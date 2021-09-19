@@ -1,0 +1,37 @@
+{
+    "name": "leafs/auth",
+    "description": "Leaf PHP auth helper",
+    "keywords": [
+        "authentication",
+        "simple auth",
+        "login",
+        "register",
+        "leaf",
+        "php",
+        "framework"
+    ],
+    "homepage": "https://leafphp.netlify.app/#/",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Michael Darko",
+            "email": "mickdd22@gmail.com",
+            "homepage": "https://mychi.netlify.app",
+            "role": "Developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Leaf\\": "src"
+        }
+    },
+    "minimum-stability": "stable",
+    "require": {
+        "leafs/password": "^1.0",
+        "leafs/session": "^1.0",
+        "leafs/db": "^1.0",
+        "leafs/form": "^1.0",
+        "leafs/http": "^1.0"
+    }
+}
