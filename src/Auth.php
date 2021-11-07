@@ -48,7 +48,7 @@ class Auth
 	 */
 	public static function login(string $table, array $credentials, array $validate = [])
 	{
-		return new Auth\Login($table, $credentials, $validate);
+		return Auth\Login::user($table, $credentials, $validate);
 	}
 
 	/**
@@ -63,7 +63,7 @@ class Auth
 	 */
 	public static function register(string $table, array $credentials, array $uniques = [], array $validate = [])
 	{
-		return new Auth\Register($table, $credentials, $uniques, $validate);
+		return Auth\Register::user($table, $credentials, $uniques, $validate);
 	}
 
 	/**
