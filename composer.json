@@ -26,7 +26,8 @@
             "Leaf\\": "src"
         }
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
+	"prefer-stable": true,
     "require": {
         "leafs/date": "^1.0",
         "leafs/password": "^1.0",
