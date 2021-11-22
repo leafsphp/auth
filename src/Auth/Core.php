@@ -48,6 +48,7 @@ class Core
         "GUARD_LOGIN" => "/auth/login",
         "GUARD_REGISTER" => "/auth/register",
         "GUARD_HOME" => "/home",
+        "GUARD_LOGOUT" => "/auth/logout",
         "SAVE_SESSION_JWT" => false,
         "TOKEN_LIFETIME" => null,
         "TOKEN_SECRET" => "@_leaf$0Secret!"

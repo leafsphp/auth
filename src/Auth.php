@@ -38,6 +38,14 @@ class Auth
 	}
 
 	/**
+	 * Set auth config
+	 */
+	public static function config($config, $value = null)
+	{
+		return Auth\Core::config($config, $value);
+	}
+
+	/**
 	 * Simple user login
 	 *
 	 * @param string table: Table to look for users
