@@ -32,7 +32,14 @@ class User extends Session
     {
         $passKey = static::$settings["PASSWORD_KEY"];
 
-        if (static::$settings["PASSWORD_ENCODE"] !== false && isset($credentials[$passKey])) {
+        if (!isset($credentials[$passKey])) {
+            static::$settings["AUTH_NO_PASS"] = true;
+        }
+
+        if (
+            static::$settings["AUTH_NO_PASS"] === false &&
+            static::$settings["PASSWORD_ENCODE"] !== false
+        ) {
             if (is_callable(static::$settings["PASSWORD_ENCODE"])) {
                 $credentials[$passKey] = call_user_func(static::$settings["PASSWORD_ENCODE"], $credentials[$passKey]);
             } else if (static::$settings["PASSWORD_ENCODE"] === "md5") {
@@ -49,7 +56,7 @@ class User extends Session
         if (count($uniques) > 0) {
             foreach ($uniques as $unique) {
                 if (!isset($credentials[$unique])) {
-                    (new \Leaf\Http\Response)->throwErr(["error" => "$unique not found in credentials."]);
+                    trigger_error("$unique not found in credentials.");
                 }
 
                 $data = static::$db->select($table)->where($unique, $credentials[$unique])->fetchAssoc();
@@ -68,8 +75,7 @@ class User extends Session
         try {
             $query = static::$db->update($table)->params($credentials)->where($where)->validate($validate)->execute();
         } catch (\Throwable $th) {
-            static::$errorsArray["dev"] = $th->getMessage();
-            return null;
+            trigger_error($th->getMessage());
         }
 
         if (!$query) {
@@ -88,17 +94,17 @@ class User extends Session
         }
 
         $token = Authentication::generateSimpleToken(
-            $user["id"],
+            $user[static::$settings["ID_KEY"]],
             static::config("TOKEN_SECRET"),
             static::config("TOKEN_LIFETIME")
         );
 
-        if (isset($user["id"])) {
-            $userId = $user["id"];
+        if (isset($user[static::$settings["ID_KEY"]])) {
+            $userId = $user[static::$settings["ID_KEY"]];
         }
 
-        if (static::$settings["HIDE_ID"] && isset($user["id"])) {
-            unset($user["id"]);
+        if (static::$settings["HIDE_ID"] && isset($user[static::$settings["ID_KEY"]])) {
+            unset($user[static::$settings["ID_KEY"]]);
         }
 
         if (static::$settings["HIDE_PASSWORD"] && (isset($user[$passKey]) || !$user[$passKey])) {
@@ -112,7 +118,7 @@ class User extends Session
 
         if (static::config("USE_SESSION")) {
             if (isset($userId)) {
-                $user["id"] = $userId;
+                $user[static::$settings["ID_KEY"]] = $userId;
             }
 
             static::save("AUTH_USER", $user);
@@ -181,7 +187,7 @@ class User extends Session
     public static function id()
     {
         if (static::config("USE_SESSION")) {
-            return static::$session->get("AUTH_USER")["id"] ?? null;
+            return static::$session->get("AUTH_USER")[static::$settings["ID_KEY"]] ?? null;
         }
 
         $payload = static::validateToken(static::config("TOKEN_SECRET"));

@@ -28,10 +28,12 @@ class Login extends Session
     public static function user(string $table, array $credentials, array $validate = [])
     {
         $passKey = static::$settings["PASSWORD_KEY"];
-        $password = $credentials[$passKey];
+        $password = $credentials[$passKey] ?? null;
 
         if (isset($credentials[$passKey])) {
             unset($credentials[$passKey]);
+        } else {
+            static::$settings["AUTH_NO_PASS"] = true;
         }
 
         $user = static::$db->select($table)->where($credentials)->validate($validate)->fetchAssoc();
@@ -40,35 +42,37 @@ class Login extends Session
             return null;
         }
 
-        $passwordIsValid = true;
+        if (static::$settings["AUTH_NO_PASS"] === false) {
+            $passwordIsValid = true;
 
-        if (static::$settings["PASSWORD_VERIFY"] !== false && isset($user[$passKey])) {
-            if (is_callable(static::$settings["PASSWORD_VERIFY"])) {
-                $passwordIsValid = call_user_func(static::$settings["PASSWORD_VERIFY"], $password, $user[$passKey]);
-            } else if (static::$settings["PASSWORD_VERIFY"] === Password::MD5) {
-                $passwordIsValid = (md5($password) === $user[$passKey]);
-            } else {
-                $passwordIsValid = Password::verify($password, $user[$passKey]);
+            if (static::$settings["PASSWORD_VERIFY"] !== false && isset($user[$passKey])) {
+                if (is_callable(static::$settings["PASSWORD_VERIFY"])) {
+                    $passwordIsValid = call_user_func(static::$settings["PASSWORD_VERIFY"], $password, $user[$passKey]);
+                } else if (static::$settings["PASSWORD_VERIFY"] === Password::MD5) {
+                    $passwordIsValid = (md5($password) === $user[$passKey]);
+                } else {
+                    $passwordIsValid = Password::verify($password, $user[$passKey]);
+                }
+            }
+
+            if (!$passwordIsValid) {
+                static::$errorsArray["password"] = static::$settings["LOGIN_PASSWORD_ERROR"];
+                return null;
             }
         }
 
-        if (!$passwordIsValid) {
-            static::$errorsArray["password"] = static::$settings["LOGIN_PASSWORD_ERROR"];
-            return null;
-        }
-
         $token = Authentication::generateSimpleToken(
-            $user["id"],
+            $user[static::$settings["ID_KEY"]],
             static::config("TOKEN_SECRET"),
             static::config("TOKEN_LIFETIME")
         );
 
-        if (isset($user["id"])) {
-            $userId = $user["id"];
+        if (isset($user[static::$settings["ID_KEY"]])) {
+            $userId = $user[static::$settings["ID_KEY"]];
         }
 
         if (static::$settings["HIDE_ID"]) {
-            unset($user["id"]);
+            unset($user[static::$settings["ID_KEY"]]);
         }
 
         if (static::$settings["HIDE_PASSWORD"] && (isset($user[$passKey]) || !$user[$passKey])) {
@@ -82,7 +86,7 @@ class Login extends Session
 
         if (static::config("USE_SESSION")) {
             if (isset($userId)) {
-                $user["id"] = $userId;
+                $user[static::$settings["ID_KEY"]] = $userId;
             }
 
             static::save("AUTH_USER", $user);

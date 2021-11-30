@@ -31,13 +31,19 @@ class Register extends Session
     {
         $passKey = static::$settings["PASSWORD_KEY"];
 
-        if (static::$settings["PASSWORD_ENCODE"] !== false && isset($credentials[$passKey])) {
-            if (is_callable(static::$settings["PASSWORD_ENCODE"])) {
-                $credentials[$passKey] = call_user_func(static::$settings["PASSWORD_ENCODE"], $credentials[$passKey]);
-            } else if (static::$settings["PASSWORD_ENCODE"] === "md5") {
-                $credentials[$passKey] = md5($credentials[$passKey]);
-            } else {
-                $credentials[$passKey] = Password::hash($credentials[$passKey]);
+        if (!isset($credentials[$passKey])) {
+            static::$settings["AUTH_NO_PASS"] = true;
+        }
+
+        if (static::$settings["AUTH_NO_PASS"] === false) {
+            if (static::$settings["PASSWORD_ENCODE"] !== false) {
+                if (is_callable(static::$settings["PASSWORD_ENCODE"])) {
+                    $credentials[$passKey] = call_user_func(static::$settings["PASSWORD_ENCODE"], $credentials[$passKey]);
+                } else if (static::$settings["PASSWORD_ENCODE"] === "md5") {
+                    $credentials[$passKey] = md5($credentials[$passKey]);
+                } else {
+                    $credentials[$passKey] = Password::hash($credentials[$passKey]);
+                }
             }
         }
 
@@ -47,11 +53,14 @@ class Register extends Session
             $credentials["updated_at"] = $now;
         }
 
+        if (static::$settings["USE_UUID"] !== false) {
+            $credentials[static::$settings["ID_KEY"]] = static::$settings["USE_UUID"];
+        }
+
         try {
             $query = static::$db->insert($table)->params($credentials)->unique($uniques)->validate($validate)->execute();
         } catch (\Throwable $th) {
-            static::$errorsArray["dev"] = $th->getMessage();
-            return null;
+            trigger_error($th->getMessage());
         }
 
         if (!$query) {
@@ -67,17 +76,17 @@ class Register extends Session
         }
 
         $token = Authentication::generateSimpleToken(
-            $user["id"],
+            $user[static::$settings["ID_KEY"]],
             static::config("TOKEN_SECRET"),
             static::config("TOKEN_LIFETIME")
         );
 
-        if (isset($user["id"])) {
-            $userId = $user["id"];
+        if (isset($user[static::$settings["ID_KEY"]])) {
+            $userId = $user[static::$settings["ID_KEY"]];
         }
 
         if (static::$settings["HIDE_ID"]) {
-            unset($user["id"]);
+            unset($user[static::$settings["ID_KEY"]]);
         }
 
         if (static::$settings["HIDE_PASSWORD"] && (isset($user[$passKey]) || !$user[$passKey])) {
@@ -92,7 +101,7 @@ class Register extends Session
         if (static::config("USE_SESSION")) {
             if (static::config("SESSION_ON_REGISTER")) {
                 if (isset($userId)) {
-                    $user["id"] = $userId;
+                    $user[static::$settings["ID_KEY"]] = $userId;
                 }
 
                 static::save("AUTH_USER", $user);
