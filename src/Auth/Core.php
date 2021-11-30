@@ -35,11 +35,14 @@ class Core
      * Auth Settings
      */
     protected static $settings = [
+        "AUTH_NO_PASS" => false,
         "USE_TIMESTAMPS" => true,
         "PASSWORD_ENCODE" => null,
         "PASSWORD_VERIFY" => null,
         "PASSWORD_KEY" => "password",
         "HIDE_ID" => true,
+        "ID_KEY" => "id",
+        "USE_UUID" => false,
         "HIDE_PASSWORD" => true,
         "LOGIN_PARAMS_ERROR" => "Incorrect credentials!",
         "LOGIN_PASSWORD_ERROR" => "Password is incorrect!",
