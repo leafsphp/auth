@@ -113,8 +113,12 @@ class Authentication
 	 */
 	public static function validate($token, $secretPhrase)
 	{
-		$payload = JWT::decode($token, $secretPhrase, ['HS256']);
-		if ($payload !== null) return $payload;
+		try {
+			$payload = JWT::decode($token, $secretPhrase, ['HS256']);
+			if ($payload !== null) return $payload;
+		} catch (\DomainException $exception) {
+			self::$errorsArray["token"] = "Malformed token";
+		}
 
 		self::$errorsArray = array_merge(self::$errorsArray, JWT::errors());
 		return null;
