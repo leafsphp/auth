@@ -8,7 +8,20 @@ if (!function_exists('auth')) {
      */
     function auth($guard = null)
     {
-        if (!$guard) return \Leaf\Auth::class;
+        if (!$guard) {
+            if (class_exists('\Leaf\Config')) {
+                $auth = Leaf\Config::get("auth")["instance"] ?? null;
+
+                if (!$auth) {
+                    $auth = new Leaf\Auth;
+                    Leaf\Config::set("auth", ["instance" => $auth]);
+                }
+
+                return $auth;
+            }
+
+            return \Leaf\Auth::class;
+        }
 
         if ($guard === 'session') {
             return \Leaf\Auth::session();
