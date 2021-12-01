@@ -153,8 +153,6 @@ class Auth
 
 	/**
 	 * Session Length
-	 * 
-	 * @deprecated Use `Auth\Session::length()` instead
 	 */
 	public static function sessionLength()
 	{
