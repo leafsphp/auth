@@ -133,7 +133,7 @@ class Session extends Core
     /**
      * Save some data to auth session
      */
-    protected static function save($key, $data)
+    public static function save($key, $data = null)
     {
         static::experimental("save");
 

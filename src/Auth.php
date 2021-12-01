@@ -198,6 +198,24 @@ class Auth
 	}
 
 	/**
+	 * Save some data to auth session
+	 * 
+	 * @deprecated Use `Auth::save()` instead
+	 */
+	public static function saveToSession($key, $data = null)
+	{
+		Auth\Session::save($key, $data);
+	}
+
+	/**
+	 * Save some data to auth session
+	 */
+	public static function save($key, $data = null)
+	{
+		Auth\Session::save($key, $data);
+	}
+
+	/**
 	 * Get all authentication errors as associative array
 	 */
 	public static function errors(): array
