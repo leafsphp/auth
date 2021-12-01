@@ -2,9 +2,6 @@
 
 namespace Leaf;
 
-use Leaf\Helpers\Authentication;
-use Leaf\Helpers\Password;
-
 /**
  * Leaf Simple Auth
  * -------------------------
@@ -144,6 +141,60 @@ class Auth
 	public static function get($param)
 	{
 		return Auth\Core::$form->get($param);
+	}
+
+	/**
+	 * Manually start an auth session
+	 */
+	public static function useSession()
+	{
+		Auth\Session::init();
+	}
+
+	/**
+	 * Session Length
+	 * 
+	 * @deprecated Use `Auth\Session::length()` instead
+	 */
+	public static function sessionLength()
+	{
+		return Auth\Session::length();
+	}
+
+	/**
+	 * Session last active
+	 * 
+	 * @deprecated Use `Auth\Session::lastActive()` instead
+	 */
+	public static function sessionActive()
+	{
+		return Auth\Session::lastActive();
+	}
+
+	/**
+	 * Check session status
+	 */
+	protected static function session()
+	{
+		return Auth\Session::status();
+	}
+
+	/**
+	 * End a session
+	 */
+	public static function endSession($location = null)
+	{
+		return Auth\Session::end($location);
+	}
+
+	/**
+	 * Define/Return session middleware
+	 *
+	 * **This method only works with session auth**
+	 */
+	public static function middleware(string $name, callable $handler = null)
+	{
+		return Auth\Session::middleware($name, $handler);
 	}
 
 	/**

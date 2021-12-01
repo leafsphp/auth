@@ -101,7 +101,7 @@ class Session extends Core
 
         if ($location) {
             $route = static::config($location) ?? $location;
-            (new \Leaf\Http\Response)->redirect($route);
+            \Leaf\Http\Response::redirect($route);
         }
     }
 
