@@ -20,7 +20,7 @@ class Register extends Session
     /**
      * Simple user registration
      *
-     * @param string $table: Table to store user in
+     * @param string $table Table to store user in
      * @param array $credentials Information for new user
      * @param array $uniques Parameters which should be unique
      * @param array $validate Validation for parameters

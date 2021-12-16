@@ -20,7 +20,7 @@ class User extends Session
     /**
      * Simple user update
      *
-     * @param string $table: Table to store user in
+     * @param string $table Table to store user in
      * @param array $credentials New information for user
      * @param array $where Information to find user by
      * @param array $uniques Parameters which should be unique
