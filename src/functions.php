@@ -4,9 +4,9 @@ if (!function_exists('auth')) {
     /**
      * Return Leaf's auth object or run an auth guard
      * 
-     * @param string $guard The auth guard to run
+     * @param string|null $guard The auth guard to run
      */
-    function auth($guard = null)
+    function auth(string $guard = null)
     {
         if (!$guard) {
             if (class_exists('\Leaf\Config')) {
@@ -35,7 +35,7 @@ if (!function_exists('hasAuth')) {
     /**
      * Find out if there's an active sesion
      */
-    function hasAuth()
+    function hasAuth(): bool
     {
         return !!sessionUser();
     }
