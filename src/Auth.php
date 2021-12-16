@@ -13,14 +13,14 @@ namespace Leaf;
  */
 class Auth
 {
-	/**
-	 * Create a db connection
-	 *
-	 * @param string $host The db host name
-	 * @param string $host The db user
-	 * @param string $host The db password
-	 * @param string $host The db name
-	 */
+    /**
+     * Create a db connection
+     *
+     * @param string $host The db name
+     * @param string $user
+     * @param string $password
+     * @param string $dbname
+     */
 	public static function connect(string $host, string $user, string $password, string $dbname): void
 	{
 		Auth\Core::connect($host, $user, $password, $dbname);
@@ -29,7 +29,7 @@ class Auth
 	/**
 	 * Create a database connection from env variables
 	 */
-	public static function autoConnect(): void
+	public static function autoConnect()
 	{
 		Auth\Core::autoConnect();
 	}
@@ -51,30 +51,30 @@ class Auth
 	 *
 	 * @return array user: all user info + tokens + session data
 	 */
-	public static function login(string $table, array $credentials, array $validate = [])
-	{
+	public static function login(string $table, array $credentials, array $validate = []): array
+    {
 		return Auth\Login::user($table, $credentials, $validate);
 	}
 
 	/**
 	 * Simple user registration
 	 *
-	 * @param string $table: Table to store user in
+	 * @param string $table Table to store user in
 	 * @param array $credentials Information for new user
 	 * @param array $uniques Parameters which should be unique
 	 * @param array $validate Validation for parameters
 	 *
 	 * @return array user: all user info + tokens + session data
 	 */
-	public static function register(string $table, array $credentials, array $uniques = [], array $validate = [])
-	{
+	public static function register(string $table, array $credentials, array $uniques = [], array $validate = []): array
+    {
 		return Auth\Register::user($table, $credentials, $uniques, $validate);
 	}
 
 	/**
 	 * Simple user update
 	 *
-	 * @param string $table: Table to store user in
+	 * @param string $table Table to store user in
 	 * @param array $credentials New information for user
 	 * @param array $where Information to find user by
 	 * @param array $uniques Parameters which should be unique
@@ -82,8 +82,8 @@ class Auth
 	 *
 	 * @return array user: all user info + tokens + session data
 	 */
-	public static function update(string $table, array $credentials, array $where, array $uniques = [], array $validate = [])
-	{
+	public static function update(string $table, array $credentials, array $where, array $uniques = [], array $validate = []): array
+    {
 		return Auth\User::update($table, $credentials, $where, $uniques, $validate);
 	}
 
@@ -91,9 +91,9 @@ class Auth
 	 * Validate Json Web Token
 	 *
 	 * @param string $token The token validate
-	 * @param string $secretKey The secret key used to encode token
+	 * @param string|null $secretKey The secret key used to encode token
 	 */
-	public static function validate($token, $secretKey = null)
+	public static function validate(string $token, string $secretKey = null)
 	{
 		return Auth\User::validate($token, $secretKey);
 	}
@@ -101,9 +101,9 @@ class Auth
 	/**
 	 * Validate Bearer Token
 	 *
-	 * @param string $secretKey The secret key used to encode token
+	 * @param string|null $secretKey The secret key used to encode token
 	 */
-	public static function validateToken($secretKey = null)
+	public static function validateToken(string $secretKey = null)
 	{
 		return Auth\User::validateToken($secretKey);
 	}
@@ -122,7 +122,7 @@ class Auth
 	 * @param string $table The table to look for user
 	 * @param array $hidden Fields to hide from user array
 	 */
-	public static function user($table = "users", $hidden = [])
+	public static function user(string $table = "users", array $hidden = [])
 	{
 		return Auth\User::info($table, $hidden);
 	}

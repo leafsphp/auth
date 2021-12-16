@@ -80,10 +80,10 @@ class Core
     /**
      * Create a db connection
      *
-     * @param string $host The db host name
-     * @param string $host The db user
-     * @param string $host The db password
      * @param string $host The db name
+     * @param string $user
+     * @param string $password
+     * @param string $dbname
      */
     public static function connect(string $host, string $user, string $password, string $dbname): void
     {
