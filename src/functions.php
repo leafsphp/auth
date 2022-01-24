@@ -1,37 +1,34 @@
 <?php
 
-if (!function_exists('auth')) {
+if (!function_exists('auth') && class_exists('Leaf\App')) {
     /**
-     * Return Leaf's auth object or run an auth guard
+     * Return the leaf auth object
      * 
-     * @param string|null $guard The auth guard to run
+     * @return Leaf\Auth
      */
-    function auth(string $guard = null)
+    function auth()
     {
-        if (!$guard) {
-            if (class_exists('\Leaf\Config')) {
-                $auth = Leaf\Config::get("auth")["instance"] ?? null;
-
-                if (!$auth) {
-                    $auth = new Leaf\Auth;
-                    Leaf\Config::set("auth", ["instance" => $auth]);
-                }
-
-                return $auth;
-            }
-
-            return \Leaf\Auth::class;
+        if (!(\Leaf\Config::get("auth.instance"))) {
+            \Leaf\Config::set("auth.instance", new Leaf\Auth());
         }
 
-        if ($guard === 'session') {
-            return \Leaf\Auth::session();
-        }
-
-        return \Leaf\Auth::guard($guard);
+        return \Leaf\Config::get("auth.instance");
     }
 }
 
-if (!function_exists('hasAuth')) {
+if (!function_exists('guard') && function_exists('auth')) {
+    /**
+     * Run an auth guard
+     * 
+     * @param string $guard The auth guard to run
+     */
+    function guard(string $guard)
+    {
+        return auth()->guard($guard);
+    }
+}
+
+if (!function_exists('hasAuth') && function_exists('auth')) {
     /**
      * Find out if there's an active sesion
      */
@@ -41,7 +38,7 @@ if (!function_exists('hasAuth')) {
     }
 }
 
-if (!function_exists('sessionUser')) {
+if (!function_exists('sessionUser') && function_exists('auth')) {
     /**
      * Get the currently logged in user
      */

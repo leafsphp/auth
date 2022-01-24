@@ -34,9 +34,9 @@
     "require": {
         "leafs/date": "^1.0",
         "leafs/password": "^1.0",
-        "leafs/session": "^1.0",
-        "leafs/db": "^1.0",
-        "leafs/form": "^1.0",
-        "leafs/http": "^1.0"
+        "leafs/session": "^1.1",
+        "leafs/db": "^2.0",
+        "leafs/form": "^1.1",
+        "leafs/http": "^1.2.1"
     }
 }
