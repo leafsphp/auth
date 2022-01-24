@@ -233,29 +233,42 @@ class Auth extends Core
      *
      * @return array all user info + tokens + session data
      */
-    public static function update(string $table, array $credentials, array $where, array $uniques = [])
+    public static function update(string $table, array $credentials, array $uniques = [])
     {
-        $passKey = static::$settings["PASSWORD_KEY"];
+        static::leafDbConnect();
+        if (static::config('USE_SESSION')) {
+            static::useSession();
+        }
+
+        $passKey = static::$settings['PASSWORD_KEY'];
+        $loggedInUser = static::user();
+
+        if (!$loggedInUser) {
+            static::$errors['auth'] = 'Not authenticated';
+            return null;
+        }
+
+        $where = isset($loggedInUser[static::$settings['ID_KEY']]) ? [static::$settings['ID_KEY'] => $loggedInUser[static::$settings['ID_KEY']]] : $loggedInUser;
 
         if (!isset($credentials[$passKey])) {
-            static::$settings["AUTH_NO_PASS"] = true;
+            static::$settings['AUTH_NO_PASS'] = true;
         }
 
         if (
-            static::$settings["AUTH_NO_PASS"] === false &&
-            static::$settings["PASSWORD_ENCODE"] !== false
+            static::$settings['AUTH_NO_PASS'] === false &&
+            static::$settings['PASSWORD_ENCODE'] !== false
         ) {
-            if (is_callable(static::$settings["PASSWORD_ENCODE"])) {
-                $credentials[$passKey] = call_user_func(static::$settings["PASSWORD_ENCODE"], $credentials[$passKey]);
-            } else if (static::$settings["PASSWORD_ENCODE"] === "md5") {
+            if (is_callable(static::$settings['PASSWORD_ENCODE'])) {
+                $credentials[$passKey] = call_user_func(static::$settings['PASSWORD_ENCODE'], $credentials[$passKey]);
+            } else if (static::$settings['PASSWORD_ENCODE'] === 'md5') {
                 $credentials[$passKey] = md5($credentials[$passKey]);
             } else {
                 $credentials[$passKey] = Password::hash($credentials[$passKey]);
             }
         }
 
-        if (static::$settings["USE_TIMESTAMPS"]) {
-            $credentials["updated_at"] = Date::now();
+        if (static::$settings['USE_TIMESTAMPS']) {
+            $credentials['updated_at'] = Date::now();
         }
 
         if (count($uniques) > 0) {
@@ -288,8 +301,8 @@ class Auth extends Core
             return null;
         }
 
-        if (isset($credentials["updated_at"])) {
-            unset($credentials["updated_at"]);
+        if (isset($credentials['updated_at'])) {
+            unset($credentials['updated_at']);
         }
 
         $user = static::$db->select($table)->where($credentials)->fetchAssoc();
@@ -299,20 +312,20 @@ class Auth extends Core
         }
 
         $token = Authentication::generateSimpleToken(
-            $user[static::$settings["ID_KEY"]],
-            static::config("TOKEN_SECRET"),
-            static::config("TOKEN_LIFETIME")
+            $user[static::$settings['ID_KEY']],
+            static::config('TOKEN_SECRET'),
+            static::config('TOKEN_LIFETIME')
         );
 
-        if (isset($user[static::$settings["ID_KEY"]])) {
-            $userId = $user[static::$settings["ID_KEY"]];
+        if (isset($user[static::$settings['ID_KEY']])) {
+            $userId = $user[static::$settings['ID_KEY']];
         }
 
-        if (static::$settings["HIDE_ID"] && isset($user[static::$settings["ID_KEY"]])) {
-            unset($user[static::$settings["ID_KEY"]]);
+        if (static::$settings['HIDE_ID'] && isset($user[static::$settings['ID_KEY']])) {
+            unset($user[static::$settings['ID_KEY']]);
         }
 
-        if (static::$settings["HIDE_PASSWORD"] && (isset($user[$passKey]) || !$user[$passKey])) {
+        if (static::$settings['HIDE_PASSWORD'] && (isset($user[$passKey]) || !$user[$passKey])) {
             unset($user[$passKey]);
         }
 
@@ -321,23 +334,23 @@ class Auth extends Core
             return null;
         }
 
-        if (static::config("USE_SESSION")) {
+        if (static::config('USE_SESSION')) {
             if (isset($userId)) {
-                $user[static::$settings["ID_KEY"]] = $userId;
+                $user[static::$settings['ID_KEY']] = $userId;
             }
 
-            static::save("AUTH_USER", $user);
-            static::save("HAS_SESSION", true);
+            static::$session->set('AUTH_USER', $user);
+            static::$session->set('HAS_SESSION', true);
 
-            if (static::config("SAVE_SESSION_JWT")) {
-                static::save("AUTH_TOKEN", $token);
+            if (static::config('SAVE_SESSION_JWT')) {
+                static::$session->set('AUTH_TOKEN', $token);
             }
 
             return $user;
         }
 
-        $response["user"] = $user;
-        $response["token"] = $token;
+        $response['user'] = $user;
+        $response['token'] = $token;
 
         return $response;
     }
@@ -479,7 +492,7 @@ class Auth extends Core
     {
         static::sessionCheck();
 
-        return time() - static::$session->get("SESSION_LAST_ACTIVITY");
+        return time() - static::$session->get('SESSION_LAST_ACTIVITY');
     }
 
     /**
@@ -493,9 +506,9 @@ class Auth extends Core
 
         $success = static::$session->regenerate($clearData);
 
-        static::$session->set("SESSION_STARTED_AT", time());
-        static::$session->set("SESSION_LAST_ACTIVITY", time());
-        static::$session->set("AUTH_SESISON", true);
+        static::$session->set('SESSION_STARTED_AT', time());
+        static::$session->set('SESSION_LAST_ACTIVITY', time());
+        static::$session->set('AUTH_SESISON', true);
 
         return $success;
     }
@@ -522,6 +535,6 @@ class Auth extends Core
     {
         static::sessionCheck();
 
-        return time() - static::$session->get("SESSION_STARTED_AT");
+        return time() - static::$session->get('SESSION_STARTED_AT');
     }
 }
