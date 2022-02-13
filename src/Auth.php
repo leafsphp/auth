@@ -120,12 +120,9 @@ class Auth extends Core
      *
      * @return array null or all user info + tokens + session data
      */
-    public static function register(
-        array $credentials,
-        array $uniques = []
-    ) {
+    public static function register(array $credentials, array $uniques = []) {
         static::leafDbConnect();
-        
+
         $table = static::$settings['DB_TABLE'];
         $passKey = static::$settings['PASSWORD_KEY'];
 
