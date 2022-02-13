@@ -20,16 +20,15 @@ class Auth extends Core
     /**
      * Simple user login
      *
-     * @param string table: Table to look for users
      * @param array $credentials User credentials
      *
      * @return array|null null or all user info + tokens + session data
      */
-    public static function login(
-        string $table,
-        array $credentials
-    ) {
+    public static function login(array $credentials) {
         static::leafDbConnect();
+
+        $table = static::$settings['DB_TABLE'];
+
         if (static::config('USE_SESSION')) {
             static::useSession();
         }
@@ -116,19 +115,18 @@ class Auth extends Core
     /**
      * Simple user registration
      *
-     * @param string $table Table to store user in
      * @param array $credentials Information for new user
      * @param array $uniques Parameters which should be unique
      *
      * @return array null or all user info + tokens + session data
      */
     public static function register(
-        string $table,
         array $credentials,
         array $uniques = []
     ) {
         static::leafDbConnect();
-
+        
+        $table = static::$settings['DB_TABLE'];
         $passKey = static::$settings['PASSWORD_KEY'];
 
         if (!isset($credentials[$passKey])) {
@@ -226,16 +224,17 @@ class Auth extends Core
     /**
      * Simple user update
      *
-     * @param string $table Table to store user in
      * @param array $credentials New information for user
-     * @param array $where Information to find user by
      * @param array $uniques Parameters which should be unique
      *
      * @return array all user info + tokens + session data
      */
-    public static function update(string $table, array $credentials, array $uniques = [])
+    public static function update(array $credentials, array $uniques = [])
     {
         static::leafDbConnect();
+
+        $table = static::$settings['DB_TABLE'];
+
         if (static::config('USE_SESSION')) {
             static::useSession();
         }
@@ -442,11 +441,12 @@ class Auth extends Core
     /**
      * Get the current user data from token
      *
-     * @param string $table The table to look for user
      * @param array $hidden Fields to hide from user array
      */
-    public static function user(string $table = 'users', array $hidden = [])
+    public static function user(array $hidden = [])
     {
+        $table = static::$settings['DB_TABLE'];
+
         if (!static::id()) {
             if (static::config('USE_SESSION')) {
                 return static::$session->get('AUTH_USER');
@@ -481,7 +481,7 @@ class Auth extends Core
 
         if (is_string($location)) {
             $route = static::config($location) ?? $location;
-            return \Leaf\Http\Response::redirect($route);
+            exit(\Leaf\Http\Response::redirect($route));
         }
     }
 
