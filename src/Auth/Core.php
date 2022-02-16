@@ -128,16 +128,19 @@ class Core
      * Set auth config
      * 
      * @param string|array $config The auth config key or array of config
-     * @param string $value The value if $config is a string
+     * @param mixed $value The value if $config is a string
      */
-    public static function config($config, ?string $value = null)
+    public static function config($config, $value = null)
     {
         if (is_array($config)) {
             foreach ($config as $key => $configValue) {
                 static::config($key, $configValue);
             }
         } else {
-            if (!$value) return static::$settings[$config] ?? null;
+            if ($value === null) {
+                return static::$settings[$config] ?? null;
+            }
+
             static::$settings[$config] = $value;
         }
     }
