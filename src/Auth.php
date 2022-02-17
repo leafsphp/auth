@@ -24,7 +24,8 @@ class Auth extends Core
      *
      * @return array|null null or all user info + tokens + session data
      */
-    public static function login(array $credentials) {
+    public static function login(array $credentials)
+    {
         static::leafDbConnect();
 
         $table = static::$settings['DB_TABLE'];
@@ -120,7 +121,8 @@ class Auth extends Core
      *
      * @return array null or all user info + tokens + session data
      */
-    public static function register(array $credentials, array $uniques = []) {
+    public static function register(array $credentials, array $uniques = [])
+    {
         static::leafDbConnect();
 
         $table = static::$settings['DB_TABLE'];
@@ -353,7 +355,7 @@ class Auth extends Core
 
     /**
      * Validation for parameters
-     * 
+     *
      * @param array $rules Rules for parameter validation
      */
     public function validate(array $rules): bool
@@ -467,7 +469,7 @@ class Auth extends Core
 
     /**
      * End a session
-     * 
+     *
      * @param string $location A route to redirect to after logout
      */
     public static function logout(?string $location = null)
@@ -478,7 +480,8 @@ class Auth extends Core
 
         if (is_string($location)) {
             $route = static::config($location) ?? $location;
-            exit(\Leaf\Http\Response::redirect($route));
+            \Leaf\Http\Headers::status(302);
+            exit(header("location: $route"));
         }
     }
 
@@ -494,7 +497,7 @@ class Auth extends Core
 
     /**
      * Refresh session
-     * 
+     *
      * @param bool $clearData Remove existing session data
      */
     public static function refresh(bool $clearData = true)
@@ -512,7 +515,7 @@ class Auth extends Core
 
     /**
      * Define/Return session middleware
-     * 
+     *
      * @param string $name The name of the middleware to set/get
      * @param callable|null $handler The handler for the middleware
      */
