@@ -59,7 +59,7 @@ class Core
 
     /**
      * Connect leaf auth to the database
-     * 
+     *
      * @param string|array $host Host Name or full config
      * @param string $dbname Database name
      * @param string $user Database username
@@ -77,16 +77,17 @@ class Core
     ) {
         $db = new \Leaf\Db();
         $db->connect($host, $dbname, $user, $password, $dbtype, $pdoOptions);
+        static::$db = $db;
     }
 
     /**
      * Connect to database using environment variables
-     * 
+     *
      * @param array $pdoOptions Options for PDO connection
      */
-    public function autoConnect(array $pdoOptions = [])
+    public static function autoConnect(array $pdoOptions = [])
     {
-        $this->connect(
+        static::connect(
             getenv('DB_HOST'),
             getenv('DB_DATABASE'),
             getenv('DB_USERNAME'),
@@ -98,7 +99,7 @@ class Core
 
     /**
      * Pass in db connetion instance directly
-     * 
+     *
      * @param \PDO $connection A connection instance of your db
      */
     public static function dbConnection(\PDO $connection)
@@ -126,7 +127,7 @@ class Core
 
     /**
      * Set auth config
-     * 
+     *
      * @param string|array $config The auth config key or array of config
      * @param mixed $value The value if $config is a string
      */
