@@ -32,11 +32,11 @@
     "minimum-stability": "dev",
 	"prefer-stable": true,
     "require": {
-        "leafs/date": "^1.0",
-        "leafs/password": "^1.0",
-        "leafs/session": "^1.1",
+        "leafs/date": "*",
+        "leafs/password": "*",
+        "leafs/session": "*",
         "leafs/db": "^2.0",
-        "leafs/form": "^1.1",
-        "leafs/http": "^1.2.1"
+        "leafs/form": "*",
+        "leafs/http": "*"
     }
 }
