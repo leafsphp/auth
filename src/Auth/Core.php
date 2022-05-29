@@ -87,14 +87,9 @@ class Core
      */
     public static function autoConnect(array $pdoOptions = [])
     {
-        static::connect(
-            getenv('DB_HOST'),
-            getenv('DB_DATABASE'),
-            getenv('DB_USERNAME'),
-            getenv('DB_PASSWORD'),
-            getenv('DB_CONNECTION') ? getenv('DB_CONNECTION') : 'mysql',
-            $pdoOptions,
-        );
+        $db = new \Leaf\Db();
+        $db->autoConnect($pdoOptions);
+        static::$db = $db;
     }
 
     /**
