@@ -6,6 +6,8 @@ package-lock.json
 vendor/
 test/
 phpunit.xml
+*.tests.php
+workflows
 
 # OS Generated
 .DS_Store*
