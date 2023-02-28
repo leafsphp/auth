@@ -29,7 +29,7 @@
 			"src/functions.php"
 		]
     },
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
 	"prefer-stable": true,
     "require": {
         "leafs/date": "*",
