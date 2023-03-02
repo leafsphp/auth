@@ -51,13 +51,13 @@ class Auth extends Core
         }
 
         if (static::$settings['AUTH_NO_PASS'] === false) {
-            $passwordIsValid = true;
+            $passwordIsValid = false;
 
             if (static::$settings['PASSWORD_VERIFY'] !== false && isset($user[$passKey])) {
                 if (is_callable(static::$settings['PASSWORD_VERIFY'])) {
                     $passwordIsValid = call_user_func(static::$settings['PASSWORD_VERIFY'], $password, $user[$passKey]);
                 } else if (static::$settings['PASSWORD_VERIFY'] === Password::MD5) {
-                    $passwordIsValid = (md5($password) === $user[$passKey]);
+                    $passwordIsValid = md5($password) === $user[$passKey];
                 } else {
                     $passwordIsValid = Password::verify($password, $user[$passKey]);
                 }
