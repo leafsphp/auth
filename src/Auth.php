@@ -145,7 +145,7 @@ class Auth extends Core
         }
 
         if (static::$settings['USE_TIMESTAMPS']) {
-            $now = (new \Leaf\Date())->tick()->now();
+            $now = (new \Leaf\Date())->tick()->format(static::$settings['TIMESTAMP_FORMAT']);
             $credentials['created_at'] = $now;
             $credentials['updated_at'] = $now;
         }
@@ -266,7 +266,7 @@ class Auth extends Core
         }
 
         if (static::$settings['USE_TIMESTAMPS']) {
-            $credentials['updated_at'] = (new \Leaf\Date())->tick()->now();
+            $credentials['updated_at'] = (new \Leaf\Date())->tick()->format(static::$settings['TIMESTAMP_FORMAT']);
         }
 
         if (count($uniques) > 0) {

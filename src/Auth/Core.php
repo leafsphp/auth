@@ -27,6 +27,7 @@ class Core
         'DB_TABLE' => 'users',
         'AUTH_NO_PASS' => false,
         'USE_TIMESTAMPS' => true,
+        'TIMESTAMP_FORMAT' => 'c',
         'PASSWORD_ENCODE' => null,
         'PASSWORD_VERIFY' => null,
         'PASSWORD_KEY' => 'password',
