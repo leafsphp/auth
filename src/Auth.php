@@ -454,7 +454,7 @@ class Auth extends Core
             return null;
         }
 
-        $user = static::$db->select($table)->where('id', static::id())->fetchAssoc();
+        $user = static::$db->select($table)->where(static::$settings['ID_KEY'], static::id())->fetchAssoc();
 
         if (count($hidden) > 0) {
             foreach ($hidden as $item) {
