@@ -42,12 +42,7 @@ expect()->extend('toBeOne', function () {
 function createUsersTable()
 {
     $db = new \Leaf\Db();
-    $db->connect(
-        'localhost',
-        'leaf',
-        'root',
-        'root'
-    );
+    $db->connect(...getConnectionConfig());
 
     $db->createTableIfNotExists(
         'users',
@@ -60,4 +55,65 @@ function createUsersTable()
             'PRIMARY KEY' => '(id)',
         ]
     )->execute();
+}
+
+function haveRegisteredUser(string $username, string $password): array
+{
+    \Leaf\Auth\Core::connect(...getConnectionConfig('mysql'));
+
+    $auth = new \Leaf\Auth();
+    $auth::config(getAuthConfig(['USE_SESSION' => false]));
+
+    return $auth::register(['username' => $username, 'password' => $password]);
+}
+
+function deleteUser(string $username)
+{
+    $db = new \Leaf\Db();
+    $db->connect(...getConnectionConfig());
+
+    $db->delete('users')->where('username', '=', $username)->execute();
+}
+
+function getConnectionConfig(?string $dbType = null): array
+{
+    $config = ['localhost', 'leaf', 'root', 'root'];
+
+    if ($dbType) {
+        $config[] = $dbType;
+    }
+
+    return $config;
+}
+
+function getAuthConfig(array $settingsReplacement = []): array
+{
+    $settings = [
+        'DB_TABLE' => 'users',
+        'AUTH_NO_PASS' => false,
+        'USE_TIMESTAMPS' => false,
+        'TIMESTAMP_FORMAT' => 'c',
+        'PASSWORD_ENCODE' => null,
+        'PASSWORD_VERIFY' => null,
+        'PASSWORD_KEY' => 'password',
+        'HIDE_ID' => true,
+        'ID_KEY' => 'id',
+        'USE_UUID' => false,
+        'HIDE_PASSWORD' => true,
+        'LOGIN_PARAMS_ERROR' => 'Incorrect credentials!',
+        'LOGIN_PASSWORD_ERROR' => 'Password is incorrect!',
+        'USE_SESSION' => true,
+        'SESSION_ON_REGISTER' => false,
+        'GUARD_LOGIN' => '/auth/login',
+        'GUARD_REGISTER' => '/auth/register',
+        'GUARD_HOME' => '/home',
+        'GUARD_LOGOUT' => '/auth/logout',
+        'SAVE_SESSION_JWT' => false,
+        'TOKEN_LIFETIME' => null,
+        'TOKEN_SECRET' => '@_leaf$0Secret!',
+        'SESSION_REDIRECT_ON_LOGIN' => false,
+        'SESSION_LIFETIME' => 60 * 60 * 24,
+    ];
+
+    return array_replace($settings, $settingsReplacement);
 }
