@@ -19,11 +19,12 @@ class Session
      */
     protected static $session;
 
-    public static function init()
+    public static function init(array $sessionCookieParams = [])
     {
         static::$session = new \Leaf\Http\Session(false);
 
         if (!isset($_SESSION)) {
+            session_set_cookie_params($sessionCookieParams);
             session_start();
         };
 

@@ -346,23 +346,6 @@ class Auth extends Core
     }
 
     /**
-     * @param array $user
-     * @param string $token
-     *
-     * @return void
-     */
-    private static function setUserToSession(array $user, string $token): void
-    {
-        static::$session->set('AUTH_USER', $user);
-        static::$session->set('HAS_SESSION', true);
-        static::$session->set('SESSION_TTL', time() + (int)static::config('SESSION_LIFETIME'));
-
-        if (static::config('SAVE_SESSION_JWT')) {
-            static::$session->set('AUTH_TOKEN', $token);
-        }
-    }
-
-    /**
      * Validation for parameters
      *
      * @param array $rules Rules for parameter validation
@@ -384,7 +367,7 @@ class Auth extends Core
     public static function useSession()
     {
         static::config('USE_SESSION', true);
-        static::$session = Auth\Session::init();
+        static::$session = Auth\Session::init(static::config('SESSION_COOKIE_PARAMS'));
     }
 
     /**
@@ -548,7 +531,7 @@ class Auth extends Core
 
         static::$session->set('SESSION_STARTED_AT', time());
         static::$session->set('SESSION_LAST_ACTIVITY', time());
-        static::$session->set('AUTH_SESISON', true);
+        static::setSessionTtl();
 
         return $success;
     }
@@ -576,5 +559,34 @@ class Auth extends Core
         static::sessionCheck();
 
         return time() - static::$session->get('SESSION_STARTED_AT');
+    }
+
+    /**
+     * @param array $user
+     * @param string $token
+     *
+     * @return void
+     */
+    private static function setUserToSession(array $user, string $token): void
+    {
+        session_regenerate_id();
+
+        static::$session->set('AUTH_USER', $user);
+        static::$session->set('HAS_SESSION', true);
+        static::setSessionTtl();
+
+        if (static::config('SAVE_SESSION_JWT')) {
+            static::$session->set('AUTH_TOKEN', $token);
+        }
+    }
+
+    /**
+     * @return void
+     */
+    private static function setSessionTtl(): void
+    {
+        if ((int)static::config('SESSION_LIFETIME') > 0) {
+            static::$session->set('SESSION_TTL', time() + (int)static::config('SESSION_LIFETIME'));
+        }
     }
 }

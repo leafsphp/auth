@@ -21,10 +21,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: 🔥 Initialize MySQL
+      - name: Initialize MySQL
         run: sudo systemctl start mysql.service
 
-      - name: 📌 Initialize first database
+      - name: Initialize first database
         run: |
           mysql -e 'CREATE DATABASE ${{ env.MYSQL_DATABASE }};' \
           -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
