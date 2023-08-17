@@ -77,10 +77,10 @@ class Auth extends Core
 
         if (isset($user[static::$settings['ID_KEY']])) {
             $userId = $user[static::$settings['ID_KEY']];
-        }
 
-        if (static::$settings['HIDE_ID']) {
-            unset($user[static::$settings['ID_KEY']]);
+            if (static::$settings['HIDE_ID']) {
+                unset($user[static::$settings['ID_KEY']]);
+            }
         }
 
         if (static::$settings['HIDE_PASSWORD'] && (isset($user[$passKey]) || !$user[$passKey])) {
@@ -409,7 +409,6 @@ class Auth extends Core
     public static function status()
     {
         static::sessionCheck();
-
         static::expireSession();
 
         return static::$session->get('AUTH_USER') ?? false;
@@ -585,8 +584,12 @@ class Auth extends Core
      */
     private static function setSessionTtl(): void
     {
-        if ((int)static::config('SESSION_LIFETIME') > 0) {
-            static::$session->set('SESSION_TTL', time() + (int)static::config('SESSION_LIFETIME'));
+        $sessionLifetime = is_int(static::config('SESSION_LIFETIME'))
+            ? static::config('SESSION_LIFETIME')
+            : (int) strtotime(static::config('SESSION_LIFETIME'));
+
+        if ($sessionLifetime > 0) {
+            static::$session->set('SESSION_TTL', time() + $sessionLifetime);
         }
     }
 }
