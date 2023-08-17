@@ -7,6 +7,8 @@ beforeEach(function () {
 
 afterEach(function () {
     deleteUser('login-user');
+    session_start();
+    session_destroy();
 });
 
 test('login should set user session', function () {
