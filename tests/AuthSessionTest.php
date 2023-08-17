@@ -5,6 +5,17 @@ beforeEach(function () {
     haveRegisteredUser('login-user', 'login-pass');
 });
 
+afterEach(function () {
+    deleteUser('login-user');
+    
+    // if session is active, don't call session_start
+    if (!session_status()) {
+        session_start();
+    }
+
+    session_destroy();
+});
+
 test('login should set user session', function () {
     $auth = new \Leaf\Auth();
     $auth::config(getAuthConfig());
@@ -130,8 +141,4 @@ test('Session should expire when fetching status', function () {
 
     sleep(2);
     expect($auth::status())->toBeFalse();
-});
-
-afterEach(function () {
-    deleteUser('login-user');
 });
