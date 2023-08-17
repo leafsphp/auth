@@ -97,14 +97,11 @@ class Auth extends Core
                 $user[static::$settings['ID_KEY']] = $userId;
             }
 
-            static::$session->set('AUTH_USER', $user);
-            static::$session->set('HAS_SESSION', true);
+            self::setUserToSession($user, $token);
 
-            if (static::config('SAVE_SESSION_JWT')) {
-                static::$session->set('AUTH_TOKEN', $token);
+            if (static::config('SESSION_REDIRECT_ON_LOGIN')) {
+                exit(header('location: ' . static::config('GUARD_HOME')));
             }
-
-            exit(header('location: ' . static::config('GUARD_HOME')));
         }
 
         $response['user'] = $user;
@@ -201,12 +198,7 @@ class Auth extends Core
                     $user[static::$settings['ID_KEY']] = $userId;
                 }
 
-                static::$session->set('AUTH_USER', $user);
-                static::$session->set('HAS_SESSION', true);
-
-                if (static::config('SAVE_SESSION_JWT')) {
-                    static::$session->set('AUTH_TOKEN', $token);
-                }
+                self::setUserToSession($user, $token);
 
                 exit(header('location: ' . static::config('GUARD_HOME')));
             } else {
@@ -375,7 +367,7 @@ class Auth extends Core
     public static function useSession()
     {
         static::config('USE_SESSION', true);
-        static::$session = Auth\Session::init();
+        static::$session = Auth\Session::init(static::config('SESSION_COOKIE_PARAMS'));
     }
 
     /**
@@ -418,6 +410,8 @@ class Auth extends Core
     {
         static::sessionCheck();
 
+        static::expireSession();
+
         return static::$session->get('AUTH_USER') ?? false;
     }
 
@@ -429,6 +423,10 @@ class Auth extends Core
         static::leafDbConnect();
 
         if (static::config('USE_SESSION')) {
+            if (static::expireSession()) {
+                return null;
+            }
+
             return static::$session->get('AUTH_USER')[static::$settings['ID_KEY']] ?? null;
         }
 
@@ -486,6 +484,31 @@ class Auth extends Core
     }
 
     /**
+     * @return bool
+     */
+    private static function expireSession(): bool
+    {
+        $sessionTtl = static::$session->get('SESSION_TTL');
+
+        if (!$sessionTtl) {
+            return false;
+        }
+
+        $isSessionExpired = time() > $sessionTtl;
+
+        if ($isSessionExpired) {
+            static::$session->unset('AUTH_USER');
+            static::$session->unset('HAS_SESSION');
+            static::$session->unset('AUTH_TOKEN');
+            static::$session->unset('SESSION_STARTED_AT');
+            static::$session->unset('SESSION_LAST_ACTIVITY');
+            static::$session->unset('SESSION_TTL');
+        }
+
+        return $isSessionExpired;
+    }
+
+    /**
      * Session last active
      */
     public static function lastActive()
@@ -508,7 +531,7 @@ class Auth extends Core
 
         static::$session->set('SESSION_STARTED_AT', time());
         static::$session->set('SESSION_LAST_ACTIVITY', time());
-        static::$session->set('AUTH_SESISON', true);
+        static::setSessionTtl();
 
         return $success;
     }
@@ -536,5 +559,34 @@ class Auth extends Core
         static::sessionCheck();
 
         return time() - static::$session->get('SESSION_STARTED_AT');
+    }
+
+    /**
+     * @param array $user
+     * @param string $token
+     *
+     * @return void
+     */
+    private static function setUserToSession(array $user, string $token): void
+    {
+        session_regenerate_id();
+
+        static::$session->set('AUTH_USER', $user);
+        static::$session->set('HAS_SESSION', true);
+        static::setSessionTtl();
+
+        if (static::config('SAVE_SESSION_JWT')) {
+            static::$session->set('AUTH_TOKEN', $token);
+        }
+    }
+
+    /**
+     * @return void
+     */
+    private static function setSessionTtl(): void
+    {
+        if ((int)static::config('SESSION_LIFETIME') > 0) {
+            static::$session->set('SESSION_TTL', time() + (int)static::config('SESSION_LIFETIME'));
+        }
     }
 }

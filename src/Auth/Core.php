@@ -15,6 +15,8 @@ use Leaf\Helpers\Authentication;
  */
 class Core
 {
+    private const TIMESTAMP_OF_ONE_DAY = 60 * 60 * 24;
+
     /**
      * All errors caught
      */
@@ -46,6 +48,9 @@ class Core
         'SAVE_SESSION_JWT' => false,
         'TOKEN_LIFETIME' => null,
         'TOKEN_SECRET' => '@_leaf$0Secret!',
+        'SESSION_REDIRECT_ON_LOGIN' => true,
+        'SESSION_LIFETIME' => self::TIMESTAMP_OF_ONE_DAY,
+        'SESSION_COOKIE_PARAMS' => ['secure' => true, 'httponly' => true, 'samesite' => 'lax'],
     ];
 
     /**
