@@ -7,7 +7,12 @@ beforeEach(function () {
 
 afterEach(function () {
     deleteUser('login-user');
-    session_start();
+    
+    // if session is active, don't call session_start
+    if (!session_status()) {
+        session_start();
+    }
+
     session_destroy();
 });
 
