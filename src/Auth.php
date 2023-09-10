@@ -487,6 +487,7 @@ class Auth extends Core
      */
     private static function expireSession(): bool
     {
+        self::sessionCheck();
         $sessionTtl = static::$session->get('SESSION_TTL');
 
         if (!$sessionTtl) {
