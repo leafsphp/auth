@@ -45,7 +45,8 @@
         }
     },
     "require-dev": {
-        "leafs/alchemy": "^1.0"
+        "leafs/alchemy": "^1.0",
+        "pestphp/pest": "^1.0 | ^2.0"
     },
     "scripts": {
         "test": "vendor/bin/pest --colors=always --coverage"
