@@ -141,3 +141,25 @@ test('Session should expire when fetching status', function () {
     sleep(2);
     expect($auth::status())->toBeFalse();
 });
+
+test('Session lifetime should set correct session ttl when string is configured instead of timestamp', function () {
+    $auth = new \Leaf\Auth();
+    $auth::config(getAuthConfig(['SESSION_LIFETIME' => '1 day']));
+    $auth::login(['username' => 'login-user', 'password' => 'login-pass']);
+
+    expect($auth::status())->not()->toBeNull();
+
+    $timestampOneDay = 60 * 60 * 24;
+    $session = new \Leaf\Http\Session(false);
+    $sessionTtl = $session->get('SESSION_TTL');
+
+    expect($sessionTtl)->toBe(time() + $timestampOneDay);
+});
+
+test('Login should throw error when lifetime string is invalid', function () {
+    $auth = new \Leaf\Auth();
+    $auth::config(getAuthConfig(['SESSION_LIFETIME' => 'invalid string']));
+
+    expect(fn() => $auth::login(['username' => 'login-user', 'password' => 'login-pass']))
+        ->toThrow(Exception::class, 'Provided string could not be converted to time');
+});

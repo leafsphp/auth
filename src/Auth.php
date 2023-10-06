@@ -585,12 +585,23 @@ class Auth extends Core
      */
     private static function setSessionTtl(): void
     {
-        $sessionLifetime = is_int(static::config('SESSION_LIFETIME'))
-            ? static::config('SESSION_LIFETIME')
-            : (int) strtotime(static::config('SESSION_LIFETIME'));
+        $sessionLifetime = static::config('SESSION_LIFETIME');
 
-        if ($sessionLifetime > 0) {
-            static::$session->set('SESSION_TTL', time() + $sessionLifetime);
+        if ($sessionLifetime === 0) {
+            return;
         }
+
+        if (is_int($sessionLifetime)) {
+            static::$session->set('SESSION_TTL', time() + $sessionLifetime);
+            return;
+        }
+
+        $sessionLifetimeInTime = strtotime($sessionLifetime);
+
+        if (!$sessionLifetimeInTime) {
+            throw new \Exception('Provided string could not be converted to time');
+        }
+
+        static::$session->set('SESSION_TTL', $sessionLifetimeInTime);
     }
 }
