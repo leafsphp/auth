@@ -202,7 +202,9 @@ class Auth extends Core
 
                 exit(header('location: ' . static::config('GUARD_HOME')));
             } else {
-                exit(header('location: ' . static::config('GUARD_LOGIN')));
+                  if (static::config('SESSION_REDIRECT_ON_REGISTER')) {
+                     exit(header('location: ' . static::config('GUARD_LOGIN')));
+                }
             }
         }
 
