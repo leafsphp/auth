@@ -142,7 +142,7 @@ class Auth extends Core
         }
 
         if (static::$settings['USE_TIMESTAMPS']) {
-            $now = date('Y-m-d H:i:s');
+            $now = (new \Leaf\Date())->tick()->format(static::$settings['TIMESTAMP_FORMAT']);
             $credentials['created_at'] = $now;
             $credentials['updated_at'] = $now;
         }
