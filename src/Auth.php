@@ -200,10 +200,13 @@ class Auth extends Core
 
                 self::setUserToSession($user, $token);
 
-                exit(header('location: ' . static::config('GUARD_HOME')));
+                $redirectPath = static::config('GUARD_HOME');
             } else {
-                exit(header('location: ' . static::config('GUARD_LOGIN')));
+                $redirectPath = static::config('GUARD_LOGIN');
             }
+
+            if(static::config('REDIRECT_ON_REGISTER'))
+                exit(header('location: ' . $redirectPath));
         }
 
         $response['user'] = $user;
