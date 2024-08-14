@@ -8,11 +8,13 @@ if (!function_exists('auth') && class_exists('Leaf\App')) {
      */
     function auth()
     {
-        if (!(\Leaf\Config::get('auth.instance'))) {
-            \Leaf\Config::set('auth.instance', new Leaf\Auth());
+        if (!(\Leaf\Config::getStatic('auth'))) {
+            \Leaf\Config::singleton('auth', function () {
+                return new \Leaf\Auth();
+            });
         }
 
-        return \Leaf\Config::get('auth.instance');
+        return \Leaf\Config::getStatic('auth');
     }
 }
 
