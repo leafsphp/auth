@@ -22,7 +22,7 @@ class Auth extends Core
      *
      * @param array $credentials User credentials
      *
-     * @return array|null null or all user info + tokens + session data
+     * @return array|false false or all user info + tokens + session data
      */
     public static function login(array $credentials)
     {
@@ -47,7 +47,7 @@ class Auth extends Core
 
         if (!$user) {
             static::$errors['auth'] = static::$settings['LOGIN_PARAMS_ERROR'];
-            return null;
+            return false;
         }
 
         if (static::$settings['AUTH_NO_PASS'] === false) {
@@ -65,7 +65,7 @@ class Auth extends Core
 
             if (!$passwordIsValid) {
                 static::$errors['password'] = static::$settings['LOGIN_PASSWORD_ERROR'];
-                return null;
+                return false;
             }
         }
 
@@ -89,7 +89,7 @@ class Auth extends Core
 
         if (!$token) {
             static::$errors = array_merge(static::$errors, Authentication::errors());
-            return null;
+            return false;
         }
 
         if (static::config('USE_SESSION')) {
@@ -116,7 +116,7 @@ class Auth extends Core
      * @param array $credentials Information for new user
      * @param array $uniques Parameters which should be unique
      *
-     * @return array null or all user info + tokens + session data
+     * @return array|false false or all user info + tokens + session data
      */
     public static function register(array $credentials, array $uniques = [])
     {
@@ -159,14 +159,14 @@ class Auth extends Core
 
         if (!$query) {
             static::$errors = array_merge(static::$errors, static::$db->errors());
-            return null;
+            return false;
         }
 
         $user = static::$db->select($table)->where($credentials)->fetchAssoc();
 
         if (!$user) {
             static::$errors = array_merge(static::$errors, static::$db->errors());
-            return null;
+            return false;
         }
 
         $token = Authentication::generateSimpleToken(
@@ -189,7 +189,7 @@ class Auth extends Core
 
         if (!$token) {
             static::$errors = array_merge(static::$errors, Authentication::errors());
-            return null;
+            return false;
         }
 
         if (static::config('USE_SESSION')) {
@@ -202,8 +202,8 @@ class Auth extends Core
 
                 exit(header('location: ' . static::config('GUARD_HOME')));
             } else {
-                  if (static::config('SESSION_REDIRECT_ON_REGISTER')) {
-                     exit(header('location: ' . static::config('GUARD_LOGIN')));
+                if (static::config('SESSION_REDIRECT_ON_REGISTER')) {
+                    exit(header('location: ' . static::config('GUARD_LOGIN')));
                 }
             }
         }
@@ -220,7 +220,7 @@ class Auth extends Core
      * @param array $credentials New information for user
      * @param array $uniques Parameters which should be unique
      *
-     * @return array all user info + tokens + session data
+     * @return array|false all user info + tokens + session data
      */
     public static function update(array $credentials, array $uniques = [])
     {
@@ -237,7 +237,7 @@ class Auth extends Core
 
         if (!$loggedInUser) {
             static::$errors['auth'] = 'Not authenticated';
-            return null;
+            return false;
         }
 
         $where = isset($loggedInUser[static::$settings['ID_KEY']]) ? [static::$settings['ID_KEY'] => $loggedInUser[static::$settings['ID_KEY']]] : $loggedInUser;
@@ -279,7 +279,9 @@ class Auth extends Core
                 }
             }
 
-            if (count(static::$errors) > 0) return null;
+            if (count(static::$errors) > 0) {
+                return false;
+            }
         }
 
         try {
@@ -290,7 +292,7 @@ class Auth extends Core
 
         if (!$query) {
             static::$errors = array_merge(static::$errors, static::$db->errors());
-            return null;
+            return false;
         }
 
         if (isset($credentials['updated_at'])) {
@@ -298,9 +300,10 @@ class Auth extends Core
         }
 
         $user = static::$db->select($table)->where($credentials)->fetchAssoc();
+
         if (!$user) {
             static::$errors = array_merge(static::$errors, static::$db->errors());
-            return null;
+            return false;
         }
 
         $token = Authentication::generateSimpleToken(
@@ -323,7 +326,7 @@ class Auth extends Core
 
         if (!$token) {
             static::$errors = array_merge(static::$errors, Authentication::errors());
-            return null;
+            return false;
         }
 
         if (static::config('USE_SESSION')) {
@@ -432,8 +435,8 @@ class Auth extends Core
         }
 
         $payload = static::validateToken(static::config('TOKEN_SECRET'));
-        if (!$payload) return null;
-        return $payload->user_id;
+
+        return $payload->user_id ?? null;
     }
 
     /**
@@ -478,8 +481,9 @@ class Auth extends Core
         static::$session->destroy();
 
         if (is_string($location)) {
-            $route = static::config($location) ?? $location;
             \Leaf\Http\Headers::status(302);
+            $route = static::config($location) ?? $location;
+
             exit(header("location: $route"));
         }
     }
@@ -490,6 +494,7 @@ class Auth extends Core
     private static function expireSession(): bool
     {
         self::sessionCheck();
+
         $sessionTtl = static::$session->get('SESSION_TTL');
 
         if (!$sessionTtl) {
@@ -536,21 +541,6 @@ class Auth extends Core
         static::setSessionTtl();
 
         return $success;
-    }
-
-    /**
-     * Define/Return session middleware
-     *
-     * @param string $name The name of the middleware to set/get
-     * @param callable|null $handler The handler for the middleware
-     */
-    public static function middleware(string $name, ?callable $handler = null)
-    {
-        static::sessionCheck();
-
-        if (!$handler) return static::$middleware[$name];
-
-        static::$middleware[$name] = $handler;
     }
 
     /**
