@@ -14,7 +14,7 @@ if (!function_exists('auth') && class_exists('Leaf\App')) {
             });
         }
 
-        return \Leaf\Config::getStatic('auth');
+        return \Leaf\Config::get('auth');
     }
 }
 
