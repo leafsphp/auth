@@ -351,22 +351,6 @@ class Auth extends Core
     }
 
     /**
-     * Validation for parameters
-     *
-     * @param array $rules Rules for parameter validation
-     */
-    public function validate(array $rules): bool
-    {
-        $validation = Form::validate($rules);
-
-        if (!$validation) {
-            static::$errors = array_merge(static::$errors, Form::errors());
-        }
-
-        return $validation;
-    }
-
-    /**
      * Manually start an auth session
      */
     public static function useSession()
