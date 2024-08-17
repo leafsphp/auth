@@ -116,7 +116,7 @@ class Core
     protected static function leafDbConnect()
     {
         if (!static::$db && function_exists('db')) {
-            if (db()->connection() instanceof \PDO) {
+            if (db()->connection() instanceof \PDO || db()->autoConnect()) {
                 static::$db = db();
             }
         }
