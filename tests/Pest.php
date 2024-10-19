@@ -62,7 +62,7 @@ function haveRegisteredUser(string $username, string $password): array
     \Leaf\Auth\Core::connect(...getConnectionConfig('mysql'));
 
     $auth = new \Leaf\Auth();
-    $auth::config(getAuthConfig(['USE_SESSION' => false]));
+    $auth::config(getAuthConfig(['session' => false]));
 
     return $auth::register(['username' => $username, 'password' => $password]);
 }
@@ -89,28 +89,28 @@ function getConnectionConfig(?string $dbType = null): array
 function getAuthConfig(array $settingsReplacement = []): array
 {
     $settings = [
-        'DB_TABLE' => 'users',
-        'AUTH_NO_PASS' => false,
-        'USE_TIMESTAMPS' => false,
-        'TIMESTAMP_FORMAT' => 'c',
-        'PASSWORD_ENCODE' => null,
-        'PASSWORD_VERIFY' => null,
-        'PASSWORD_KEY' => 'password',
+        'db.table' => 'users',
+        'password' => false,
+        'timestamps' => false,
+        'timestamps.format' => 'c',
+        'password.encode' => null,
+        'password.verify' => null,
+        'password.key' => 'password',
         'HIDE_ID' => true,
-        'ID_KEY' => 'id',
-        'USE_UUID' => false,
+        'id.key' => 'id',
+        'id.uuid' => false,
         'HIDE_PASSWORD' => true,
-        'LOGIN_PARAMS_ERROR' => 'Incorrect credentials!',
-        'LOGIN_PASSWORD_ERROR' => 'Password is incorrect!',
-        'USE_SESSION' => true,
+        'messages.loginParamsError' => 'Incorrect credentials!',
+        'messages.loginPasswordError' => 'Password is incorrect!',
+        'session' => true,
         'SESSION_ON_REGISTER' => false,
         'GUARD_LOGIN' => '/auth/login',
         'GUARD_REGISTER' => '/auth/register',
         'GUARD_HOME' => '/home',
         'GUARD_LOGOUT' => '/auth/logout',
         'SAVE_SESSION_JWT' => false,
-        'TOKEN_LIFETIME' => null,
-        'TOKEN_SECRET' => '@_leaf$0Secret!',
+        'token.lifetime' => null,
+        'token.secret' => '@_leaf$0Secret!',
         'SESSION_REDIRECT_ON_LOGIN' => false,
         'SESSION_LIFETIME' => 60 * 60 * 24,
     ];
