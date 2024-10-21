@@ -8,25 +8,33 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: ["ubuntu-latest"]
-        php: ["8.3"]
+        os: ["ubuntu-latest","macos-latest","windows-latest"]
+        php: ["8.3","8.2","8.1","8.0","7.4"]
 
     name: PHP ${{ matrix.php }} - ${{ matrix.os }}
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - name: Setup PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ matrix.php }}
-        extensions: json, zip, dom, curl, libxml, mbstring
-        tools: composer:v2
-        coverage: xdebug
+      - name: Boot MySQL
+        run: sudo systemctl start mysql.service
 
-    - name: Install PHP dependencies
-      run: composer update --no-interaction --no-progress
+      - name: Initialize database
+        run: |
+          mysql -e 'CREATE DATABASE atest;' \
+          -uroot -p -P3306
 
-    - name: Run Tests
-      run: composer run test
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: json, zip, dom, curl, libxml, mbstring
+          tools: composer:v2
+          coverage: xdebug
+
+      - name: Install PHP dependencies
+        run: composer update --no-interaction --no-progress
+
+      - name: Run Tests
+        run: composer run test -- --flags=coverage

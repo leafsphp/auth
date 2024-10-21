@@ -10,6 +10,7 @@ beforeAll(function () {
 afterAll(function () {
     deleteUser('test-user', 'myusers');
     deleteUser('test-user55', 'myusers');
+    deleteUser('test-user', 'uuid_users');
 });
 
 test('register should save user in user defined table', function () {
