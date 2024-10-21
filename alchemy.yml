@@ -14,7 +14,7 @@ tests:
       name: atest
       port: 3306
       username: root
-      password: ''
+      password: root
 
 lint:
   preset: PSR12
