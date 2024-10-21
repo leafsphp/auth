@@ -23,7 +23,7 @@ jobs:
       - name: Initialize database
         run: |
           mysql -e 'CREATE DATABASE atest;' \
-          -u root -p root
+          -uroot -proot -P3306
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
