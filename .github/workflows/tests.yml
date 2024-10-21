@@ -1,0 +1,32 @@
+name: Run Tests
+
+on: ["push","pull_request"]
+
+jobs:
+  tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: ["ubuntu-latest"]
+        php: ["8.3"]
+
+    name: PHP ${{ matrix.php }} - ${{ matrix.os }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
+        extensions: json, zip, dom, curl, libxml, mbstring
+        tools: composer:v2
+        coverage: xdebug
+
+    - name: Install PHP dependencies
+      run: composer update --no-interaction --no-progress
+
+    - name: Run Tests
+      run: composer run test
