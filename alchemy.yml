@@ -1,0 +1,44 @@
+app:
+  - src
+
+tests:
+  engine: pest
+  parallel: true
+  paths:
+    - tests
+  files:
+    - '*.test.php'
+  database:
+    type: mysql
+    connection:
+      name: atest
+      port: 3306
+      username: root
+      password: root
+
+lint:
+  preset: PSR12
+  rules:
+    no_unused_imports: true
+    not_operator_with_successor_space: false
+    single_quote: true
+
+actions:
+  run:
+    - lint
+    - tests
+  os:
+    - ubuntu-latest
+    - macos-latest
+    - windows-latest
+  php:
+    extensions: json, zip, dom, curl, libxml, mbstring
+    versions:
+      - '8.3'
+      - '8.2'
+      - '8.1'
+      - '8.0'
+      - '7.4'
+  events:
+    - push
+    - pull_request

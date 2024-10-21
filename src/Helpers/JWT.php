@@ -60,30 +60,30 @@ class JWT
     {
         $timestamp = is_null(static::$timestamp) ? time() : static::$timestamp;
         if (empty($key)) {
-            return static::saveErr("Key may not be empty");
+            return static::saveErr('Key may not be empty');
         }
         $tks = explode('.', $jwt);
         if (count($tks) != 3) {
-            return static::saveErr("Wrong number of segments");
+            return static::saveErr('Wrong number of segments');
         }
         list($headb64, $bodyb64, $cryptob64) = $tks;
         if (null === ($header = static::jsonDecode(static::urlsafeB64Decode($headb64)))) {
-            return static::saveErr("Invalid header encoding");
+            return static::saveErr('Invalid header encoding');
         }
         if (null === $payload = static::jsonDecode(static::urlsafeB64Decode($bodyb64))) {
-            return static::saveErr("Invalid claims encoding");
+            return static::saveErr('Invalid claims encoding');
         }
         if (false === ($sig = static::urlsafeB64Decode($cryptob64))) {
-            return static::saveErr("Invalid signature encoding");
+            return static::saveErr('Invalid signature encoding');
         }
         if (empty($header->alg)) {
-            return static::saveErr("Empty algorithm");
+            return static::saveErr('Empty algorithm');
         }
         if (empty(static::$supported_algs[$header->alg])) {
-            return static::saveErr("Algorithm not supported");
+            return static::saveErr('Algorithm not supported');
         }
         if (!in_array($header->alg, $allowed_algs)) {
-            return static::saveErr("Algorithm not allowed");
+            return static::saveErr('Algorithm not allowed');
         }
         if (is_array($key) || $key instanceof \ArrayAccess) {
             if (isset($header->kid)) {
@@ -97,13 +97,13 @@ class JWT
         }
         // Check the signature
         if (!static::verify("$headb64.$bodyb64", $sig, $key, $header->alg)) {
-            return static::saveErr("Signature verification failed");
+            return static::saveErr('Signature verification failed');
         }
         // Check if the nbf if it is defined. This is the time that the
         // token can actually be used. If it's not yet that time, abort.
         if (isset($payload->nbf) && $payload->nbf > ($timestamp + static::$leeway)) {
             return static::saveErr(
-                "Cannot handle token prior to " . date(\DateTime::ISO8601, $payload->nbf)
+                'Cannot handle token prior to ' . date(\DateTime::ISO8601, $payload->nbf)
             );
         }
         // Check that this token has been created before "now". This prevents
@@ -111,12 +111,12 @@ class JWT
         // correctly used the nbf claim).
         if (isset($payload->iat) && $payload->iat > ($timestamp + static::$leeway)) {
             return static::saveErr(
-                "Cannot handle token prior to " . date(\DateTime::ISO8601, $payload->iat)
+                'Cannot handle token prior to ' . date(\DateTime::ISO8601, $payload->iat)
             );
         }
         // Check if this token has expired.
         if (isset($payload->exp) && ($timestamp - static::$leeway) >= $payload->exp) {
-            return static::saveErr("Expired token");
+            return static::saveErr('Expired token');
         }
         return $payload;
     }
@@ -180,7 +180,7 @@ class JWT
                 $signature = '';
                 $success = openssl_sign($msg, $signature, $key, $algorithm);
                 if (!$success) {
-                    throw new \DomainException("OpenSSL unable to sign data");
+                    throw new \DomainException('OpenSSL unable to sign data');
                 } else {
                     return $signature;
                 }
@@ -355,7 +355,7 @@ class JWT
         return strlen($str);
     }
 
-    protected static function saveErr($err, $key = "token")
+    protected static function saveErr($err, $key = 'token')
     {
         self::$errorsArray[$key] = $err;
         return null;

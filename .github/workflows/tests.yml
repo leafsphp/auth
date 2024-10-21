@@ -1,19 +1,15 @@
 name: Run Tests
 
-on: ['push', 'pull_request']
-
-env:
-  MYSQL_DATABASE: leaf
-  DB_USER: root
-  DB_PASSWORD: root
+on: ["push","pull_request"]
 
 jobs:
-  ci:
+  tests:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: true
       matrix:
-        os: [ubuntu-latest]
-        php: ['7.4', '8.0', '8.1', '8.2', '8.3']
+        os: ["ubuntu-latest","macos-latest","windows-latest"]
+        php: ["8.3","8.2","8.1","8.0","7.4"]
 
     name: PHP ${{ matrix.php }} - ${{ matrix.os }}
 
@@ -21,23 +17,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Initialize MySQL
+      - name: Boot MySQL
         run: sudo systemctl start mysql.service
 
-      - name: Initialize first database
+      - name: Initialize database
         run: |
-          mysql -e 'CREATE DATABASE ${{ env.MYSQL_DATABASE }};' \
-          -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+          mysql -e 'CREATE DATABASE atest;' \
+          -uroot -proot -P3306
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+          extensions: json, zip, dom, curl, libxml, mbstring
           tools: composer:v2
           coverage: xdebug
 
       - name: Install PHP dependencies
         run: composer update --no-interaction --no-progress
 
-      - name: All Tests
-        run: composer run-script test
+      - name: Run Tests
+        run: composer run test -- --flags=coverage

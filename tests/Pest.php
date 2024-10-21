@@ -1,118 +1,90 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Test Case
-|--------------------------------------------------------------------------
-|
-| The closure you provide to your test functions is always bound to a specific PHPUnit test
-| case class. By default, that class is "PHPUnit\Framework\TestCase". Of course, you may
-| need to change it using the "uses()" function to bind a different classes or traits.
-|
-*/
-
-// uses(Tests\TestCase::class)->in('Feature');
-
-/*
-|--------------------------------------------------------------------------
-| Expectations
-|--------------------------------------------------------------------------
-|
-| When you're writing tests, you often need to check that values meet certain conditions. The
-| "expect()" function gives you access to a set of "expectations" methods that you can use
-| to assert different things. Of course, you may extend the Expectation API at any time.
-|
-*/
-
-expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
-});
-
-/*
-|--------------------------------------------------------------------------
-| Functions
-|--------------------------------------------------------------------------
-|
-| While Pest is very powerful out-of-the-box, you may have some testing code specific to your
-| project that you don't want to repeat in every file. Here you can also expose helpers as
-| global functions to help you to reduce the number of lines of code in your test files.
-|
-*/
-
-function createUsersTable()
+function createUsersTable($table = 'users', $dynamicId = false)
 {
     $db = new \Leaf\Db();
-    $db->connect(...getConnectionConfig());
+    $db->connect(getConnectionConfig());
+
+    // $auth = new \Leaf\Auth();
+    // $auth->dbConnection($db->connection());
 
     $db->createTableIfNotExists(
-        'users',
+        $table,
         [
-            'id' => 'int NOT NULL AUTO_INCREMENT',
+            // using varchar(255) to mimic binary(16) for uuid
+            'id' => $dynamicId ? 'varchar(255)' : 'int NOT NULL AUTO_INCREMENT',
             'username' => 'varchar(255)',
+            'email' => 'varchar(255)',
             'password' => 'varchar(255)',
             'created_at' => 'datetime',
             'updated_at' => 'datetime',
             'PRIMARY KEY' => '(id)',
         ]
     )->execute();
+
+    $db->close();
 }
 
-function haveRegisteredUser(string $username, string $password): array
-{
-    \Leaf\Auth\Core::connect(...getConnectionConfig('mysql'));
-
-    $auth = new \Leaf\Auth();
-    $auth::config(getAuthConfig(['USE_SESSION' => false]));
-
-    return $auth::register(['username' => $username, 'password' => $password]);
-}
-
-function deleteUser(string $username)
+function deleteUser(string $username, $table = 'users')
 {
     $db = new \Leaf\Db();
-    $db->connect(...getConnectionConfig());
+    $db->connect(getConnectionConfig());
 
-    $db->delete('users')->where('username', '=', $username)->execute();
+    $db->delete($table)->where('username', $username)->execute();
 }
 
-function getConnectionConfig(?string $dbType = null): array
+function getConnectionConfig(): array
 {
-    $config = ['localhost', 'leaf', 'root', 'root'];
+    return [
+        'port' => '3306',
+        'host' => 'localhost',
+        'username' => 'root',
+        'password' => 'root',
+        'dbname' => 'atest',
+    ];
+}
 
-    if ($dbType) {
-        $config[] = $dbType;
-    }
+function auth(): \Leaf\Auth
+{
+    $db = new \Leaf\Db();
+    $db->connect(getConnectionConfig());
 
-    return $config;
+    $auth = new \Leaf\Auth();
+    $auth->dbConnection($db->connection());
+
+    return $auth;
 }
 
 function getAuthConfig(array $settingsReplacement = []): array
 {
     $settings = [
-        'DB_TABLE' => 'users',
-        'AUTH_NO_PASS' => false,
-        'USE_TIMESTAMPS' => false,
-        'TIMESTAMP_FORMAT' => 'c',
-        'PASSWORD_ENCODE' => null,
-        'PASSWORD_VERIFY' => null,
-        'PASSWORD_KEY' => 'password',
-        'HIDE_ID' => true,
-        'ID_KEY' => 'id',
-        'USE_UUID' => false,
-        'HIDE_PASSWORD' => true,
-        'LOGIN_PARAMS_ERROR' => 'Incorrect credentials!',
-        'LOGIN_PASSWORD_ERROR' => 'Password is incorrect!',
-        'USE_SESSION' => true,
-        'SESSION_ON_REGISTER' => false,
-        'GUARD_LOGIN' => '/auth/login',
-        'GUARD_REGISTER' => '/auth/register',
-        'GUARD_HOME' => '/home',
-        'GUARD_LOGOUT' => '/auth/logout',
-        'SAVE_SESSION_JWT' => false,
-        'TOKEN_LIFETIME' => null,
-        'TOKEN_SECRET' => '@_leaf$0Secret!',
-        'SESSION_REDIRECT_ON_LOGIN' => false,
-        'SESSION_LIFETIME' => 60 * 60 * 24,
+        'id.key' => 'id',
+        'id.uuid' => null,
+
+        'db.table' => 'users',
+
+        'timestamps' => true,
+        'timestamps.format' => 'c',
+
+        'password' => true,
+        'password.encode' => null,
+        'password.verify' => null,
+        'password.key' => 'password',
+
+        'unique' => ['email', 'username'],
+        'hidden' => ['field.id', 'field.password'],
+
+        'session' => false,
+        'session.logout' => null,
+        'session.register' => null,
+        'session.lifetime' => 60 * 60 * 24,
+        'session.cookie' => ['secure' => true, 'httponly' => true, 'samesite' => 'lax'],
+
+        'token.lifetime' => null,
+        'token.secret' => '@_leaf$0Secret!',
+
+        'messages.loginParamsError' => 'Incorrect credentials!',
+        'messages.loginPasswordError' => 'Password is incorrect!',
     ];
 
     return array_replace($settings, $settingsReplacement);

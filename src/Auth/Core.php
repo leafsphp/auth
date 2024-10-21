@@ -26,31 +26,31 @@ class Core
      * Auth Settings
      */
     protected static $settings = [
-        'DB_TABLE' => 'users',
-        'AUTH_NO_PASS' => false,
-        'USE_TIMESTAMPS' => true,
-        'TIMESTAMP_FORMAT' => 'c',
-        'PASSWORD_ENCODE' => null,
-        'PASSWORD_VERIFY' => null,
-        'PASSWORD_KEY' => 'password',
-        'HIDE_ID' => true,
-        'ID_KEY' => 'id',
-        'USE_UUID' => false,
-        'HIDE_PASSWORD' => true,
-        'LOGIN_PARAMS_ERROR' => 'Incorrect credentials!',
-        'LOGIN_PASSWORD_ERROR' => 'Password is incorrect!',
-        'USE_SESSION' => false,
-        'SESSION_ON_REGISTER' => false,
-        'GUARD_LOGIN' => '/auth/login',
-        'GUARD_REGISTER' => '/auth/register',
-        'GUARD_HOME' => '/home',
-        'GUARD_LOGOUT' => '/auth/logout',
-        'SAVE_SESSION_JWT' => false,
-        'TOKEN_LIFETIME' => null,
-        'TOKEN_SECRET' => '@_leaf$0Secret!',
-        'SESSION_REDIRECT_ON_LOGIN' => true,
-        'SESSION_LIFETIME' => self::TIMESTAMP_OF_ONE_DAY,
-        'SESSION_COOKIE_PARAMS' => ['secure' => true, 'httponly' => true, 'samesite' => 'lax'],
+        'id.key' => 'id',
+        'db.table' => 'users',
+
+        'timestamps' => true,
+        'timestamps.format' => 'c',
+
+        'password' => true,
+        'password.encode' => null,
+        'password.verify' => null,
+        'password.key' => 'password',
+
+        'unique' => ['email', 'username'],
+        'hidden' => ['field.id', 'field.password'],
+
+        'session' => false,
+        'session.logout' => null,
+        'session.register' => null,
+        'session.lifetime' => 60 * 60 * 24,
+        'session.cookie' => ['secure' => true, 'httponly' => true, 'samesite' => 'lax'],
+
+        'token.lifetime' => null,
+        'token.secret' => '@_leaf$0Secret!',
+
+        'messages.loginParamsError' => 'Incorrect credentials!',
+        'messages.loginPasswordError' => 'Password is incorrect!',
     ];
 
     /**
@@ -75,14 +75,20 @@ class Core
      */
     public static function connect(
         $host,
-        string $dbname,
-        string $user,
-        string $password,
-        string $dbtype,
+        string $dbname = null,
+        string $user = null,
+        string $password = null,
+        string $dbtype = null,
         array $pdoOptions = []
     ) {
         $db = new \Leaf\Db();
-        $db->connect($host, $dbname, $user, $password, $dbtype, $pdoOptions);
+
+        if (is_array($host)) {
+            $db->connect($host);
+        } else {
+            $db->connect($host, $dbname, $user, $password, $dbtype, $pdoOptions);
+        }
+
         static::$db = $db;
     }
 
@@ -95,6 +101,7 @@ class Core
     {
         $db = new \Leaf\Db();
         $db->autoConnect($pdoOptions);
+
         static::$db = $db;
     }
 
@@ -107,6 +114,7 @@ class Core
     {
         $db = new \Leaf\Db();
         $db->connection($connection);
+
         static::$db = $db;
     }
 
@@ -155,12 +163,14 @@ class Core
      */
     public static function validateUserToken(string $token, ?string $secretKey = null)
     {
-        $payload = Authentication::validate($token, $secretKey ?? static::config("TOKEN_SECRET"));
-        if ($payload) return $payload;
+        $payload = Authentication::validate($token, $secretKey ?? static::config('token.secret'));
 
-        static::$errors = array_merge(static::$errors, Authentication::errors());
+        if (!$payload) {
+            static::$errors = array_merge(static::$errors, Authentication::errors());
+            return null;
+        }
 
-        return null;
+        return $payload;
     }
 
     /**
@@ -170,12 +180,14 @@ class Core
      */
     public static function validateToken(?string $secretKey = null)
     {
-        $payload = Authentication::validateToken($secretKey ?? static::config("TOKEN_SECRET"));
-        if ($payload) return $payload;
+        $payload = Authentication::validateToken($secretKey ?? static::config('token.secret'));
 
-        static::$errors = array_merge(static::$errors, Authentication::errors());
+        if (!$payload) {
+            static::$errors = array_merge(static::$errors, Authentication::errors());
+            return null;
+        }
 
-        return null;
+        return $payload;
     }
 
     /**
@@ -184,11 +196,13 @@ class Core
     public static function getBearerToken()
     {
         $token = Authentication::getBearerToken();
-        if ($token) return $token;
 
-        static::$errors = array_merge(static::$errors, Authentication::errors());
+        if (!$token) {
+            static::$errors = array_merge(static::$errors, Authentication::errors());
+            return null;
+        }
 
-        return null;
+        return $token;
     }
 
     /**

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 namespace Leaf\Auth;
+
 /**
  * Auth Sessions [CORE]
  * -----
@@ -28,11 +29,11 @@ class Session
             session_start();
         };
 
-        if (!static::$session->get("SESSION_STARTED_AT")) {
-            static::$session->set("SESSION_STARTED_AT", time());
+        if (!static::$session->get('session.startedAt')) {
+            static::$session->set('session.startedAt', time());
         }
 
-        static::$session->set("SESSION_LAST_ACTIVITY", time());
+        static::$session->set('session.lastActivity', time());
 
         return static::$session;
     }

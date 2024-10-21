@@ -26,18 +26,19 @@
             "Leaf\\": "src"
         },
         "files": [
-			"src/functions.php"
-		]
+            "src/functions.php"
+        ]
     },
     "minimum-stability": "stable",
-	"prefer-stable": true,
+    "prefer-stable": true,
     "require": {
         "leafs/date": "*",
         "leafs/password": "*",
         "leafs/session": "*",
         "leafs/db": "*",
         "leafs/form": "*",
-        "leafs/http": "*"
+        "leafs/http": "*",
+        "leafs/alchemy": "dev-next"
     },
     "config": {
         "allow-plugins": {
@@ -45,10 +46,13 @@
         }
     },
     "require-dev": {
-        "leafs/alchemy": "^1.0",
-        "pestphp/pest": "^1.0 | ^2.0"
+        "pestphp/pest": "^1.0 | ^2.0",
+        "friendsofphp/php-cs-fixer": "^3.64"
     },
     "scripts": {
-        "test": "vendor/bin/pest --colors=always --coverage"
+        "test": "./vendor/bin/alchemy setup --test",
+        "alchemy": "./vendor/bin/alchemy setup",
+        "lint": "./vendor/bin/alchemy setup --lint",
+        "actions": "./vendor/bin/alchemy setup --actions"
     }
 }
