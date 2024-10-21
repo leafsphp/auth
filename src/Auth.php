@@ -28,6 +28,7 @@ class Auth extends Core
     {
         static::leafDbConnect();
 
+        static::$errors = [];
         $table = static::$settings['db.table'];
 
         if (static::config('session')) {
@@ -108,10 +109,11 @@ class Auth extends Core
      *
      * @return array|false false or all user info + tokens + session data
      */
-    public static function register(array $credentials, array $uniques = [])
+    public static function register(array $credentials)
     {
         static::leafDbConnect();
 
+        static::$errors = [];
         $table = static::$settings['db.table'];
         $passKey = static::$settings['password.key'];
 
@@ -123,6 +125,7 @@ class Auth extends Core
             $credentials[$passKey] = (is_callable(static::$settings['password.encode']))
                 ? call_user_func(static::$settings['password.encode'], $credentials[$passKey])
                 : Password::hash($credentials[$passKey]);
+
         }
 
         if (static::$settings['timestamps']) {
@@ -131,14 +134,16 @@ class Auth extends Core
             $credentials['updated_at'] = $now;
         }
 
-        if (static::$settings['id.uuid'] !== false) {
-            $credentials[static::$settings['id.key']] = call_user_func(static::$settings['id.uuid']);
+        if (isset($credentials[static::$settings['id.key']])) {
+            $credentials[static::$settings['id.key']] = is_callable($credentials[static::$settings['id.key']])
+                ? call_user_func($credentials[static::$settings['id.key']])
+                : $credentials[static::$settings['id.key']];
         }
 
         try {
-            $query = static::$db->insert($table)->params($credentials)->unique($uniques)->execute();
+            $query = static::$db->insert($table)->params($credentials)->unique(static::$settings['unique'])->execute();
         } catch (\Throwable $th) {
-            trigger_error($th->getMessage());
+            throw new \Exception($th->getMessage());
         }
 
         if (!$query) {
@@ -163,11 +168,16 @@ class Auth extends Core
             $userId = $user[static::$settings['id.key']];
         }
 
-        if (static::$settings['HIDE_ID']) {
+        if (
+            in_array(static::$settings['id.key'], static::$settings['hidden']) || in_array('field.id', static::$settings['hidden'])
+        ) {
             unset($user[static::$settings['id.key']]);
         }
 
-        if (static::$settings['HIDE_PASSWORD'] && (isset($user[$passKey]) || !$user[$passKey])) {
+        if (
+            (in_array(static::$settings['password.key'], static::$settings['hidden']) || in_array('field.password', static::$settings['hidden']))
+            && (isset($user[$passKey]) || !$user[$passKey])
+        ) {
             unset($user[$passKey]);
         }
 
@@ -176,20 +186,14 @@ class Auth extends Core
             return false;
         }
 
-        if (static::config('session')) {
-            if (static::config('SESSION_ON_REGISTER')) {
-                if (isset($userId)) {
-                    $user[static::$settings['id.key']] = $userId;
-                }
+        if (static::config('session') && static::config('session.register')) {
+            static::useSession();
 
-                self::setUserToSession($user, $token);
-
-                exit(header('location: ' . static::config('GUARD_HOME')));
-            } else {
-                if (static::config('SESSION_REDIRECT_ON_REGISTER')) {
-                    exit(header('location: ' . static::config('GUARD_LOGIN')));
-                }
+            if (isset($userId)) {
+                $user[static::$settings['id.key']] = $userId;
             }
+
+            self::setUserToSession($user, $token);
         }
 
         $response['user'] = $user;
@@ -206,9 +210,11 @@ class Auth extends Core
      *
      * @return array|false all user info + tokens + session data
      */
-    public static function update(array $credentials, array $uniques = [])
+    public static function update(array $credentials)
     {
         static::leafDbConnect();
+
+        static::$errors = [];
 
         $table = static::$settings['db.table'];
 
@@ -227,28 +233,21 @@ class Auth extends Core
         $where = isset($loggedInUser[static::$settings['id.key']]) ? [static::$settings['id.key'] => $loggedInUser[static::$settings['id.key']]] : $loggedInUser;
 
         if (!isset($credentials[$passKey])) {
-            static::$settings['password'] = true;
+            static::$settings['password'] = false;
         }
 
-        if (
-            static::$settings['password'] === false &&
-            static::$settings['password.encode'] !== false
-        ) {
-            if (is_callable(static::$settings['password.encode'])) {
-                $credentials[$passKey] = call_user_func(static::$settings['password.encode'], $credentials[$passKey]);
-            } else if (static::$settings['password.encode'] === 'md5') {
-                $credentials[$passKey] = md5($credentials[$passKey]);
-            } else {
-                $credentials[$passKey] = Password::hash($credentials[$passKey]);
-            }
+        if (static::$settings['password'] && static::$settings['password.encode'] !== false) {
+            $credentials[$passKey] = (is_callable(static::$settings['password.encode']))
+                ? call_user_func(static::$settings['password.encode'], $credentials[$passKey])
+                : Password::hash($credentials[$passKey]);
         }
 
         if (static::$settings['timestamps']) {
             $credentials['updated_at'] = (new \Leaf\Date())->tick()->format(static::$settings['timestamps.format']);
         }
 
-        if (count($uniques) > 0) {
-            foreach ($uniques as $unique) {
+        if (count(static::$settings['unique']) > 0) {
+            foreach (static::$settings['unique'] as $unique) {
                 if (!isset($credentials[$unique])) {
                     trigger_error("$unique not found in credentials.");
                 }
@@ -300,11 +299,17 @@ class Auth extends Core
             $userId = $user[static::$settings['id.key']];
         }
 
-        if (static::$settings['HIDE_ID'] && isset($user[static::$settings['id.key']])) {
+        if (
+            (in_array(static::$settings['id.key'], static::$settings['hidden']) || in_array('field.id', static::$settings['hidden']))
+            && isset($user[static::$settings['id.key']])
+        ) {
             unset($user[static::$settings['id.key']]);
         }
 
-        if (static::$settings['HIDE_PASSWORD'] && (isset($user[$passKey]) || !$user[$passKey])) {
+        if (
+            (in_array(static::$settings['password.key'], static::$settings['hidden']) || in_array('field.password', static::$settings['hidden']))
+            && (isset($user[$passKey]) || !$user[$passKey])
+        ) {
             unset($user[$passKey]);
         }
 
@@ -318,14 +323,8 @@ class Auth extends Core
                 $user[static::$settings['id.key']] = $userId;
             }
 
-            static::$session->set('AUTH_USER', $user);
-            static::$session->set('HAS_SESSION', true);
-
-            if (static::config('SAVE_SESSION_JWT')) {
-                static::$session->set('AUTH_TOKEN', $token);
-            }
-
-            return $user;
+            static::$session->set('auth.user', $user);
+            static::$session->set('auth.token', $token);
         }
 
         $response['user'] = $user;
@@ -340,7 +339,7 @@ class Auth extends Core
     public static function useSession()
     {
         static::config('session', true);
-        static::$session = Auth\Session::init(static::config('SESSION_COOKIE_PARAMS'));
+        static::$session = Auth\Session::init(static::config('session.cookie'));
     }
 
     /**
@@ -349,30 +348,11 @@ class Auth extends Core
     protected static function sessionCheck()
     {
         if (!static::config('session')) {
-            trigger_error('Turn on session to use this feature.');
+            trigger_error('Turn on sessions to use this feature.');
         }
 
         if (!static::$session) {
             static::useSession();
-        }
-    }
-
-    /**
-     * A simple auth guard: 'guest' pages can't be viewed when logged in,
-     * 'auth' pages can't be viewed without authentication
-     *
-     * @param string $type The type of guard/guard options
-     */
-    public static function guard(string $type)
-    {
-        static::sessionCheck();
-
-        if ($type === 'guest' && static::status()) {
-            exit(header('location: ' . static::config('GUARD_HOME'), true, 302));
-        }
-
-        if ($type === 'auth' && !static::status()) {
-            exit(header('location: ' . static::config('GUARD_LOGIN'), true, 302));
         }
     }
 
@@ -384,7 +364,7 @@ class Auth extends Core
         static::sessionCheck();
         static::expireSession();
 
-        return static::$session->get('AUTH_USER') ?? false;
+        return static::$session->get('auth.token') ?? false;
     }
 
     /**
@@ -394,12 +374,14 @@ class Auth extends Core
     {
         static::leafDbConnect();
 
+        static::$errors = [];
+
         if (static::config('session')) {
             if (static::expireSession()) {
                 return null;
             }
 
-            return static::$session->get('AUTH_USER')[static::$settings['id.key']] ?? null;
+            return static::$session->get('auth.token')[static::$settings['id.key']] ?? null;
         }
 
         $payload = static::validateToken(static::config('token.secret'));
@@ -417,11 +399,7 @@ class Auth extends Core
         $table = static::$settings['db.table'];
 
         if (!static::id()) {
-            if (static::config('session')) {
-                return static::$session->get('AUTH_USER');
-            }
-
-            return null;
+            return (static::config('session')) ? static::$session->get('auth.token') : null;
         }
 
         $user = static::$db->select($table)->where(static::$settings['id.key'], static::id())->fetchAssoc();
@@ -463,7 +441,7 @@ class Auth extends Core
     {
         self::sessionCheck();
 
-        $sessionTtl = static::$session->get('SESSION_TTL');
+        $sessionTtl = static::$session->get('session.ttl');
 
         if (!$sessionTtl) {
             return false;
@@ -472,12 +450,12 @@ class Auth extends Core
         $isSessionExpired = time() > $sessionTtl;
 
         if ($isSessionExpired) {
-            static::$session->unset('AUTH_USER');
+            static::$session->unset('auth.token');
             static::$session->unset('HAS_SESSION');
-            static::$session->unset('AUTH_TOKEN');
-            static::$session->unset('SESSION_STARTED_AT');
-            static::$session->unset('SESSION_LAST_ACTIVITY');
-            static::$session->unset('SESSION_TTL');
+            static::$session->unset('auth.token');
+            static::$session->unset('session.startedAt');
+            static::$session->unset('session.lastActivity');
+            static::$session->unset('session.ttl');
         }
 
         return $isSessionExpired;
@@ -490,7 +468,7 @@ class Auth extends Core
     {
         static::sessionCheck();
 
-        return time() - static::$session->get('SESSION_LAST_ACTIVITY');
+        return time() - static::$session->get('session.lastActivity');
     }
 
     /**
@@ -504,8 +482,8 @@ class Auth extends Core
 
         $success = static::$session->regenerate($clearData);
 
-        static::$session->set('SESSION_STARTED_AT', time());
-        static::$session->set('SESSION_LAST_ACTIVITY', time());
+        static::$session->set('session.startedAt', time());
+        static::$session->set('session.lastActivity', time());
         static::setSessionTtl();
 
         return $success;
@@ -518,7 +496,7 @@ class Auth extends Core
     {
         static::sessionCheck();
 
-        return time() - static::$session->get('SESSION_STARTED_AT');
+        return time() - static::$session->get('session.startedAt');
     }
 
     /**
@@ -531,12 +509,12 @@ class Auth extends Core
     {
         session_regenerate_id();
 
-        static::$session->set('AUTH_USER', $user);
+        static::$session->set('auth.token', $user);
         static::$session->set('HAS_SESSION', true);
         static::setSessionTtl();
 
         if (static::config('SAVE_SESSION_JWT')) {
-            static::$session->set('AUTH_TOKEN', $token);
+            static::$session->set('auth.token', $token);
         }
     }
 
@@ -545,14 +523,14 @@ class Auth extends Core
      */
     private static function setSessionTtl(): void
     {
-        $sessionLifetime = static::config('SESSION_LIFETIME');
+        $sessionLifetime = static::config('session.lifetime');
 
         if ($sessionLifetime === 0) {
             return;
         }
 
         if (is_int($sessionLifetime)) {
-            static::$session->set('SESSION_TTL', time() + $sessionLifetime);
+            static::$session->set('session.ttl', time() + $sessionLifetime);
             return;
         }
 
@@ -562,6 +540,6 @@ class Auth extends Core
             throw new \Exception('Provided string could not be converted to time');
         }
 
-        static::$session->set('SESSION_TTL', $sessionLifetimeInTime);
+        static::$session->set('session.ttl', $sessionLifetimeInTime);
     }
 }

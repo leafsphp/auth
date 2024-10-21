@@ -3,7 +3,7 @@
 if (!function_exists('auth') && class_exists('Leaf\App')) {
     /**
      * Return the leaf auth object
-     * 
+     *
      * @return Leaf\Auth
      */
     function auth()
