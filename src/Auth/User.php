@@ -59,8 +59,30 @@ class User
      */
     public function getAuthInfo(): object
     {
+        $userData = $this->data;
+
+        $idKey = Config::get('id.key');
+        $hidden = Config::get('hidden');
+        $passwordKey = Config::get('password.key');
+
+        if (count($hidden) > 0) {
+            foreach ($hidden as $item) {
+                if (isset($userData[$item])) {
+                    unset($userData[$item]);
+                }
+
+                if ($item === 'field.id' && isset($userData[$idKey])) {
+                    unset($userData[$idKey]);
+                }
+
+                if ($item === 'field.password' && isset($userData[$passwordKey])) {
+                    unset($userData[$passwordKey]);
+                }
+            }
+        }
+
         $dataToReturn = (object) [
-            'user' => $this->data,
+            'user' => $userData,
             'accessToken' => $this->tokens['access'],
             'refreshToken' => $this->tokens['refresh'],
         ];

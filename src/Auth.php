@@ -118,11 +118,15 @@ class Auth
             unset($credentials[$passwordKey]);
         }
 
-        $user = $this->db->select($table)->where($credentials)->first();
+        try {
+            $user = $this->db->select($table)->where($credentials)->first();
 
-        if (!$user) {
-            $this->errorsArray['auth'] = Config::get('messages.loginParamsError');
-            return false;
+            if (!$user) {
+                $this->errorsArray['auth'] = Config::get('messages.loginParamsError');
+                return false;
+            }
+        } catch (\Throwable $th) {
+            throw new \Exception($th->getMessage());
         }
 
         $passwordIsValid = (Config::get('password.verify') !== false && isset($user[$passwordKey]))
@@ -136,9 +140,9 @@ class Auth
             return false;
         }
 
-        echo json_encode($user);
+        $this->user = new User($user);
 
-        return false;
+        return true;
     }
 
     /**
@@ -245,21 +249,15 @@ class Auth
         $idKey = Config::get('id.key');
         $table = Config::get('db.table');
 
-        $user = $this->db->select($table)->where($idKey, $userId)->first();
+        try {
+            $user = $this->db->select($table)->where($idKey, $userId)->first();
 
-        if (!$user) {
-            $this->errorsArray = $this->db->errors();
-            return null;
-        }
-
-        $hidden = Config::get('hidden');
-
-        if (count($hidden) > 0) {
-            foreach ($hidden as $item) {
-                if (isset($user[$item])) {
-                    unset($user[$item]);
-                }
+            if (!$user) {
+                $this->errorsArray = $this->db->errors();
+                return null;
             }
+        } catch (\Throwable $th) {
+            throw new \Exception($th->getMessage());
         }
 
         return $this->user = new User(
