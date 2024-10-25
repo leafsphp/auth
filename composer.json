@@ -38,7 +38,8 @@
         "leafs/db": "*",
         "leafs/form": "*",
         "leafs/http": "*",
-        "leafs/alchemy": "dev-next"
+        "leafs/alchemy": "dev-next",
+        "firebase/php-jwt": "^6.10"
     },
     "config": {
         "allow-plugins": {

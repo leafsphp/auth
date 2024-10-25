@@ -5,9 +5,8 @@ composer.lock
 package-lock.json
 vendor/
 test/
+old/
 *.tests.php
-workflows
-!.github/workflows
 
 # OS Generated
 .DS_Store*
