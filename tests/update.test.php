@@ -18,9 +18,9 @@ beforeAll(function () {
     sleep(1);
 });
 
-// afterAll(function () {
-//     dbInstance()->delete('users')->execute();
-// });
+afterAll(function () {
+    dbInstance()->delete('users')->execute();
+});
 
 test('update should update user data', function () {
     $auth = authInstance();
@@ -98,4 +98,33 @@ test('updatePassword should update user password', function () {
 
     expect($loginSuccess)->toBeTrue();
     expect($auth->user()->{$auth->config('password.key')})->not()->toBe($oldPassword);
+});
+
+test('update should regenerate session id if session => true', function () {
+    $auth = authInstance();
+    $auth->config(['session' => true]);
+
+    $success = $auth->login([
+        'username' => 'test-user-2',
+        'password' => 'new-password'
+    ]);
+
+    if (!$success) {
+        $this->fail(json_encode($auth->errors()));
+    }
+
+    $updateData = [
+        'username' => 'test-user-5',
+    ];
+
+    $initialSessionId = session_id();
+
+    $updateSuccess = $auth->update($updateData);
+
+    if (!$updateSuccess) {
+        $this->fail(json_encode($auth->errors()));
+    }
+
+    expect($auth->user()->username)->toBe($updateData['username']);
+    expect($initialSessionId)->not()->toBe(session_id());
 });

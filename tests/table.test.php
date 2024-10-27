@@ -8,9 +8,7 @@ beforeAll(function () {
 });
 
 afterAll(function () {
-    deleteUser('test-user', 'myusers');
-    deleteUser('test-user55', 'myusers');
-    deleteUser('test-user', 'uuid_users');
+    dbInstance()->delete('myusers')->execute();
 });
 
 test('register should save user in user defined table', function () {
@@ -28,7 +26,7 @@ test('register should save user in user defined table', function () {
     }
 
     expect($auth->user()->username)->toBe('test-user');
-})->skip();
+});
 
 test('login should work with user defined table', function () {
     $auth = authInstance();
@@ -44,7 +42,7 @@ test('login should work with user defined table', function () {
     }
 
     expect($auth->user()->username)->toBe('test-user');
-})->skip();
+});
 
 test('update should work with user defined table', function () {
     $auth = authInstance();
