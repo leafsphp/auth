@@ -98,7 +98,6 @@ class Auth
         );
     }
 
-
     /**
      * Sign a user in
      * ---
@@ -394,6 +393,51 @@ class Auth
         }
 
         return $user->getAuthInfo();
+    }
+
+    /**
+     * Get generated access tokens
+     * @return array|null
+     */
+    public function tokens()
+    {
+        $user = $this->user();
+
+        if (!$user) {
+            return null;
+        }
+
+        return $user->tokens();
+    }
+
+    /**
+     * Register auth middleware for your Leaf apps
+     * @param string $middleware The middleware to register
+     * @param callable $callback The callback to run if middleware fails
+     */
+    public function middleware(string $middleware, callable $callback)
+    {
+        if (!class_exists(\Leaf\App::class)) {
+            throw new \Exception('This feature is only available for Leaf apps');
+        }
+
+        if ($middleware === 'auth.required') {
+            return app()->registerMiddleware('auth.required', function () use ($callback) {
+                if (!$this->user()) {
+                    $callback();
+                }
+            });
+        }
+
+        if ($middleware === 'auth.guest') {
+            return app()->registerMiddleware('auth.guest', function () use ($callback) {
+                if ($this->user()) {
+                    $callback();
+                }
+            });
+        }
+        
+        app()->registerMiddleware($middleware, $callback);
     }
 
     /**

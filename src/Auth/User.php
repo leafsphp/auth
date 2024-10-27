@@ -110,6 +110,15 @@ class User
     }
 
     /**
+     * Return generated tokens
+     * @return array
+     */
+    public function tokens(): array
+    {
+        return $this->tokens;
+    }
+
+    /**
      * Generate a new JWT for the user
      * @return string
      */
