@@ -192,10 +192,10 @@ class User
      * Get a "user to many" table relation
      * 
      * <code>
-     * auth()->user()->orders()->get();
+     * auth()->user()->orders()->all();
      * auth()->user()->transactions()->where('amount', '>', 100)->get();
      * auth()->user()->notes()->where('title', 'like', '%important%')->get();
-     * auth()->user()->posts()->where('published', true)->get();
+     * auth()->user()->posts()->where('published', true)->all();
      * </code>
      * 
      * @param mixed $method The table to relate to
