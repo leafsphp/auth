@@ -32,7 +32,6 @@ class Config
 
         'session' => false,
         'session.logout' => null,
-        'session.register' => null,
         'session.lifetime' => 60 * 60 * 24,
         'session.cookie' => ['secure' => true, 'httponly' => true, 'samesite' => 'lax'],
 
@@ -46,7 +45,7 @@ class Config
     /**
      * Set Leaf Auth config
      */
-    public static function set($config)
+    public static function set($config): void
     {
         static::$config = array_merge(static::$config, $config);
     }
@@ -54,7 +53,7 @@ class Config
     /**
      * Overwrite Leaf Auth config
      */
-    public static function overwrite($config)
+    public static function overwrite($config): void
     {
         static::$config = $config;
     }
@@ -62,7 +61,7 @@ class Config
     /**
      * Get Leaf Auth config
      */
-    public static function get($key = null)
+    public static function get($key = null): mixed
     {
         if ($key) {
             return static::$config[$key] ?? null;

@@ -33,12 +33,6 @@ class Auth
     protected $db;
 
     /**
-     * Internal instance of Leaf session
-     * @var Session
-     */
-    protected $session;
-
-    /**
      * All errors caught
      * @var array
      */
@@ -54,10 +48,6 @@ class Auth
         $this->db = new Db();
         $this->db->connect($dbConfig);
 
-        if (Config::get('session')) {
-            $this->initSession(Config::get('session.cookie'));
-        }
-
         return $this;
     }
 
@@ -71,10 +61,6 @@ class Auth
     {
         $this->db = new Db();
         $this->db->autoConnect($pdoOptions);
-
-        if (Config::get('session')) {
-            $this->initSession(Config::get('session.cookie'));
-        }
 
         return $this;
     }
@@ -90,12 +76,28 @@ class Auth
         $this->db = new Db();
         $this->db->connection($connection);
 
-        if (Config::get('session')) {
-            $this->initSession(Config::get('session.cookie'));
-        }
-
         return $this;
     }
+
+    /**
+     * Get/Set Leaf Auth config
+     * 
+     * @param string|array $config The auth config key or array of config
+     * @param mixed $value The value if $config is a string
+     */
+    public function config($config, $value = null)
+    {
+        if (is_string($config) && $value === null) {
+            return Config::get($config);
+        }
+
+        Config::set(
+            is_string($config)
+            ? [$config => $value]
+            : $config
+        );
+    }
+
 
     /**
      * Sign a user in
@@ -129,15 +131,17 @@ class Auth
             throw new \Exception($th->getMessage());
         }
 
-        $passwordIsValid = (Config::get('password.verify') !== false && isset($user[$passwordKey]))
-            ? ((is_callable(Config::get('password.verify')))
-                ? call_user_func(Config::get('password.verify'), $userPassword, $user[$passwordKey])
-                : Password::verify($userPassword, $user[$passwordKey]))
-            : false;
+        if ($passwordKey !== false) {
+            $passwordIsValid = (Config::get('password.verify') !== false && isset($user[$passwordKey]))
+                ? ((is_callable(Config::get('password.verify')))
+                    ? call_user_func(Config::get('password.verify'), $userPassword, $user[$passwordKey])
+                    : Password::verify($userPassword, $user[$passwordKey]))
+                : false;
 
-        if (!$passwordIsValid) {
-            $this->errorsArray['password'] = Config::get('messages.loginPasswordError');
-            return false;
+            if (!$passwordIsValid) {
+                $this->errorsArray['password'] = Config::get('messages.loginPasswordError');
+                return false;
+            }
         }
 
         $this->user = new User($user);
@@ -212,7 +216,93 @@ class Auth
     public function update(array $userData): bool
     {
         $this->checkDbConnection();
-        return false;
+
+        $user = $this->user();
+
+        if (!$user) {
+            return false;
+        }
+
+        $idKey = Config::get('id.key');
+        $table = Config::get('db.table');
+
+        if (Config::get('timestamps')) {
+            $userData['updated_at'] = (new Date())->tick()->format(Config::get('timestamps.format'));
+        }
+
+        try {
+            $query = $this->db->update($table)->params($userData)->where($idKey, $this->user->{$idKey})->unique($userData)->execute();
+
+            if (!$query) {
+                $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
+                return false;
+            }
+        } catch (\Throwable $th) {
+            throw new \Exception($th->getMessage());
+        }
+
+        foreach ($userData as $key => $value) {
+            $this->user->{$key} = $value;
+        }
+
+        return true;
+    }
+
+    /**
+     * Update user password
+     * ---
+     * Update user password in the database
+     * 
+     * @param string $oldPassword Old password
+     * @param string $newPassword New password
+     * @return bool
+     */
+    public function updatePassword(string $oldPassword, string $newPassword): bool
+    {
+        $this->checkDbConnection();
+
+        $user = $this->user();
+
+        if (!$user) {
+            return false;
+        }
+
+        $passwordKey = Config::get('password.key');
+
+        if (Config::get('password.verify') !== false && isset($user->{$passwordKey})) {
+            $passwordIsValid = (is_callable(Config::get('password.verify')))
+                ? call_user_func(Config::get('password.verify'), $oldPassword, $user->{$passwordKey})
+                : Password::verify($oldPassword, $user->{$passwordKey});
+
+            if (!$passwordIsValid) {
+                $this->errorsArray['password'] = Config::get('messages.loginPasswordError');
+                return false;
+            }
+        }
+
+        $newPassword = (Config::get('password.encode') !== false)
+            ? ((is_callable(Config::get('password.encode')))
+                ? call_user_func(Config::get('password.encode'), $newPassword)
+                : Password::hash($newPassword))
+            : $newPassword;
+
+        try {
+            $query = $this->db->update(Config::get('db.table'))
+                ->params([$passwordKey => $newPassword])
+                ->where(Config::get('id.key'), $this->id())
+                ->execute();
+
+            if (!$query) {
+                $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
+                return false;
+            }
+        } catch (\Throwable $th) {
+            throw new \Exception($th->getMessage());
+        }
+
+        $this->user->{$passwordKey} = $newPassword;
+
+        return true;
     }
 
     /**
@@ -221,13 +311,9 @@ class Auth
      */
     public function id()
     {
-        if ($this->user) {
-            return $this->user->id();
-        }
-
         return Config::get('session')
             ? $this->getFromSession('auth.id')
-            : ($this->parseToken()['user.id'] ?? null);
+            : ($this->user ? $this->user->id() : ($this->parseToken()['user.id'] ?? null));
     }
 
     /**
@@ -236,6 +322,14 @@ class Auth
      */
     public function user()
     {
+        if (Config::get('session')) {
+            $userId = $this->getFromSession('auth.id');
+
+            if (!$userId) {
+                return null;
+            }
+        }
+
         if ($this->user) {
             return $this->user;
         }
@@ -297,6 +391,16 @@ class Auth
         );
     }
 
+    /**
+     * Return the current db instance
+     * 
+     * @return Db
+     */
+    public function db()
+    {
+        return $this->db;
+    }
+
     protected function checkDbConnection(): void
     {
         if (!$this->db && function_exists('db')) {
@@ -328,7 +432,7 @@ class Auth
 
     protected function isSessionExpired(): bool
     {
-        $sessionTtl = $this->session->get('session.ttl');
+        $sessionTtl = Session::get('auth.ttl');
 
         if (!$sessionTtl) {
             return false;
@@ -337,33 +441,10 @@ class Auth
         $isSessionExpired = time() > $sessionTtl;
 
         if ($isSessionExpired) {
-            $this->session->unset('auth.user');
-            $this->session->unset('auth.id');
-            $this->session->unset('auth.token');
-            $this->session->unset('session.startedAt');
-            $this->session->unset('session.lastActivity');
-            $this->session->unset('session.ttl');
+            Session::unset('auth');
         }
 
         return $isSessionExpired;
-    }
-
-    protected function initSession(array $sessionCookieParams = [])
-    {
-        $session = new Session(false);
-
-        if (!isset($_SESSION)) {
-            session_set_cookie_params($sessionCookieParams);
-            session_start();
-        }
-
-        if (!$session->has('session.startedAt')) {
-            $session->set('session.startedAt', time());
-        }
-
-        $session->set('session.lastActivity', time());
-
-        $this->session = $session;
     }
 
     protected function getTokenFromRequest()
