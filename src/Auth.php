@@ -230,8 +230,26 @@ class Auth
             $userData['updated_at'] = (new Date())->tick()->format(Config::get('timestamps.format'));
         }
 
+        if (count(Config::get('unique')) > 0) {
+            foreach (Config::get('unique') as $unique) {
+                if (!isset($userData[$unique])) {
+                    continue;
+                }
+
+                $data = $this->db->select($table, Config::get('id.key'))->where($unique, $userData[$unique])->first();
+
+                if ($data && $data[Config::get('id.key')] !== $this->id()) {
+                    $this->errorsArray[$unique] = "$unique already exists";
+                }
+            }
+
+            if (count($this->errorsArray) > 0) {
+                return false;
+            }
+        }
+
         try {
-            $query = $this->db->update($table)->params($userData)->where($idKey, $this->user->{$idKey})->unique($userData)->execute();
+            $query = $this->db->update($table)->params($userData)->where($idKey, $this->user->{$idKey})->execute();
 
             if (!$query) {
                 $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
@@ -239,6 +257,10 @@ class Auth
             }
         } catch (\Throwable $th) {
             throw new \Exception($th->getMessage());
+        }
+
+        if (Config::get('session')) {
+            session_regenerate_id();
         }
 
         foreach ($userData as $key => $value) {
@@ -416,7 +438,7 @@ class Auth
 
     protected function getFromSession($value)
     {
-        if ($this->isSessionExpired()) {
+        if ($this->checkAndExpireSession()) {
             return null;
         }
 
@@ -430,7 +452,7 @@ class Auth
         }
     }
 
-    protected function isSessionExpired(): bool
+    protected function checkAndExpireSession(): bool
     {
         $sessionTtl = Session::get('auth.ttl');
 
