@@ -7,8 +7,8 @@ beforeAll(function () {
         dbInstance()
             ->insert('users')
             ->params([
-                'username' => 'test-user-login',
-                'email' => 'test-user-login@example.com',
+                'username' => 'test-user',
+                'email' => 'test-user@example.com',
                 'password' => password_hash('password', PASSWORD_BCRYPT)
             ])
             ->execute();
@@ -21,42 +21,32 @@ afterAll(function () {
     dbInstance()->delete('users')->execute();
 });
 
-test('user can login', function () {
+test('user can login', function (array $testUser) {
     $auth = authInstance();
 
-    $userData = [
-        'username' => 'test-user-login',
-        'password' => 'password'
-    ];
-
-    $success = $auth->login($userData);
+    $success = $auth->login($testUser);
 
     expect($success)->toBeTrue();
     expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);
-    expect($auth->user()->username)->toBe($userData['username']);
-});
+    expect($auth->user()->username)->toBe($testUser['username']);
+})->with('test-user');
 
-test('login generates tokens on success', function () {
+test('login generates tokens on success', function (array $testUser) {
     $auth = authInstance();
 
-    $userData = [
-        'username' => 'test-user-login',
-        'password' => 'password'
-    ];
-
-    $success = $auth->login($userData);
+    $success = $auth->login($testUser);
 
     expect($success)->toBeTrue();
     expect($auth->data())->not()->toBeNull();
     expect($auth->data()->accessToken)->toBeString();
     expect($auth->data()->refreshToken)->toBeString();
-});
+})->with('test-user');
 
 test('login fails with incorrect password', function () {
     $auth = authInstance();
 
     $userData = [
-        'username' => 'test-user-login',
+        'username' => 'test-user',
         'password' => 'wrong-password'
     ];
 
@@ -92,7 +82,7 @@ test('login should work without password is password.key is false', function () 
     $auth->config('password.key', false);
 
     $userData = [
-        'username' => 'test-user-login'
+        'username' => 'test-user'
     ];
 
     $success = $auth->login($userData);

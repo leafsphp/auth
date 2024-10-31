@@ -11,15 +11,9 @@ afterAll(function () {
     dbInstance()->delete('users')->execute();
 });
 
-test('register should create a new session when session => true', function () {
+test('register should create a new session when session => true', function (array $userData) {
     $auth = authInstance();
     $auth->config(['session' => true]);
-
-    $userData = [
-        'username' => 'test-user',
-        'email' => 'test-user@example.com',
-        'password' => 'password'
-    ];
 
     $success = $auth->register($userData);
 
@@ -29,9 +23,9 @@ test('register should create a new session when session => true', function () {
 
     expect(session_status())->toBe(PHP_SESSION_ACTIVE);
     expect($_SESSION['auth']['user']['username'] ?? null)->toBe($userData['username']);
-});
+})->with('test-user');
 
-test('register should not create a new session when session => false', function () {
+test('register should not create a new session when session => false', function (array $userData) {
     $auth = authInstance();
     $auth->config(['session' => false]);
 
@@ -48,17 +42,11 @@ test('register should not create a new session when session => false', function 
 
     expect(session_status())->toBe(PHP_SESSION_NONE);
     expect($_SESSION['auth']['user']['username'] ?? null)->toBeNull();
-});
+})->with('test-user');
 
-test('login should create session when session => true', function () {
+test('login should create session when session => true', function (array $userData) {
     $auth = authInstance();
     $auth->config(['session' => true]);
-
-    $userData = [
-        'username' => 'test-user',
-        'email' => 'test-user@example.com',
-        'password' => 'password'
-    ];
 
     $success = $auth->login($userData);
 
@@ -68,17 +56,11 @@ test('login should create session when session => true', function () {
 
     expect(session_status())->toBe(PHP_SESSION_ACTIVE);
     expect($_SESSION['auth']['user']['username'] ?? null)->toBe($userData['username']);
-});
+})->with('test-user');
 
-test('session should create auth.ttl when session.lifetime is not 0', function () {
+test('session should create auth.ttl when session.lifetime is not 0', function (array $userData) {
     $auth = authInstance();
     $auth->config(['session' => true, 'session.lifetime' => 2]);
-
-    $userData = [
-        'username' => 'test-user',
-        'email' => 'test-user@example.com',
-        'password' => 'password'
-    ];
 
     $timeBeforeLogin = time();
 
@@ -92,17 +74,11 @@ test('session should create auth.ttl when session.lifetime is not 0', function (
     expect($_SESSION['auth']['user']['username'] ?? null)->toBe($userData['username']);
 
     expect($_SESSION['auth']['ttl'])->toBeGreaterThan($timeBeforeLogin);
-});
+})->with('test-user');
 
-test('session should not create auth.ttl when session.lifetime is 0', function () {
+test('session should not create auth.ttl when session.lifetime is 0', function (array $userData) {
     $auth = authInstance();
     $auth->config(['session' => true, 'session.lifetime' => 0]);
-
-    $userData = [
-        'username' => 'test-user',
-        'email' => 'test-user@example.com',
-        'password' => 'password'
-    ];
 
     $success = $auth->login($userData);
 
@@ -114,17 +90,11 @@ test('session should not create auth.ttl when session.lifetime is 0', function (
     expect($_SESSION['auth']['user']['username'] ?? null)->toBe($userData['username']);
 
     expect($_SESSION['auth']['ttl'] ?? null)->toBeNull();
-});
+})->with('test-user');
 
-test('session should expire after session.lifetime', function () {
+test('session should expire after session.lifetime', function (array $userData) {
     $auth = authInstance();
     $auth->config(['session' => true, 'session.lifetime' => 2]);
-
-    $userData = [
-        'username' => 'test-user',
-        'email' => 'test-user@example.com',
-        'password' => 'password'
-    ];
 
     $success = $auth->login($userData);
 
@@ -139,21 +109,15 @@ test('session should expire after session.lifetime', function () {
 
     expect($auth->id())->toBeNull();
     expect($auth->user())->toBeNull();
-});
+})->with('test-user');
 
-test('login should regenerate session id when session => true and session is already active', function () {
+test('login should regenerate session id when session => true and session is already active', function (array $userData) {
     $auth = authInstance();
     $auth->config(['session' => true]);
 
     session_start();
 
     $sessionId = session_id();
-
-    $userData = [
-        'username' => 'test-user',
-        'email' => 'test-user@example.com',
-        'password' => 'password'
-    ];
 
     $success = $auth->login($userData);
 
@@ -167,4 +131,20 @@ test('login should regenerate session id when session => true and session is alr
     expect($_SESSION['auth']['user']['username'] ?? null)->toBe($userData['username']);
 
     expect($newSessionId)->not()->toBe($sessionId);
-});
+})->with('test-user');
+
+test('logout should remove auth info from session when session => true', function (array $userData) {
+    $auth = authInstance();
+    $auth->config(['session' => true]);
+
+    $success = $auth->login($userData);
+
+    expect($success)->toBeTrue();
+    expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);
+    expect($_SESSION['auth']['user']['username'] ?? null)->toBe($userData['username']);
+
+    $auth->logout();
+
+    expect($auth->user())->toBeNull();
+    expect($_SESSION['auth']['user']['username'] ?? null)->toBeNull();
+})->with('test-user');

@@ -1,5 +1,11 @@
 <?php
 
+dataset('test-user', [[[
+    'username' => 'test-user',
+    'email' => 'test-user@example.com',
+    'password' => 'password'
+]]]);
+
 function getDatabaseConnection(): array
 {
     return [
