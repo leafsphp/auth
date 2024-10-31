@@ -67,7 +67,7 @@ class Auth
 
     /**
      * Pass in db connection instance directly
-     * 
+     *
      * @param \PDO $connection A connection instance of your db
      * @return $this;
      */
@@ -81,7 +81,7 @@ class Auth
 
     /**
      * Get/Set Leaf Auth config
-     * 
+     *
      * @param string|array $config The auth config key or array of config
      * @param mixed $value The value if $config is a string
      */
@@ -102,7 +102,7 @@ class Auth
      * Sign a user in
      * ---
      * Verify user credentials and sign them in with token or session
-     * 
+     *
      * @param array $credentials User credentials
      * @return bool
      */
@@ -152,7 +152,7 @@ class Auth
      * Register a new user
      * ---
      * Save a new user to the database
-     * 
+     *
      * @param array $userData User data
      * @return bool
      */
@@ -208,7 +208,7 @@ class Auth
      * Update user data
      * ---
      * Update user data in the database
-     * 
+     *
      * @param array $userData User data
      * @return bool
      */
@@ -273,7 +273,7 @@ class Auth
      * Update user password
      * ---
      * Update user password in the database
-     * 
+     *
      * @param string $oldPassword Old password
      * @param string $newPassword New password
      * @return bool
@@ -330,7 +330,7 @@ class Auth
      * Sign a user out
      * ---
      * Sign out the currently authenticated user
-     * 
+     *
      * @param string|array|callable|null $redirectUrl Redirect to this url after logout
      * @return bool
      */
@@ -465,7 +465,7 @@ class Auth
                 }
             });
         }
-        
+
         app()->registerMiddleware($middleware, $callback);
     }
 
@@ -488,7 +488,7 @@ class Auth
 
     /**
      * Return the current db instance
-     * 
+     *
      * @return Db
      */
     public function db()

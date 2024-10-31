@@ -6,7 +6,7 @@ namespace Leaf\Auth;
  * Config for Leaf Auth
  * --------
  * Set/Get config to match your app
- * 
+ *
  * @since 3.0.0
  * @version 0.1.0
  */

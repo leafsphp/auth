@@ -45,7 +45,7 @@ function deleteUser(string $username, $table = 'users')
 function createTableForUsers($table = 'users'): void
 {
     $db = dbInstance();
-    
+
     try {
         $db
             ->query("CREATE TABLE IF NOT EXISTS $table (
@@ -60,6 +60,6 @@ function createTableForUsers($table = 'users'): void
             )")
             ->execute();
     } catch (\Throwable $th) {
-        throw new \Exception("Failed to create table for users: " . $th->getMessage());
+        throw new \Exception('Failed to create table for users: ' . $th->getMessage());
     }
 }

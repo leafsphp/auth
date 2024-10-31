@@ -6,12 +6,12 @@ namespace Leaf\Auth;
  * Functionality for user permissions
  * ----
  * Addition to user class
- * 
+ *
  * @version 0.1.0
  * @since 3.0.0
  */
-trait UsesRoles {
-
+trait UsesRoles
+{
     /**
      * User Permissions
      */
