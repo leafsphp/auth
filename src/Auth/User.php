@@ -16,8 +16,6 @@ use Leaf\Db;
  */
 class User
 {
-    use UsesRoles;
-
     /**
      * Internal instance of Leaf session
      * @var Session
@@ -33,11 +31,6 @@ class User
      * User Tokens
      */
     protected array $tokens = [];
-
-    /**
-     * User Roles
-     */
-    protected array $roles = [];
 
     public function __construct($data)
     {
@@ -98,11 +91,11 @@ class User
             'refreshToken' => $this->tokens['refresh'],
         ];
 
-        if (count($this->roles)) {
+        if (count($this->roles ?? [])) {
             $dataToReturn->roles = $this->roles;
         }
 
-        if (count($this->permissions)) {
+        if (count($this->permissions ?? [])) {
             $dataToReturn->permissions = $this->permissions;
         }
 

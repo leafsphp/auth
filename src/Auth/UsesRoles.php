@@ -18,6 +18,11 @@ trait UsesRoles {
     protected array $permissions = [];
 
     /**
+     * User Roles
+     */
+    protected array $roles = [];
+
+    /**
      * Grant a user permission to do something
      * @param string|array $permission The permission to grant
      */
