@@ -57,12 +57,17 @@ class User
             Session::set('auth.user', $this->get());
 
             if ($sessionLifetime !== 0 && $sessionLifetime !== null) {
-                Session::set(
-                    'auth.ttl',
-                    is_int($sessionLifetime)
-                    ? time() + $sessionLifetime
-                    : strtotime($sessionLifetime) ?? throw new \Exception('Invalid session lifetime')
-                );
+                if (!is_int($sessionLifetime)) {
+                    $sessionLifetime = strtotime($sessionLifetime);
+
+                    if (!$sessionLifetime) {
+                        throw new \Exception('Invalid session lifetime');
+                    }
+                } else {
+                    $sessionLifetime = time() + $sessionLifetime;
+                }
+
+                Session::set('auth.ttl', $sessionLifetime);
             }
         }
 

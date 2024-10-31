@@ -2,6 +2,7 @@
 
 beforeAll(function () {
     $auth = authInstance();
+    $auth->config(['db.table' => 'users']);
 
     $auth->register([
         'username' => 'test-user-1',
