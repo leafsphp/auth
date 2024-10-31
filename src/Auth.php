@@ -327,6 +327,35 @@ class Auth
     }
 
     /**
+     * Sign a user out
+     * ---
+     * Sign out the currently authenticated user
+     * 
+     * @param string|array|callable|null $redirectUrl Redirect to this url after logout
+     * @return bool
+     */
+    public function logout($action = null): bool
+    {
+        if (Config::get('session')) {
+            Session::unset('auth');
+        }
+
+        $this->user = null;
+
+        if (is_callable($action)) {
+            $action($this);
+            return true;
+        }
+
+        if ($action) {
+            response()->redirect($action);
+            exit;
+        }
+
+        return true;
+    }
+
+    /**
      * Get the id of the currently authenticated user
      * @return string|int
      */
@@ -544,7 +573,7 @@ class Auth
 
     protected function getTokenFromSession()
     {
-        return \Leaf\Http\Session::get('auth.token');
+        return Session::get('auth.token');
     }
 
     /**

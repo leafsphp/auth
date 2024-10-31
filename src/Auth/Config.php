@@ -31,7 +31,6 @@ class Config
         'hidden' => ['field.id', 'field.password'],
 
         'session' => false,
-        'session.logout' => null,
         'session.lifetime' => 60 * 60 * 24,
         'session.cookie' => ['secure' => true, 'httponly' => true, 'samesite' => 'lax'],
 
