@@ -19,6 +19,7 @@ afterAll(function () {
 test('register should create a new session when session => true', function () {
     $auth = authInstance();
     $auth->config(['session' => true]);
+    $auth->config(['db.table' => 'users']);
 
     $userData = [
         'username' => 'test-user',
@@ -39,6 +40,7 @@ test('register should create a new session when session => true', function () {
 test('register should not create a new session when session => false', function () {
     $auth = authInstance();
     $auth->config(['session' => false]);
+    $auth->config(['db.table' => 'users']);
 
     $userData = [
         'username' => 'test-user2',
@@ -58,6 +60,7 @@ test('register should not create a new session when session => false', function 
 test('login should create session when session => true', function () {
     $auth = authInstance();
     $auth->config(['session' => true]);
+    $auth->config(['db.table' => 'users']);
 
     $userData = [
         'username' => 'test-user',
@@ -78,6 +81,7 @@ test('login should create session when session => true', function () {
 test('session should create auth.ttl when session.lifetime is not 0', function () {
     $auth = authInstance();
     $auth->config(['session' => true, 'session.lifetime' => 2]);
+    $auth->config(['db.table' => 'users']);
 
     $userData = [
         'username' => 'test-user',
@@ -102,6 +106,7 @@ test('session should create auth.ttl when session.lifetime is not 0', function (
 test('session should not create auth.ttl when session.lifetime is 0', function () {
     $auth = authInstance();
     $auth->config(['session' => true, 'session.lifetime' => 0]);
+    $auth->config(['db.table' => 'users']);
 
     $userData = [
         'username' => 'test-user',
@@ -124,6 +129,7 @@ test('session should not create auth.ttl when session.lifetime is 0', function (
 test('session should expire after session.lifetime', function () {
     $auth = authInstance();
     $auth->config(['session' => true, 'session.lifetime' => 2]);
+    $auth->config(['db.table' => 'users']);
 
     $userData = [
         'username' => 'test-user',
@@ -149,6 +155,7 @@ test('session should expire after session.lifetime', function () {
 test('login should regenerate session id when session => true and session is already active', function () {
     $auth = authInstance();
     $auth->config(['session' => true]);
+    $auth->config(['db.table' => 'users']);
 
     session_start();
 
@@ -177,6 +184,7 @@ test('login should regenerate session id when session => true and session is alr
 test('logout should remove auth info from session when session => true', function () {
     $auth = authInstance();
     $auth->config(['session' => true]);
+    $auth->config(['db.table' => 'users']);
 
     $userData = [
         'username' => 'test-user',

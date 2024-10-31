@@ -24,6 +24,7 @@ afterAll(function () {
 
 test('update should update user data', function () {
     $auth = authInstance();
+    $auth->config(['db.table' => 'users']);
 
     $success = $auth->login([
         'username' => 'test-user-1',
@@ -49,6 +50,7 @@ test('update should update user data', function () {
 
 test('update should fail if user already exists', function () {
     $auth = authInstance();
+    $auth->config(['db.table' => 'users']);
 
     $success = $auth->login([
         'username' => 'test-user-3',
@@ -72,6 +74,7 @@ test('update should fail if user already exists', function () {
 test('updatePassword should update user password', function () {
     $auth = authInstance();
     $auth->config(['unique' => ['username']]);
+    $auth->config(['db.table' => 'users']);
 
     $success = $auth->login([
         'username' => 'test-user-2',
@@ -103,6 +106,7 @@ test('updatePassword should update user password', function () {
 test('update should regenerate session id if session => true', function () {
     $auth = authInstance();
     $auth->config(['session' => true]);
+    $auth->config(['db.table' => 'users']);
 
     $success = $auth->login([
         'username' => 'test-user-2',

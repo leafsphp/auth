@@ -11,6 +11,7 @@ afterEach(function () {
 
 test('user can register an account', function () {
     $auth = authInstance();
+    $auth->config(['db.table' => 'users']);
 
     $userData = [
         'username' => 'test-user',
@@ -31,6 +32,7 @@ test('user can register an account', function () {
 
 test('user can login after registering', function () {
     $auth = authInstance();
+    $auth->config(['db.table' => 'users']);
 
     $userData = [
         'username' => 'test-user',
@@ -51,6 +53,7 @@ test('user can login after registering', function () {
 
 test('user can only sign up once', function () {
     $auth = authInstance();
+    $auth->config(['db.table' => 'users']);
 
     $userData = [
         'username' => 'test-user',
@@ -78,6 +81,7 @@ test('user can only sign up once', function () {
 
 test('register passwords are encrypted', function () {
     $auth = authInstance();
+    $auth->config(['db.table' => 'users']);
 
     $userData = [
         'username' => 'test-user',
