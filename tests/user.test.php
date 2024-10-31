@@ -2,6 +2,7 @@
 
 beforeAll(function () {
     createTableForUsers();
+    dbInstance()->delete('users')->execute();
 
     try {
         dbInstance()

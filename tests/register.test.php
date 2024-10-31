@@ -2,16 +2,21 @@
 
 beforeAll(function () {
     createTableForUsers();
+    dbInstance()->delete('users')->execute();
 });
 
 afterEach(function () {
-    dbInstance()->delete('users')->where('username', 'test-user')->execute();
+    dbInstance()->delete('users')->execute();
 });
 
 test('user can register an account', function (array $userData) {
     $auth = authInstance();
 
     $success = $auth->register($userData);
+
+    if (!$success) {
+        $this->fail(json_encode($auth->errors()));
+    }
 
     expect($success)->toBeTrue();
     expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);

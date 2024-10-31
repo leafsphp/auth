@@ -1,5 +1,10 @@
 <?php
 
+beforeAll(function () {
+    createTableForUsers();
+    dbInstance()->delete('users')->execute();
+});
+
 afterEach(function () {
     if (session_status() === PHP_SESSION_ACTIVE) {
         $_SESSION = [];
