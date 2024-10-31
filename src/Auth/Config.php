@@ -60,7 +60,7 @@ class Config
     /**
      * Get Leaf Auth config
      */
-    public static function get($key = null): mixed
+    public static function get($key = null)
     {
         if ($key) {
             return static::$config[$key] ?? null;

@@ -22,8 +22,6 @@ actions:
     - tests
   os:
     - ubuntu-latest
-    - macos-latest
-    - windows-latest
   php:
     extensions: json, zip, dom, curl, libxml, mbstring, PDO_PGSQL
     versions:
