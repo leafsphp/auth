@@ -25,7 +25,7 @@ actions:
     - macos-latest
     - windows-latest
   php:
-    extensions: json, zip, dom, curl, libxml, mbstring
+    extensions: json, zip, dom, curl, libxml, mbstring, PDO_PGSQL
     versions:
       - '8.3'
       - '8.2'

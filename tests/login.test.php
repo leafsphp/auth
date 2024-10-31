@@ -21,18 +21,30 @@ afterAll(function () {
     dbInstance()->delete('users')->execute();
 });
 
-test('user can login', function (array $testUser) {
+test('user can login', function () {
     $auth = authInstance();
+
+    $testUser = [
+        'username' => 'test-user',
+        'email' => 'test-user@example.com',
+        'password' => 'password'
+    ];
 
     $success = $auth->login($testUser);
 
     expect($success)->toBeTrue();
     expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);
     expect($auth->user()->username)->toBe($testUser['username']);
-})->with('test-user');
+});
 
-test('login generates tokens on success', function (array $testUser) {
+test('login generates tokens on success', function () {
     $auth = authInstance();
+
+    $testUser = [
+        'username' => 'test-user',
+        'email' => 'test-user@example.com',
+        'password' => 'password'
+    ];
 
     $success = $auth->login($testUser);
 
@@ -40,7 +52,7 @@ test('login generates tokens on success', function (array $testUser) {
     expect($auth->data())->not()->toBeNull();
     expect($auth->data()->accessToken)->toBeString();
     expect($auth->data()->refreshToken)->toBeString();
-})->with('test-user');
+});
 
 test('login fails with incorrect password', function () {
     $auth = authInstance();

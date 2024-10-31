@@ -11,37 +11,49 @@ afterAll(function () {
     dbInstance()->delete('myusers')->execute();
 });
 
-test('register should save user in user defined table', function (array $testUser) {
+test('register should save user in user defined table', function () {
     $auth = authInstance();
     $auth->config(['session' => false, 'db.table' => 'myusers']);
 
-    $success = $auth->register($testUser);
+    $success = $auth->register([
+        'username' => 'test-user',
+        'email' => 'test-user@example.com',
+        'password' => 'password'
+    ]);
 
     if (!$success) {
         $this->fail(json_encode($auth->errors()));
     }
 
     expect($auth->user()->username)->toBe('test-user');
-})->with('test-user');
+});
 
-test('login should work with user defined table', function (array $testUser) {
+test('login should work with user defined table', function () {
     $auth = authInstance();
     $auth->config(['session' => false, 'db.table' => 'myusers']);
 
-    $success = $auth->login($testUser);
+    $success = $auth->login([
+        'username' => 'test-user',
+        'email' => 'test-user@example.com',
+        'password' => 'password'
+    ]);
 
     if (!$success) {
         $this->fail(json_encode($auth->errors()));
     }
 
     expect($auth->user()->username)->toBe('test-user');
-})->with('test-user');
+});
 
-test('update should work with user defined table', function (array $testUser) {
+test('update should work with user defined table', function () {
     $auth = authInstance();
     $auth->config(['session' => true, 'db.table' => 'myusers', 'session.lifetime' => '1 day']);
 
-    $success = $auth->login($testUser);
+    $success = $auth->login([
+        'username' => 'test-user',
+        'email' => 'test-user@example.com',
+        'password' => 'password'
+    ]);
 
     if (!$success) {
         $this->fail(json_encode($auth->errors()));
@@ -58,7 +70,7 @@ test('update should work with user defined table', function (array $testUser) {
 
     expect($response['user']['username'])->toBe('test-user55');
     expect($response['user']['email'])->toBe('test-user55@example.com');
-})->with('test-user')->skip();
+})->skip();
 
 test('user table can use uuid as id', function () {
     createUsersTable('uuid_users', true);

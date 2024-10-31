@@ -22,9 +22,15 @@ afterAll(function () {
     dbInstance()->delete('users')->execute();
 });
 
-test('auth user is instance of Leaf\Auth\User', function (array $testUser) {
+test('auth user is instance of Leaf\Auth\User', function () {
     $auth = authInstance();
     $auth->config(['db.table' => 'users']);
+
+    $testUser = [
+        'username' => 'test-user',
+        'email' => 'test-user@example.com',
+        'password' => 'password'
+    ];
 
     $success = $auth->login($testUser);
 
@@ -35,11 +41,17 @@ test('auth user is instance of Leaf\Auth\User', function (array $testUser) {
     expect($success)->toBeTrue();
     expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);
     expect($auth->user()->username)->toBe($testUser['username']);
-})->with('test-user');
+});
 
-test('logout can use logout callback to run custom action', function (array $testUser) {
+test('logout can use logout callback to run custom action', function () {
     $auth = authInstance();
     $auth->config(['db.table' => 'users']);
+
+    $testUser = [
+        'username' => 'test-user',
+        'email' => 'test-user@example.com',
+        'password' => 'password'
+    ];
 
     $success = $auth->login($testUser);
 
@@ -56,4 +68,4 @@ test('logout can use logout callback to run custom action', function (array $tes
     });
 
     expect($auth->user())->toBeNull();
-})->with('test-user');
+});

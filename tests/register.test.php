@@ -9,8 +9,14 @@ afterEach(function () {
     dbInstance()->delete('users')->execute();
 });
 
-test('user can register an account', function (array $userData) {
+test('user can register an account', function () {
     $auth = authInstance();
+
+    $userData = [
+        'username' => 'test-user',
+        'email' => 'test-user@example.com',
+        'password' => 'password'
+    ];
 
     $success = $auth->register($userData);
 
@@ -21,10 +27,16 @@ test('user can register an account', function (array $userData) {
     expect($success)->toBeTrue();
     expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);
     expect($auth->user()->username)->toBe($userData['username']);
-})->with('test-user');
+});
 
-test('user can login after registering', function (array $userData) {
+test('user can login after registering', function () {
     $auth = authInstance();
+
+    $userData = [
+        'username' => 'test-user',
+        'email' => 'test-user@example.com',
+        'password' => 'password'
+    ];
 
     $registerSuccess = $auth->register($userData);
 
@@ -35,10 +47,16 @@ test('user can login after registering', function (array $userData) {
     expect($loginSuccess)->toBeTrue();
     expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);
     expect($auth->user()->username)->toBe($userData['username']);
-})->with('test-user');
+});
 
-test('user can only sign up once', function (array $userData) {
+test('user can only sign up once', function () {
     $auth = authInstance();
+
+    $userData = [
+        'username' => 'test-user',
+        'email' => 'test-user@example.com',
+        'password' => 'password'
+    ];
 
     $auth->config([
         'unique' => ['email', 'username']
@@ -56,10 +74,16 @@ test('user can only sign up once', function (array $userData) {
         'email' => 'email already exists',
         'username' => 'username already exists',
     ]);
-})->with('test-user');
+});
 
-test('register passwords are encrypted', function (array $userData) {
+test('register passwords are encrypted', function () {
     $auth = authInstance();
+
+    $userData = [
+        'username' => 'test-user',
+        'email' => 'test-user@example.com',
+        'password' => 'password'
+    ];
 
     $auth->config([
         'hidden' => []
@@ -70,4 +94,4 @@ test('register passwords are encrypted', function (array $userData) {
     expect($registerSuccess)->toBeTrue();
     expect($auth->user()->password)->not()->toBe($userData['password']);
     expect(password_verify($userData['password'], $auth->user()->password))->toBeTrue();
-})->with('test-user');
+});

@@ -21,7 +21,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: json, zip, dom, curl, libxml, mbstring
+          extensions: json, zip, dom, curl, libxml, mbstring, PDO_PGSQL
           tools: composer:v2
           coverage: xdebug
 
