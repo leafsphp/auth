@@ -162,10 +162,11 @@ class Auth
 
         $table = Config::get('db.table');
         $passwordKey = Config::get('password.key');
+        $passwordEncode = Config::get('password.encode');
 
-        if (Config::get('password.encode') !== false) {
-            $userData[$passwordKey] = (is_callable(Config::get('password.encode')))
-                ? call_user_func(Config::get('password.encode'), $userData[$passwordKey])
+        if ($passwordEncode !== false && $passwordKey !== false) {
+            $userData[$passwordKey] = (is_callable($passwordEncode))
+                ? call_user_func($passwordEncode, $userData[$passwordKey])
                 : Password::hash($userData[$passwordKey]);
         }
 
