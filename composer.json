@@ -38,7 +38,6 @@
         "leafs/db": "*",
         "leafs/form": "*",
         "leafs/http": "*",
-        "leafs/alchemy": "dev-next",
         "firebase/php-jwt": "^6.10"
     },
     "config": {
@@ -48,7 +47,8 @@
     },
     "require-dev": {
         "pestphp/pest": "^1.0 | ^2.0",
-        "friendsofphp/php-cs-fixer": "^3.64"
+        "friendsofphp/php-cs-fixer": "^3.64",
+        "leafs/alchemy": "^2.0"
     },
     "scripts": {
         "test": "./vendor/bin/alchemy setup --test",
