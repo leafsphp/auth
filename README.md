@@ -2,7 +2,7 @@
 <p align="center">
   <br><br>
   <img src="https://leafphp.netlify.app/assets/img/leaf3-logo.png" height="100"/>
-  <h1 align="center">Leaf Auth v2</h1>
+  <h1 align="center">Leaf Auth</h1>
   <br><br>
 </p>
 
@@ -10,121 +10,122 @@
 [![Total Downloads](https://poser.pugx.org/leafs/auth/downloads)](https://packagist.org/packages/leafs/auth)
 [![License](https://poser.pugx.org/leafs/auth/license)](https://packagist.org/packages/leafs/auth)
 
-Leaf auth is a simple but powerful module which comes with powerful functions for handling all your authentication needs.
-
-v2 comes with tons of fixes, improvements and upgrades. Running on top of leaf db v2, it also has support for other database types like PostgreSQL, Sqlite and many more.
+Leaf provides a lightweight but very powerful authentication system to handle all the complexities of authentication in a few lines of code. We understand that authentication is a critical part of your application, so we've made it as simple and secure as possible.
 
 ## Installation
 
-You can easily install Leaf using [Composer](https://getcomposer.org/).
+You can easily install Leaf Auth using the Leaf CLI:
 
 ```bash
-composer require leafs/auth
-```
-
-Or with leaf db
-
-```sh
 leaf install auth
 ```
 
-## Basic Usage
+Or via composer:
 
-After installing leaf auth, you need to connect to your database. v2 presents additional ways to achieve this.
+```sh
+composer require leafs/auth
+```
 
-### connect
+## Connecting to a database
 
-The connect method allows you to pass in your database connection parameters directly to leaf auth.
+To do any kind of authentication, you need to connect to some kind of database which will store your users' data.
 
 ```php
-auth()->connect('127.0.0.1', 'dbname', 'username', 'password');
+auth()->connect([
+  'dbtype' => '...',
+  'charset' => '...',
+  'port' => '...',
+  'host' => '...',
+  'dbname' => '...',
+  'user' => '...',
+  'password' => '...'
+]);
 ```
 
-### autoConnect
-
-This method creates a database connection using your env variables.
-
-```env
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=LEAF_DB_NAME
-DB_USERNAME=LEAF_DB_USERNAME
-DB_PASSWORD=
-```
-
-And call `autoConnect` in your app.
+If you have an existing PDO connection, you can pass it to Leaf Auth:
 
 ```php
-auth()->autoConnect();
+$db = new PDO('mysql:dbname=test;host=127.0.0.1', 'root', '');
+
+auth()->dbConnection($db);
+
+// you can use leaf auth the same way you always have
 ```
 
-### db connection (v2 only)
+## Signing a user in
 
-Leaf auth now allows you to directly pass a PDO connection into leaf auth. This allows you to share your connection with leaf auth and avoid multiple connections.
+To sign a user in, you can use the login() method. This method takes in an array of data you want to use to authenticate the user. This data is usually the user's email and password, but can be anything as long as the password field is present.
 
 ```php
-$auth = new Leaf\Auth;
-$auth->dbConnection($pdoConnecction);
+auth()->login([
+  'email' => 'm@example.com',
+  'password' => 'password'
+]);
 ```
 
-This also means that you can share you leaf db v2 connection with leaf auth like this:
+## Signing a user up
+
+To sign a user up is to create a new user account on your application. This is usually done by collecting the user's details and storing them in your database. You also need to validate the user's details to ensure they are correct and that they don't conflict with existing data.
+
+Leaf allows you to do all this using the register() method. This method takes in an array of data you want to use to create the user.
 
 ```php
-$auth = new Leaf\Auth;
-$auth->dbConnection($db->connection());
+auth()->register([
+  'username' => 'example',
+  'email' => 'm@example.com',
+  'password' => 'password'
+]);
 ```
 
-### Leaf db (auth v2 + leaf 3 only)
+## Using Middleware
 
-If you are using leaf auth in a leaf 3 app, you will have access to the `auth` global as shown in some of the above connections. Along with this, if you already have a leaf db connection, you no longer need to explicitly connect to your database. Leaf auth searches for a leaf db instance and connects to it automatically.
-
-**Note that this only works in a leaf 3 app and only if you already have a leaf db connection.**
+Leaf Auth also provides a middleware that you can use to protect your routes. The auth middleware checks if a user is logged in and allows you to set a callback function to run if a user is not logged in.
 
 ```php
-<?php
-
-db()->connect('127.0.0.1', 'dbname', 'username', 'password');
-
-// you can use auth straight away without any connect
-auth()->login(...);
+auth()->middleware('auth.required', function () {
+  response()->redirect('/login');
+});
 ```
 
-## 📚 Auth methods
+Once you have defined a callback for the middleware, you can use it in your routes like this:
 
-After connecting your db, you can use any of the methods below.
+```php
+app()->get('/protected', ['middleware' => 'auth.required', function () {
+  // this route is protected
+}]);
 
-WIP: This page will be updated
+// or on a route group
+app()->group('/protected', ['middleware' => 'auth.required', function () {
+  app()->get('/route', function () {
+    // this route is protected
+  });
+}]);
+```
 
-## ⚡️ Funtional Mode
+You can find the full documentation [here](https://leafphp.dev/docs/auth/protected-routes.html)
 
-When using leaf auth in a leaf 3 app, you will have access to the `auth`, `guard`, `hasAuth` and `sessionUser` globals.
-
-## 💬 Stay In Touch
+## Stay In Touch
 
 - [Twitter](https://twitter.com/leafphp)
 - [Join the forum](https://github.com/leafsphp/leaf/discussions/37)
 - [Chat on discord](https://discord.com/invite/Pkrm9NJPE3)
 
-## 📓 Learning Leaf 3
+## Learning Leaf PHP
 
 - Leaf has a very easy to understand [documentation](https://leafphp.dev) which contains information on all operations in Leaf.
 - You can also check out our [youtube channel](https://www.youtube.com/channel/UCllE-GsYy10RkxBUK0HIffw) which has video tutorials on different topics
-- We are also working on codelabs which will bring hands-on tutorials you can follow and contribute to.
+- You can also learn from [codelabs](https://leafphp.dev/codelabs/) and contribute as well.
 
-## 😇 Contributing
+## Contributing
 
 We are glad to have you. All contributions are welcome! To get started, familiarize yourself with our [contribution guide](https://leafphp.dev/community/contributing.html) and you'll be ready to make your first pull request 🚀.
 
 To report a security vulnerability, you can reach out to [@mychidarko](https://twitter.com/mychidarko) or [@leafphp](https://twitter.com/leafphp) on twitter. We will coordinate the fix and eventually commit the solution in this project.
 
-## 🤩 Sponsoring Leaf
+## Sponsoring Leaf
 
-Your cash contributions go a long way to help us make Leaf even better for you. You can sponsor Leaf and any of our packages on [open collective](https://opencollective.com/leaf) or check the [contribution page](https://leafphp.dev/support/) for a list of ways to contribute.
+We are committed to keeping Leaf open-source and free, but maintaining and developing new features now requires significant time and resources. As the project has grown, so have the costs, which have been mostly covered by the team. To sustain and grow Leaf, we need your help to support full-time maintainers.
 
-And to all our existing cash/code contributors, we love you all ❤️
+You can sponsor Leaf and any of our packages on [open collective](https://opencollective.com/leaf) or check the [contribution page](https://leafphp.dev/support/) for a list of ways to contribute.
 
-## 🤯 Links/Projects
-
-- [Leaf Docs](https://leafphp.dev)
-- [Leaf CLI Docs](https://cli.leafphp.dev)
+And to all our [existing cash/code contributors](https://leafphp.dev#sponsors), we love you all ❤️
