@@ -466,6 +466,8 @@ class Auth
                 if ($this->user()) {
                     $callback();
                 }
+
+                auth()->clearErrors();
             });
         }
 
@@ -577,6 +579,14 @@ class Auth
     protected function getTokenFromSession()
     {
         return Session::get('auth.token');
+    }
+
+    /**
+     * Clear all errors caught
+     */
+    public function clearErrors()
+    {
+        $this->errorsArray = [];
     }
 
     /**
