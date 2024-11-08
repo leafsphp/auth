@@ -391,6 +391,8 @@ class Auth
             return null;
         }
 
+        $this->checkDbConnection();
+
         $idKey = Config::get('id.key');
         $table = Config::get('db.table');
 
