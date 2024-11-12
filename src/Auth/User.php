@@ -71,6 +71,10 @@ class User
             }
         }
 
+        $sessionLifetime = !is_numeric($sessionLifetime)
+            ? strtotime($sessionLifetime)
+            : (time() + $sessionLifetime);
+
         $this->tokens['access'] = $this->generateToken($sessionLifetime);
         $this->tokens['refresh'] = $this->generateToken($sessionLifetime + 259200);
     }
