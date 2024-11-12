@@ -485,10 +485,15 @@ class Auth
             return null;
         }
 
-        return (array) JWT::decode(
-            $bearerToken,
-            new Key(Config::get('token.secret'), 'HS256')
-        );
+        try {
+            return (array) JWT::decode(
+                $bearerToken,
+                new Key(Config::get('token.secret'), 'HS256')
+            );
+        } catch (\Throwable $th) {
+            $this->errorsArray['token'] = $th->getMessage();
+            return null;
+        }
     }
 
     /**
