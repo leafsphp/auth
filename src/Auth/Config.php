@@ -42,6 +42,11 @@ class Config
     ];
 
     /**
+     * Additional user information for cache
+     */
+    protected static array $userCache = [];
+
+    /**
      * Set Leaf Auth config
      */
     public static function set($config): void
@@ -67,5 +72,31 @@ class Config
         }
 
         return static::$config;
+    }
+
+    /**
+     * Set user cache
+     */
+    public static function setUserCache($key, $value): void
+    {
+        if (isset($_SESSION)) {
+            $_SESSION[$key] = $value;
+        }
+
+        static::$userCache[$key] = $value;
+    }
+
+    /**
+     * Get user cache
+     */
+    public static function getUserCache($key = null)
+    {
+        $cache = $_SESSION ?? static::$userCache;
+
+        if ($key) {
+            return $cache[$key] ?? null;
+        }
+
+        return $cache;
     }
 }

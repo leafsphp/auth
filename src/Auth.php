@@ -328,6 +328,37 @@ class Auth
     }
 
     /**
+     * Create a new user from OAuth
+     *
+     * @param array $userData User data
+     *
+     * @return bool
+     */
+    public function fromOAuth(array $userData): bool
+    {
+        $this->checkDbConnection();
+
+        Config::setUserCache('oauth-token', $userData['token']);
+
+        $user = $this->db->select(Config::get('db.table'))->where($userData['user'])->first();
+
+        if (!$user) {
+            return $this->register($userData['user']);
+        }
+
+        $this->user = new User($user);
+        return true;
+    }
+
+    /**
+     * Get saved OAuth token
+     */
+    public function oauthToken()
+    {
+        return Config::getUserCache('oauth-token');
+    }
+
+    /**
      * Sign a user out
      * ---
      * Sign out the currently authenticated user
