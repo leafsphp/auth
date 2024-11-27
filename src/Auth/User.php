@@ -4,7 +4,6 @@ namespace Leaf\Auth;
 
 use Firebase\JWT\JWT;
 use Leaf\Http\Session;
-use Leaf\Db;
 
 /**
  * Auth User
