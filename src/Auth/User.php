@@ -212,7 +212,8 @@ class User
      * @param mixed $method The table to relate to
      * @param mixed $args
      * @throws \Exception
-     * @return Db
+     *
+     * @return Model
      */
     public function __call($method, $args)
     {
@@ -220,9 +221,10 @@ class User
             throw new \Exception('Relations are only available in Leaf apps.');
         }
 
-        return auth()
-            ->db()
-            ->select($method)
-            ->where('user_id', $this->id());
+        return (new Model([
+            'user' => $this,
+            'table' => $method,
+            'db' => auth()->db(),
+        ]));
     }
 }
