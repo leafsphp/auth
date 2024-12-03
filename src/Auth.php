@@ -336,17 +336,25 @@ class Auth
      */
     public function fromOAuth(array $userData): bool
     {
-        $this->checkDbConnection();
+        $initialPassword = Config::get('password.key');
 
-        Config::setUserCache('oauth-token', $userData['token']);
+        $this->checkDbConnection();
+        $this->config('password.key', false);
 
         $user = $this->db->select(Config::get('db.table'))->where($userData['user'])->first();
 
+        Config::setUserCache('oauth-token', $userData['token']);
+
         if (!$user) {
-            return $this->register($userData['user']);
+            $success = $this->register($userData['user']);
+            $this->config('password.key', $initialPassword);
+
+            return $success;
         }
 
         $this->user = new User($user);
+        $this->config('password.key', $initialPassword);
+
         return true;
     }
 
