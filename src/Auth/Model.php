@@ -117,4 +117,9 @@ class Model
     {
         $this->dataToSave[$name] = $value;
     }
+
+    public function __call($name, $arguments)
+    {
+        return $this->get()->$name(...$arguments);
+    }
 }
