@@ -93,7 +93,7 @@ class Model
      *
      * @return \Leaf\Db
      */
-    public function get($columns = '*'): \Leaf\Db
+    public function table($columns = '*'): \Leaf\Db
     {
         return $this->db->select($this->table, $columns)
             ->where('user_id', $this->user->id());
