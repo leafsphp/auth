@@ -36,17 +36,21 @@ trait UsesRoles
 
         $this->setRolesAndPermissions($role);
 
-        if (!($this->data['roles'] ?? null)) {
+        if (!($this->data[Config::get('roles.key')] ?? null)) {
             $this->db->query("ALTER TABLE users ADD COLUMN roles TEXT NOT NULL DEFAULT '[]'")->execute();
         }
 
-        $this->db
-            ->update('users')
-            ->params([
-                'roles' => json_encode($this->roles)
-            ])
-            ->where(Config::get('id.key'), $this->data['id'])
-            ->execute();
+        try {
+            $this->db
+                ->update('users')
+                ->params([
+                    Config::get('roles.key') => json_encode($this->roles)
+                ])
+                ->where(Config::get('id.key'), $this->data['id'])
+                ->execute();
+        } catch (\Throwable $th) {
+            return false;
+        }
 
         return true;
     }

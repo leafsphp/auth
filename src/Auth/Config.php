@@ -19,6 +19,7 @@ class Config
     protected static array $config = [
         'id.key' => 'id',
         'db.table' => 'users',
+        'roles.key' => 'leaf_auth_user_roles',
 
         'timestamps' => true,
         'timestamps.format' => 'YYYY-MM-DD HH:mm:ss',

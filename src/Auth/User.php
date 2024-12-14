@@ -85,8 +85,8 @@ class User
         $this->tokens['access'] = $this->generateToken($sessionLifetime);
         $this->tokens['refresh'] = $this->generateToken($sessionLifetime + 259200);
 
-        if ($data['roles'] ?? null) {
-            $this->setRolesAndPermissions(json_decode($data['roles'], true));
+        if ($data[Config::get('roles.key')] ?? null) {
+            $this->setRolesAndPermissions(json_decode($data[Config::get('roles.key')], true));
         }
     }
 
@@ -160,7 +160,7 @@ class User
         $userData = $this->data;
 
         $idKey = Config::get('id.key');
-        $hidden = array_merge(Config::get('hidden'), ['roles']);
+        $hidden = array_merge(Config::get('hidden'), [Config::get('roles.key')]);
         $passwordKey = Config::get('password.key');
 
         if (count($hidden) > 0) {
