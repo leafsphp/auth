@@ -100,7 +100,7 @@ class Auth
 
     /**
      * Create roles and permissions
-     * 
+     *
      * @param array $roles Array of roles and their permissions
      * @return Auth
      */
@@ -115,7 +115,7 @@ class Auth
 
     /**
      * Return all roles and their permissions
-     * 
+     *
      * @return array
      */
     public function roles()
@@ -387,7 +387,7 @@ class Auth
      * Find a user by id
      * ---
      * Select and return an existing user from db
-     * 
+     *
      * @param string|int $id The id of the user to grab
      * @return User|null
      */
@@ -406,7 +406,7 @@ class Auth
      * Create a new user
      * ---
      * Create an account for another user
-     * 
+     *
      * @param array The user details to save
      */
     public function createUserFor($userData)

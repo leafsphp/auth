@@ -24,7 +24,7 @@ trait UsesRoles
 
     /**
      * Assign new role to user
-     * 
+     *
      * @param string|array $role The role to assign
      * @return bool
      */
@@ -146,7 +146,7 @@ trait UsesRoles
 
     /**
      * Set the roles and permissions for a user
-     * 
+     *
      * @param string|array $role The role(s) to set
      */
     protected function setRolesAndPermissions($role): void
@@ -163,7 +163,7 @@ trait UsesRoles
 
     /**
      * Get the permissions for a role
-     * 
+     *
      * @param string|array $role
      * @return array
      */
