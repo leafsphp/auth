@@ -160,7 +160,7 @@ class User
         $userData = $this->data;
 
         $idKey = Config::get('id.key');
-        $hidden = Config::get('hidden');
+        $hidden = array_merge(Config::get('hidden'), ['roles']);
         $passwordKey = Config::get('password.key');
 
         if (count($hidden) > 0) {
