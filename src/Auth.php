@@ -99,6 +99,32 @@ class Auth
     }
 
     /**
+     * Create roles and permissions
+     * 
+     * @param array $roles Array of roles and their permissions
+     * @return Auth
+     */
+    public function createRoles(array $roles)
+    {
+        Config::set([
+            'roles' => $roles,
+        ]);
+
+        return $this;
+    }
+
+    /**
+     * Return all roles and their permissions
+     * 
+     * @return array
+     */
+    public function roles()
+    {
+        return Config::get('roles');
+    }
+    
+
+    /**
      * Sign a user in
      * ---
      * Verify user credentials and sign them in with token or session
@@ -266,6 +292,81 @@ class Auth
         foreach ($userData as $key => $value) {
             $this->user->{$key} = $value;
         }
+
+        return true;
+    }
+
+    /**
+     * Find a user by id
+     * ---
+     * Select and return an existing user from db
+     * 
+     * @param string|int $id The id of the user to grab
+     * @return User|null
+     */
+    public function find($id)
+    {
+        $userData = $this->db->select(Config::get('db.table'))->find($id);
+
+        if (!$userData) {
+            return null;
+        }
+
+        return new User($userData, false);
+    }
+
+    /**
+     * Create a new user
+     * ---
+     * Create an account for another user
+     * 
+     * @param array The user details to save
+     */
+    public function createUserFor($userData)
+    {
+        $this->checkDbConnection();
+
+        $table = Config::get('db.table');
+        $passwordKey = Config::get('password.key');
+        $passwordEncode = Config::get('password.encode');
+
+        if ($passwordEncode !== false && $passwordKey !== false) {
+            $userData[$passwordKey] = (is_callable($passwordEncode))
+                ? call_user_func($passwordEncode, $userData[$passwordKey])
+                : Password::hash($userData[$passwordKey]);
+        }
+
+        if (Config::get('timestamps')) {
+            $now = (new Date())->tick()->format(Config::get('timestamps.format'));
+            $userData['created_at'] = $now;
+            $userData['updated_at'] = $now;
+        }
+
+        if (isset($credentials[Config::get('id.key')])) {
+            $userData[Config::get('id.key')] = is_callable($userData[Config::get('id.key')])
+                ? call_user_func($userData[Config::get('id.key')])
+                : $userData[Config::get('id.key')];
+        }
+
+        try {
+            $query = $this->db->insert($table)->params($userData)->unique(Config::get('unique'))->execute();
+
+            if (!$query) {
+                $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
+                return false;
+            }
+        } catch (\Throwable $th) {
+            throw new \Exception($th->getMessage());
+        }
+
+        $user = $this->db->select($table)->where($userData)->first();
+
+        if (!$user) {
+            $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
+            return false;
+        }
+
+        $this->user = new User($user, false);
 
         return true;
     }

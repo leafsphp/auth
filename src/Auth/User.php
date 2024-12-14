@@ -15,6 +15,8 @@ use Leaf\Http\Session;
  */
 class User
 {
+    use UsesRoles;
+
     /**
      * Internal instance of Leaf session
      * @var Session
@@ -31,13 +33,13 @@ class User
      */
     protected array $tokens = [];
 
-    public function __construct($data)
+    public function __construct($data, $session = true)
     {
         $this->data = $data;
 
         $sessionLifetime = Config::get('token.lifetime');
 
-        if (Config::get('session')) {
+        if (Config::get('session') && $session) {
             $sessionLifetime = Config::get('session.lifetime');
 
             if (session_status() !== PHP_SESSION_ACTIVE) {
@@ -70,7 +72,7 @@ class User
             }
         }
 
-        $sessionLifetime = !is_numeric($sessionLifetime)
+        $sessionLifetime = $sessionLifetime && !is_numeric($sessionLifetime)
             ? strtotime($sessionLifetime)
             : (time() + $sessionLifetime);
 
@@ -95,8 +97,8 @@ class User
     {
         $dataToReturn = (object) [
             'user' => $this->get(),
-            'accessToken' => $this->tokens['access'],
-            'refreshToken' => $this->tokens['refresh'],
+            'accessToken' => $this->tokens['access'] ?? null,
+            'refreshToken' => $this->tokens['refresh'] ?? null,
         ];
 
         if (count($this->roles ?? [])) {

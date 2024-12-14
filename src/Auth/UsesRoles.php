@@ -23,24 +23,10 @@ trait UsesRoles
     protected array $roles = [];
 
     /**
-     * Grant a user permission to do something
-     * @param string|array $permission The permission to grant
-     */
-    public function grantPermissions($permission): void
-    {
-        // will probably have to verify permissions here
-
-        $this->permissions = array_merge(
-            $this->permissions,
-            is_array($permission) ? $permission : [$permission]
-        );
-    }
-
-    /**
      * Assign new role to user
      * @param string|array $role The role to assign
      */
-    public function assignRoles($role): void
+    public function assign($role): void
     {
         // will need to verify roles here
 
@@ -52,7 +38,7 @@ trait UsesRoles
         // persist via storage contract
 
         foreach ($this->roles as $role) {
-            $this->grantPermissions($this->getRolePermissions($role));
+            $this->permissions = array_merge($this->permissions, $this->getRolePermissions($role));
         }
 
         // persist via storage contract
@@ -73,6 +59,14 @@ trait UsesRoles
     }
 
     /**
+     * Check if a user does not have a permission
+     */
+    public function cannot($permission): bool
+    {
+        return !$this->can($permission);
+    }
+
+    /**
      * Check if user has a role
      * @param string|array $role The role(s) to check
      * @return bool
@@ -87,23 +81,18 @@ trait UsesRoles
     }
 
     /**
-     * Revoke a permission from a user
-     * @param string|array $permission The permission(s) to revoke
+     * Check if user does not have a role
      */
-    public function revokePermissions($permission): void
+    public function isNot($role): bool
     {
-        // persist via storage contract
-        $this->permissions = array_diff(
-            $this->permissions,
-            is_array($permission) ? $permission : [$permission]
-        );
+        return !$this->is($role);
     }
 
     /**
      * Remove a role from a user
      * @param string|array $role The role(s) to revoke
      */
-    public function removeRoles($role): void
+    public function unassign($role): void
     {
         // persist via storage contract
         $this->roles = array_diff(
