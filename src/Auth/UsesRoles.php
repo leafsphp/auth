@@ -90,8 +90,6 @@ trait UsesRoles
             return count(array_intersect($role, $this->roles)) === count($role);
         }
 
-        echo json_encode([$role, $this->roles]);
-
         return in_array($role, haystack: $this->roles);
     }
 
@@ -127,11 +125,23 @@ trait UsesRoles
      */
     public function unassign($role): void
     {
-        // persist via storage contract
         $this->roles = array_diff(
             $this->roles,
             is_array($role) ? $role : [$role]
         );
+
+        $this->permissions = array_diff(
+            $this->permissions,
+            $this->getRolePermissions($role)
+        );
+
+        $this->db
+            ->update('users')
+            ->params([
+                Config::get('roles.key') => json_encode($this->roles)
+            ])
+            ->where(Config::get('id.key'), $this->data['id'])
+            ->execute();
     }
 
     /**
