@@ -608,6 +608,38 @@ class Auth
             });
         }
 
+        if ($middleware === 'is') {
+            return app()->registerMiddleware('is', function ($role) use ($callback) {
+                if ($this->user()?->isNot($role)) {
+                    $callback();
+                }
+            });
+        }
+
+        if ($middleware === 'isNot') {
+            return app()->registerMiddleware('isNot', function ($role) use ($callback) {
+                if ($this->user()?->is($role)) {
+                    $callback();
+                }
+            });
+        }
+
+        if ($middleware === 'can') {
+            return app()->registerMiddleware('can', function ($role) use ($callback) {
+                if ($this->user()?->can($role)) {
+                    $callback();
+                }
+            });
+        }
+
+        if ($middleware === 'cannot') {
+            return app()->registerMiddleware('cannot', function ($role) use ($callback) {
+                if ($this->user()?->cannot($role)) {
+                    $callback();
+                }
+            });
+        }
+
         app()->registerMiddleware($middleware, $callback);
     }
 
