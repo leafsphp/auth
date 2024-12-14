@@ -34,17 +34,19 @@ trait UsesRoles
             return false;
         }
 
+        $roleKey = Config::get('roles.key');
+
         $this->setRolesAndPermissions($role);
 
-        if (!($this->data[Config::get('roles.key')] ?? null)) {
-            $this->db->query("ALTER TABLE users ADD COLUMN roles TEXT NOT NULL DEFAULT '[]'")->execute();
+        if (!($this->data[$roleKey] ?? null)) {
+            $this->db->query("ALTER TABLE users ADD COLUMN $roleKey TEXT NOT NULL DEFAULT '[]'")->execute();
         }
 
         try {
             $this->db
                 ->update('users')
                 ->params([
-                    Config::get('roles.key') => json_encode($this->roles)
+                    $roleKey => json_encode($this->roles)
                 ])
                 ->where(Config::get('id.key'), $this->data['id'])
                 ->execute();
@@ -88,7 +90,9 @@ trait UsesRoles
             return count(array_intersect($role, $this->roles)) === count($role);
         }
 
-        return in_array($role, $this->roles);
+        echo json_encode([$role, $this->roles]);
+
+        return in_array($role, haystack: $this->roles);
     }
 
     /**
