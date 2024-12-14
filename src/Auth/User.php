@@ -18,6 +18,12 @@ class User
     use UsesRoles;
 
     /**
+     * Internal instance of Leaf database
+     * @var \Leaf\DB
+     */
+    protected $db;
+
+    /**
      * Internal instance of Leaf session
      * @var Session
      */
@@ -78,6 +84,10 @@ class User
 
         $this->tokens['access'] = $this->generateToken($sessionLifetime);
         $this->tokens['refresh'] = $this->generateToken($sessionLifetime + 259200);
+
+        if ($data['roles'] ?? null) {
+            $this->setRolesAndPermissions(json_decode($data['roles'], true));
+        }
     }
 
     /**
@@ -170,6 +180,18 @@ class User
         }
 
         return $userData;
+    }
+
+    /**
+     * Set user db instance
+     * @param \Leaf\Db $db
+     * @return User
+     */
+    public function setDb($db)
+    {
+        $this->db = $db;
+
+        return $this;
     }
 
     public function __toString()

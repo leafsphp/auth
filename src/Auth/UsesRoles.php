@@ -24,24 +24,31 @@ trait UsesRoles
 
     /**
      * Assign new role to user
+     * 
      * @param string|array $role The role to assign
+     * @return bool
      */
-    public function assign($role): void
+    public function assign($role): bool
     {
-        // will need to verify roles here
-
-        $this->roles = array_merge(
-            $this->roles,
-            is_array($role) ? $role : [$role]
-        );
-
-        // persist via storage contract
-
-        foreach ($this->roles as $role) {
-            $this->permissions = array_merge($this->permissions, $this->getRolePermissions($role));
+        if (!array_key_exists($role, Config::get('roles'))) {
+            return false;
         }
 
-        // persist via storage contract
+        $this->setRolesAndPermissions($role);
+
+        if (!($this->data['roles'] ?? null)) {
+            $this->db->query("ALTER TABLE users ADD COLUMN roles TEXT NOT NULL DEFAULT '[]'")->execute();
+        }
+
+        $this->db
+            ->update('users')
+            ->params([
+                'roles' => json_encode($this->roles)
+            ])
+            ->where(Config::get('id.key'), $this->data['id'])
+            ->execute();
+
+        return true;
     }
 
     /**
@@ -89,6 +96,24 @@ trait UsesRoles
     }
 
     /**
+     * Return the user's roles
+     * @return array
+     */
+    public function roles(): array
+    {
+        return $this->roles;
+    }
+
+    /**
+     * Return the user's permissions
+     * @return array
+     */
+    public function permissions(): array
+    {
+        return $this->permissions;
+    }
+
+    /**
      * Remove a role from a user
      * @param string|array $role The role(s) to revoke
      */
@@ -102,13 +127,36 @@ trait UsesRoles
     }
 
     /**
+     * Set the roles and permissions for a user
+     * 
+     * @param string|array $role The role(s) to set
+     */
+    protected function setRolesAndPermissions($role): void
+    {
+        $this->roles = array_merge(
+            $this->roles,
+            is_array($role) ? $role : [$role]
+        );
+
+        foreach ($this->roles as $role) {
+            $this->permissions = array_merge($this->permissions, $this->getRolePermissions($role));
+        }
+    }
+
+    /**
      * Get the permissions for a role
-     * @param string $role
+     * 
+     * @param string|array $role
      * @return array
      */
     protected function getRolePermissions($role): array
     {
-        // get permissions from storage contract
-        return [];
+        if (is_string($role)) {
+            return Config::get('roles')[$role] ?? [];
+        }
+
+        return array_reduce($role, function ($acc, $role) {
+            return array_merge($acc, Config::get('roles')[$role] ?? []);
+        }, []);
     }
 }
