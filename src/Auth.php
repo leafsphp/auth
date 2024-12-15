@@ -38,6 +38,33 @@ class Auth
      */
     protected $errorsArray = [];
 
+    public function __construct()
+    {
+        $this->middleware('auth.required', function () {
+            response()->redirect('/auth/login', 401);
+        });
+
+        $this->middleware('auth.guest', function () {
+            response()->json('/dashboard', 401);
+        });
+
+        $this->middleware('is', function ($role) {
+            \Leaf\Exception\General::default404();
+        });
+
+        $this->middleware('isNot', function () {
+            \Leaf\Exception\General::default404();
+        });
+
+        $this->middleware('can', function () {
+            \Leaf\Exception\General::default404();
+        });
+
+        $this->middleware('cannot', function () {
+            \Leaf\Exception\General::default404();
+        });
+    }
+
     /**
      * Connect leaf auth to the database
      * @param array $dbConfig Configuration for leaf db connection
@@ -594,6 +621,7 @@ class Auth
             return app()->registerMiddleware('auth.required', function () use ($callback) {
                 if (!$this->user()) {
                     $callback();
+                    exit;
                 }
             });
         }
@@ -602,6 +630,7 @@ class Auth
             return app()->registerMiddleware('auth.guest', function () use ($callback) {
                 if ($this->user()) {
                     $callback();
+                    exit;
                 }
 
                 auth()->clearErrors();
@@ -611,7 +640,8 @@ class Auth
         if ($middleware === 'is') {
             return app()->registerMiddleware('is', function ($role) use ($callback) {
                 if ($this->user()?->isNot($role)) {
-                    $callback();
+                    $callback($role);
+                    exit;
                 }
             });
         }
@@ -619,23 +649,26 @@ class Auth
         if ($middleware === 'isNot') {
             return app()->registerMiddleware('isNot', function ($role) use ($callback) {
                 if ($this->user()?->is($role)) {
-                    $callback();
+                    $callback($role);
+                    exit;
                 }
             });
         }
 
         if ($middleware === 'can') {
             return app()->registerMiddleware('can', function ($role) use ($callback) {
-                if ($this->user()?->can($role)) {
-                    $callback();
+                if ($this->user()?->cannot($role)) {
+                    $callback($role);
+                    exit;
                 }
             });
         }
 
         if ($middleware === 'cannot') {
             return app()->registerMiddleware('cannot', function ($role) use ($callback) {
-                if ($this->user()?->cannot($role)) {
-                    $callback();
+                if ($this->user()?->can($role)) {
+                    $callback($role);
+                    exit;
                 }
             });
         }
