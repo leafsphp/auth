@@ -65,7 +65,7 @@ trait UsesRoles
     public function can($permission): bool
     {
         if (is_array($permission)) {
-            return count(array_intersect($permission, $this->permissions)) === count($permission);
+            return count(array_intersect($permission, $this->permissions)) > 0;
         }
 
         return in_array($permission, $this->permissions);
@@ -87,7 +87,7 @@ trait UsesRoles
     public function is($role): bool
     {
         if (is_array($role)) {
-            return count(array_intersect($role, $this->roles)) === count($role);
+            return count(array_intersect($role, $this->roles)) > 0;
         }
 
         return in_array($role, haystack: $this->roles);
