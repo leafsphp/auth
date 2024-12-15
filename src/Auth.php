@@ -41,11 +41,11 @@ class Auth
     public function __construct()
     {
         $this->middleware('auth.required', function () {
-            response()->redirect('/auth/login', 401);
+            response()->redirect('/auth/login');
         });
 
         $this->middleware('auth.guest', function () {
-            response()->json('/dashboard', 401);
+            response()->redirect('/dashboard');
         });
 
         $this->middleware('is', function ($role) {
