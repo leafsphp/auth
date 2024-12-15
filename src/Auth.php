@@ -49,19 +49,35 @@ class Auth
         });
 
         $this->middleware('is', function ($role) {
-            \Leaf\Exception\General::default404();
+            \Leaf\Exception\General::error(
+                '404',
+                '<p>The page you are looking for could not be found.</p>',
+                403
+            );
         });
 
         $this->middleware('isNot', function () {
-            \Leaf\Exception\General::default404();
+            \Leaf\Exception\General::error(
+                '404',
+                '<p>The page you are looking for could not be found.</p>',
+                403
+            );
         });
 
         $this->middleware('can', function () {
-            \Leaf\Exception\General::default404();
+            \Leaf\Exception\General::error(
+                '404',
+                '<p>The page you are looking for could not be found.</p>',
+                403
+            );
         });
 
         $this->middleware('cannot', function () {
-            \Leaf\Exception\General::default404();
+            \Leaf\Exception\General::error(
+                '404',
+                '<p>The page you are looking for could not be found.</p>',
+                403
+            );
         });
     }
 
@@ -639,7 +655,7 @@ class Auth
 
         if ($middleware === 'is') {
             return app()->registerMiddleware('is', function ($role) use ($callback) {
-                if ($this->user()?->isNot($role)) {
+                if (!$this->user() || $this->user()?->isNot($role)) {
                     $callback($role);
                     exit;
                 }
@@ -648,7 +664,7 @@ class Auth
 
         if ($middleware === 'isNot') {
             return app()->registerMiddleware('isNot', function ($role) use ($callback) {
-                if ($this->user()?->is($role)) {
+                if (!$this->user() || $this->user()?->is($role)) {
                     $callback($role);
                     exit;
                 }
@@ -657,7 +673,7 @@ class Auth
 
         if ($middleware === 'can') {
             return app()->registerMiddleware('can', function ($role) use ($callback) {
-                if ($this->user()?->cannot($role)) {
+                if (!$this->user() || $this->user()?->cannot($role)) {
                     $callback($role);
                     exit;
                 }
@@ -666,7 +682,7 @@ class Auth
 
         if ($middleware === 'cannot') {
             return app()->registerMiddleware('cannot', function ($role) use ($callback) {
-                if ($this->user()?->can($role)) {
+                if (!$this->user() || $this->user()?->can($role)) {
                     $callback($role);
                     exit;
                 }
