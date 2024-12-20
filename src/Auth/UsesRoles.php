@@ -34,6 +34,10 @@ trait UsesRoles
             return false;
         }
 
+        if (in_array($role, $this->roles)) {
+            return true;
+        }
+
         $roleKey = Config::get('roles.key');
 
         $this->setRolesAndPermissions($role);
