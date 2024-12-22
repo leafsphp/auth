@@ -30,17 +30,9 @@ trait UsesRoles
      */
     public function assign($role): bool
     {
-        if (!array_key_exists($role, Config::get('roles'))) {
-            return false;
-        }
-
-        if (in_array($role, $this->roles)) {
-            return true;
-        }
+        $this->setRolesAndPermissions($role);
 
         $roleKey = Config::get('roles.key');
-
-        $this->setRolesAndPermissions($role);
 
         if (!($this->data[$roleKey] ?? null)) {
             $this->db->query("ALTER TABLE users ADD COLUMN $roleKey TEXT NOT NULL DEFAULT '[]'")->execute();
@@ -134,10 +126,7 @@ trait UsesRoles
             is_array($role) ? $role : [$role]
         );
 
-        $this->permissions = array_diff(
-            $this->permissions,
-            $this->getRolePermissions($role)
-        );
+        $this->permissions = $this->getRolePermissions($this->roles);
 
         $this->db
             ->update('users')
@@ -151,18 +140,27 @@ trait UsesRoles
     /**
      * Set the roles and permissions for a user
      *
-     * @param string|array $role The role(s) to set
+     * @param string|array $roles The role(s) to set
      */
-    protected function setRolesAndPermissions($role): void
+    protected function setRolesAndPermissions($roles): void
     {
-        $this->roles = array_merge(
-            $this->roles,
-            is_array($role) ? $role : [$role]
-        );
-
-        foreach ($this->roles as $role) {
-            $this->permissions = array_merge($this->permissions, $this->getRolePermissions($role));
+        if (is_string($roles)) {
+            $roles = [$roles];
         }
+
+        foreach ($roles as $role) {
+            if (!array_key_exists($role, Config::get('roles'))) {
+                continue;
+            }
+
+            if (in_array($role, $this->roles)) {
+                continue;
+            }
+
+            $this->roles[] = $role;
+        }
+
+        $this->permissions = $this->getRolePermissions($this->roles);
     }
 
     /**
@@ -171,14 +169,20 @@ trait UsesRoles
      * @param string|array $role
      * @return array
      */
-    protected function getRolePermissions($role): array
+    protected function getRolePermissions($roles): array
     {
-        if (is_string($role)) {
-            return Config::get('roles')[$role] ?? [];
+        $allRoles = Config::get('roles');
+
+        if (is_string($roles)) {
+            return $allRoles[$roles] ?? [];
         }
 
-        return array_reduce($role, function ($acc, $role) {
-            return array_merge($acc, Config::get('roles')[$role] ?? []);
-        }, []);
+        return array_values(array_unique(array_reduce($roles, function ($carry, $role) use ($allRoles) {
+            if (isset($allRoles[$role])) {
+                $carry = array_merge($carry, $allRoles[$role]); // Merge permissions for the selected role
+            }
+
+            return $carry;
+        }, [])));
     }
 }
