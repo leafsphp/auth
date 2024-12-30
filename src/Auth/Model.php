@@ -120,6 +120,6 @@ class Model
 
     public function __call($name, $arguments)
     {
-        return $this->get()->$name(...$arguments);
+        return $this->table()->$name(...$arguments);
     }
 }
