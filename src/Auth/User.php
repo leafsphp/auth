@@ -140,19 +140,64 @@ class User
         $userIdKey = Config::get('id.key');
         $secretPhrase = Config::get('token.secret');
 
-        // no fallback because we need the user id
-        $userId = $this->data[$userIdKey];
-
         $payload = [
-            'user.id' => $userId,
+            'user.id' => $this->data[$userIdKey],
             'iat' => time(),
             'exp' => $tokenLifetime,
             'iss' => $_SERVER['HTTP_HOST'] ?? 'localhost',
         ];
 
-        $token = JWT::encode($payload, $secretPhrase, 'HS256');
+        return JWT::encode($payload, $secretPhrase, 'HS256');
+    }
 
-        return $token;
+    /**
+     * Generate a verification token for the user
+     * @param mixed $expiresIn Token expiration time
+     * @return string
+     */
+    public function generateVerificationToken($expiresIn = null): string
+    {
+        $userIdKey = Config::get('id.key');
+        $secretPhrase = Config::get('token.secret') . '-verification';
+
+        $payload = [
+            'user.id' => $this->data[$userIdKey],
+            'user.email' => $this->data['email'],
+            'iat' => time(),
+            'exp' => $expiresIn ?? (time() + 600),
+            'iss' => $_SERVER['HTTP_HOST'] ?? 'localhost',
+        ];
+
+        return JWT::encode($payload, $secretPhrase, 'HS256');
+    }
+
+    /**
+     * Check if email is verified
+     * @return bool
+     */
+    public function isVerified(): bool
+    {
+        return !!$this->data['email_verified_at'];
+    }
+
+    /**
+     * Verify user's email
+     * @return bool
+     */
+    public function verifyEmail(): bool
+    {
+        $this->data['email_verified_at'] = tick()->format(Config::get('timestamps.format'));
+
+        try {
+            $this->db->update(Config::get('db.table'))
+                ->params(['email_verified_at' => $this->data['email_verified_at']])
+                ->where(Config::get('id.key'), $this->data[Config::get('id.key')])
+                ->execute();
+
+            return true;
+        } catch (\Throwable $th) {
+            return false;
+        }
     }
 
     public function get()
