@@ -79,6 +79,14 @@ class Auth
                 403
             );
         });
+
+        $this->middleware('auth.verified', function () {
+            response()->redirect('/auth/verify');
+        });
+
+        $this->middleware('auth.unverified', function () {
+            response()->redirect('/dashboard');
+        });
     }
 
     /**
@@ -689,6 +697,24 @@ class Auth
             });
         }
 
+        if ($middleware === 'auth.verified') {
+            return app()->registerMiddleware('auth.verified', function () use ($callback) {
+                if (!$this->user() || !$this->user()->isVerified()) {
+                    $callback();
+                    exit;
+                }
+            });
+        }
+
+        if ($middleware === 'auth.unverified') {
+            return app()->registerMiddleware('auth.unverified', function () use ($callback) {
+                if (!$this->user() || $this->user()->isVerified()) {
+                    $callback();
+                    exit;
+                }
+            });
+        }
+
         app()->registerMiddleware($middleware, $callback);
     }
 
@@ -708,6 +734,37 @@ class Auth
                 $bearerToken,
                 new Key(Config::get('token.secret'), 'HS256')
             );
+        } catch (\Throwable $th) {
+            $this->errorsArray['token'] = $th->getMessage();
+            return null;
+        }
+    }
+
+    /**
+     * Verify a user's token
+     * @param string $token The token to verify
+     */
+    public function verifyToken(string $token)
+    {
+        try {
+            $decodedToken = (array) JWT::decode(
+                $token,
+                new Key(Config::get('token.secret') . '-verification', 'HS256')
+            );
+
+            if (!isset($decodedToken['user.id'])) {
+                $this->errorsArray['token'] = 'Invalid token';
+                return null;
+            }
+
+            $user = $this->find($decodedToken['user.id']);
+
+            if (!$user) {
+                $this->errorsArray['token'] = 'User not found';
+                return null;
+            }
+
+            return true;
         } catch (\Throwable $th) {
             $this->errorsArray['token'] = $th->getMessage();
             return null;
