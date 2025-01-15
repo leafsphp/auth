@@ -757,10 +757,15 @@ class Auth
                 return null;
             }
 
-            $user = $this->find($decodedToken['user.email']);
+            $user = $this->find($decodedToken['user.id']);
 
             if (!$user) {
                 $this->errorsArray['token'] = 'User not found';
+                return null;
+            }
+
+            if ($user->email !== $decodedToken['user.email']) {
+                $this->errorsArray['token'] = 'Invalid token';
                 return null;
             }
 
