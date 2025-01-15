@@ -35,12 +35,12 @@ trait UsesRoles
         $roleKey = Config::get('roles.key');
 
         if (!($this->data[$roleKey] ?? null)) {
-            $this->db->query("ALTER TABLE users ADD COLUMN $roleKey TEXT NOT NULL DEFAULT '[]'")->execute();
+            $this->db->query("ALTER TABLE " . Config::get('db.table') . " ADD COLUMN $roleKey TEXT NOT NULL DEFAULT '[]'")->execute();
         }
 
         try {
             $this->db
-                ->update('users')
+                ->update(Config::get('db.table'))
                 ->params([
                     $roleKey => json_encode($this->roles)
                 ])
@@ -129,7 +129,7 @@ trait UsesRoles
         $this->permissions = $this->getRolePermissions($this->roles);
 
         $this->db
-            ->update('users')
+            ->update(Config::get('db.table'))
             ->params([
                 Config::get('roles.key') => json_encode($this->roles)
             ])
