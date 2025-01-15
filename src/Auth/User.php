@@ -191,7 +191,7 @@ class User
         }
 
         if (!isset($this->data['email_verified_at'])) {
-            $this->db->query("ALTER TABLE " . Config::get('db.table') . " ADD COLUMN email_verified_at TIMESTAMP NULL DEFAULT NULL")->execute();
+            $this->db->query('ALTER TABLE ' . Config::get('db.table') . ' ADD COLUMN email_verified_at TIMESTAMP NULL DEFAULT NULL')->execute();
         }
 
         $this->data['email_verified_at'] = tick()->format(Config::get('timestamps.format'));
