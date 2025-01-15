@@ -752,12 +752,12 @@ class Auth
                 new Key(Config::get('token.secret') . '-verification', 'HS256')
             );
 
-            if (!isset($decodedToken['user.id'])) {
+            if (!isset($decodedToken['user.email'])) {
                 $this->errorsArray['token'] = 'Invalid token';
                 return null;
             }
 
-            $user = $this->find($decodedToken['user.id']);
+            $user = $this->find($decodedToken['user.email']);
 
             if (!$user) {
                 $this->errorsArray['token'] = 'User not found';
