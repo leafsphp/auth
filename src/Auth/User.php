@@ -190,7 +190,7 @@ class User
             return true;
         }
 
-        if (!isset($this->data['email_verified_at'])) {
+        if (!array_key_exists('email_verified_at', $this->data)) {
             $this->db->query('ALTER TABLE ' . Config::get('db.table') . ' ADD COLUMN email_verified_at TIMESTAMP NULL DEFAULT NULL')->execute();
         }
 
