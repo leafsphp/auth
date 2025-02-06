@@ -35,7 +35,7 @@ trait UsesRoles
         $roleKey = Config::get('roles.key');
 
         if (!($this->data[$roleKey] ?? null)) {
-            $this->db->query('ALTER TABLE ' . Config::get('db.table') . " ADD COLUMN $roleKey TEXT NOT NULL DEFAULT '[]'")->execute();
+            $this->db->query('ALTER TABLE ' . Config::get('db.table') . " ADD COLUMN $roleKey TEXT NOT NULL")->execute();
         }
 
         try {
