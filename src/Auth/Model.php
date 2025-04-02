@@ -2,6 +2,9 @@
 
 namespace Leaf\Auth;
 
+use PDO;
+use PDOStatement;
+
 /**
  * Auth User Model
  * ----
@@ -44,9 +47,9 @@ class Model
      *
      * @param array $data Data to be inserted
      *
-     * @return bool
+     * @return PDOStatement|null
      */
-    public function create(array $data): bool
+    public function create(array $data): ?PDOStatement
     {
         $data['user_id'] = $this->user->id();
 
@@ -56,7 +59,7 @@ class Model
             $data['updated_at'] = $now;
         }
 
-        return $this->db->table($this->table)->insert($data)->execute();
+        return $this->db->insert($this->table)->params($data)->execute();
     }
 
     /**
@@ -102,9 +105,9 @@ class Model
     /**
      * Save a model resource
      *
-     * @return bool
+     * @return PDOStatement|null
      */
-    public function save(): bool
+    public function save(): ?PDOStatement
     {
         $success = $this->create($this->dataToSave);
 
