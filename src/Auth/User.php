@@ -16,6 +16,7 @@ use Leaf\Http\Session;
 class User
 {
     use UsesRoles;
+    use UsesSubscriptions;
 
     /**
      * Internal instance of Leaf database
