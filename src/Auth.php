@@ -444,7 +444,7 @@ class Auth
      */
     public function find($id)
     {
-		$this->checkDbConnection();
+        $this->checkDbConnection();
 
         $userData = $this->db->select(Config::get('db.table'))->find($id);
 
