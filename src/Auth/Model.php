@@ -2,7 +2,6 @@
 
 namespace Leaf\Auth;
 
-use PDO;
 use PDOStatement;
 
 /**
