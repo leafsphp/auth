@@ -24,18 +24,50 @@ trait UsesSubscriptions
      * @param string|array $subscription The subscription to assign
      * @return array|null
      */
-    public function subscription()
+    public function subscription(): ?array
     {
-        if (!$this->subscription) {
-            $this->subscription = db()
+        if (
+            !$this->subscription && $this->subscription = db()
                 ->select('subscriptions')
                 ->where('user_id', $this->id())
-                ->first();
-
+                ->first() ?? null
+        ) {
             $this->subscription['tier'] = billing()->tier($this->subscription['plan_id']);
         }
 
         return $this->subscription;
     }
 
+    /**
+     * Check if user has a subscription
+     * @return bool
+     */
+    public function hasSubscription(): bool
+    {
+        return $this->subscription() && $this->subscription['status'] !== \Leaf\Billing\Subscription::STATUS_CANCELLED;
+    }
+
+    /**
+     * Check if user has an active subscription
+     * @return bool
+     */
+    public function hasActiveSubscription(): bool
+    {
+        return $this->subscription() && ($this->subscription['status'] === \Leaf\Billing\Subscription::STATUS_ACTIVE || $this->subscription['status'] === \Leaf\Billing\Subscription::STATUS_TRIAL);
+    }
+
+    /**
+     * Cancel current subscription
+     * @return bool
+     */
+    public function cancelSubscription(): bool
+    {
+        $subscription = $this->subscription();
+
+        if (!$subscription) {
+            return true;
+        }
+
+        return billing()->cancelSubcription($subscription['subscription_id']);
+    }
 }
