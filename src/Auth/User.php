@@ -97,7 +97,7 @@ class User
      */
     public function id()
     {
-        return $this->data['id'] ?? null;
+        return $this->data[Config::get('id.key')] ?? null;
     }
 
     /**

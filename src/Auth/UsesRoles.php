@@ -44,7 +44,7 @@ trait UsesRoles
                 ->params([
                     $roleKey => json_encode($this->roles)
                 ])
-                ->where(Config::get('id.key'), $this->data['id'])
+                ->where(Config::get('id.key'), $this->data[Config::get('id.key')])
                 ->execute();
         } catch (\Throwable $th) {
             return false;
@@ -133,7 +133,7 @@ trait UsesRoles
             ->params([
                 Config::get('roles.key') => json_encode($this->roles)
             ])
-            ->where(Config::get('id.key'), $this->data['id'])
+            ->where(Config::get('id.key'), $this->data[Config::get('id.key')])
             ->execute();
     }
 
