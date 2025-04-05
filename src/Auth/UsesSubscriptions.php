@@ -27,15 +27,17 @@ trait UsesSubscriptions
     public function subscription(): ?array
     {
         if (
-            !$this->subscription && $this->subscription = db()
-                ->select('subscriptions')
-                ->where('user_id', $this->id())
-                ->first() ?? null
+            !$this->subscription && (
+                $this->subscription = db()
+                    ->select('subscriptions')
+                    ->where('user_id', $this->id())
+                    ->first()
+            )
         ) {
             $this->subscription['tier'] = billing()->tier($this->subscription['plan_id']);
         }
 
-        return $this->subscription;
+        return $this->subscription ? $this->subscription : null;
     }
 
     /**
