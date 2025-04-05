@@ -446,7 +446,7 @@ class Auth
     {
         $this->checkDbConnection();
 
-        $userData = $this->db->select(Config::get('db.table'))->find($id);
+        $userData = $this->db->select(Config::get('db.table'))->where(Config::get('id.key'), $id)->first();
 
         if (!$userData) {
             return null;
