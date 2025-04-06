@@ -26,6 +26,10 @@ trait UsesSubscriptions
      */
     public function subscription(): ?array
     {
+        if (billing()->tiers() === []) {
+            return null;
+        }
+
         if (
             !$this->subscription && (
                 $this->subscription = db()
