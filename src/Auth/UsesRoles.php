@@ -86,7 +86,7 @@ trait UsesRoles
             return count(array_intersect($role, $this->roles)) > 0;
         }
 
-        return in_array($role, haystack: $this->roles);
+        return in_array($role, $this->roles);
     }
 
     /**

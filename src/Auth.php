@@ -665,7 +665,7 @@ class Auth
 
         if ($middleware === 'is') {
             return app()->registerMiddleware('is', function ($role) use ($callback) {
-                if (!$this->user() || $this->user()?->isNot($role)) {
+                if (!$this->user() || ($this->user() && $this->user()->isNot($role))) {
                     $callback($role);
                     exit;
                 }
@@ -674,7 +674,7 @@ class Auth
 
         if ($middleware === 'isNot') {
             return app()->registerMiddleware('isNot', function ($role) use ($callback) {
-                if (!$this->user() || $this->user()?->is($role)) {
+                if (!$this->user() || ($this->user() && $this->user()->is($role))) {
                     $callback($role);
                     exit;
                 }
@@ -683,7 +683,7 @@ class Auth
 
         if ($middleware === 'can') {
             return app()->registerMiddleware('can', function ($role) use ($callback) {
-                if (!$this->user() || $this->user()?->cannot($role)) {
+                if (!$this->user() || ($this->user() && $this->user()->cannot($role))) {
                     $callback($role);
                     exit;
                 }
@@ -692,7 +692,7 @@ class Auth
 
         if ($middleware === 'cannot') {
             return app()->registerMiddleware('cannot', function ($role) use ($callback) {
-                if (!$this->user() || $this->user()?->can($role)) {
+                if (!$this->user() || ($this->user() && $this->user()->can($role))) {
                     $callback($role);
                     exit;
                 }
