@@ -745,6 +745,7 @@ class Auth
     /**
      * Verify a user's token
      * @param string $token The token to verify
+     * @return User|null
      */
     public function verifyToken(string $token)
     {
@@ -771,7 +772,7 @@ class Auth
                 return null;
             }
 
-            return true;
+            return $user;
         } catch (\Throwable $th) {
             $this->errorsArray['token'] = $th->getMessage();
             return null;
