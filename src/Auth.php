@@ -195,6 +195,10 @@ class Auth
             unset($credentials[$passwordKey]);
         }
 
+        if (isset($credentials['email'])) {
+            $credentials['email'] = strtolower($credentials['email']);
+        }
+
         try {
             $user = $this->db->select($table)->where($credentials)->first();
 
@@ -252,6 +256,10 @@ class Auth
             $userData['updated_at'] = $now;
         }
 
+        if (isset($userData['email'])) {
+            $userData['email'] = strtolower($userData['email']);
+        }
+
         if (isset($credentials[Config::get('id.key')])) {
             $userData[Config::get('id.key')] = is_callable($userData[Config::get('id.key')])
                 ? call_user_func($userData[Config::get('id.key')])
@@ -304,6 +312,10 @@ class Auth
 
         if (Config::get('timestamps')) {
             $userData['updated_at'] = (new Date())->tick()->format(Config::get('timestamps.format'));
+        }
+
+        if (isset($userData['email'])) {
+            $userData['email'] = strtolower($userData['email']);
         }
 
         if (count(Config::get('unique')) > 0) {
@@ -480,6 +492,10 @@ class Auth
             $now = (new Date())->tick()->format(Config::get('timestamps.format'));
             $userData['created_at'] = $now;
             $userData['updated_at'] = $now;
+        }
+
+        if (isset($userData['email'])) {
+            $userData['email'] = strtolower($userData['email']);
         }
 
         if (isset($credentials[Config::get('id.key')])) {
