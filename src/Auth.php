@@ -763,7 +763,7 @@ class Auth
      * @param string $token The token to verify
      * @return User|null
      */
-    public function verifyToken(string $token)
+    public function verifyToken(string $token, ?string $purpose = null)
     {
         try {
             $decodedToken = (array) JWT::decode(
@@ -784,6 +784,11 @@ class Auth
             }
 
             if ($user->email !== $decodedToken['user.email']) {
+                $this->errorsArray['token'] = 'Invalid token';
+                return null;
+            }
+
+            if ($purpose && (!isset($decodedToken['token.purpose']) || $decodedToken['token.purpose'] !== $purpose)) {
                 $this->errorsArray['token'] = 'Invalid token';
                 return null;
             }

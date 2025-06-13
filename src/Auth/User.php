@@ -154,9 +154,10 @@ class User
     /**
      * Generate a verification token for the user
      * @param mixed $expiresIn Token expiration time
+     * @param string|null $purpose Purpose of the token
      * @return string
      */
-    public function generateVerificationToken($expiresIn = null): string
+    public function generateVerificationToken($expiresIn = null, ?string $purpose = null): string
     {
         $userIdKey = Config::get('id.key');
         $secretPhrase = Config::get('token.secret') . '-verification';
@@ -168,6 +169,10 @@ class User
             'exp' => $expiresIn ?? (time() + 600),
             'iss' => $_SERVER['HTTP_HOST'] ?? 'localhost',
         ];
+
+        if ($purpose) {
+            $payload['token.purpose'] = $purpose;
+        }
 
         return JWT::encode($payload, $secretPhrase, 'HS256');
     }
