@@ -38,6 +38,11 @@ class Auth
      */
     protected $errorsArray = [];
 
+    /**
+     * Configured oauth clients
+     */
+    protected $oauthClients = [];
+
     public function __construct()
     {
         $this->middleware('auth.required', function () {
@@ -87,6 +92,21 @@ class Auth
         $this->middleware('auth.unverified', function () {
             response()->redirect('/dashboard');
         });
+
+        if (
+            class_exists('League\OAuth2\Client\Provider\Google') &&
+            _env('GOOGLE_AUTH_CLIENT_ID') &&
+            _env('GOOGLE_AUTH_CLIENT_SECRET')
+        ) {
+            $this->withGoogle(
+                _env('GOOGLE_AUTH_CLIENT_ID'),
+                _env('GOOGLE_AUTH_CLIENT_SECRET'),
+                [
+                    'name' => 'google',
+                    'redirectUri' => _env('GOOGLE_AUTH_REDIRECT_URI', _env('APP_URL') . '/auth/register/google'),
+                ]
+            );
+        }
     }
 
     /**
@@ -128,6 +148,47 @@ class Auth
         $this->db->connection($connection);
 
         return $this;
+    }
+
+    /**
+     * Register a Google OAuth client
+     * ---
+     * Register a Google OAuth client to use with Leaf Auth, should be a league/oauth2-client compatible client.
+     * @param string $clientId
+     * @param string $clientSecret
+     * @param array $options
+     * @return static
+     */
+    public function withGoogle(
+        string $clientId,
+        string $clientSecret,
+        array $options = []
+    ) {
+        $clientName = $options['name'] ?? 'google';
+
+        unset($options['name']);
+
+        if (!isset($options['redirectUri'])) {
+            $options['redirectUri'] = _env('APP_URL') . '/auth/google/callback';
+        }
+
+        $this->oauthClients[$clientName] = new \League\OAuth2\Client\Provider\Google(array_merge([
+            'clientId' => $clientId,
+            'clientSecret' => $clientSecret,
+            'redirectUri' => $options['redirectUri'],
+        ], $options));
+
+        return $this;
+    }
+
+    /**
+     * Return an oauth client
+     * @param string $clientName The name of the client to return
+     * @return \League\OAuth2\Client\Provider\AbstractProvider|null
+     */
+    public function client(string $clientName)
+    {
+        return $this->oauthClients[$clientName] ?? null;
     }
 
     /**
@@ -429,7 +490,11 @@ class Auth
         $this->checkDbConnection();
         $this->config('password.key', false);
 
-        $user = $this->db->select(Config::get('db.table'))->where($userData['user'])->first();
+        $user = $this->db->select(Config::get('db.table'))
+            ->where([
+                'email' => $userData['user']['email'] ?? null,
+            ])
+            ->first();
 
         Config::setUserCache('oauth-token', $userData['token']);
 
