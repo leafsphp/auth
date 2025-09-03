@@ -172,12 +172,26 @@ class Auth
             $options['redirectUri'] = _env('APP_URL') . '/auth/google/callback';
         }
 
-        $this->oauthClients[$clientName] = new \League\OAuth2\Client\Provider\Google(array_merge([
+        $this->withProvider($clientName, new \League\OAuth2\Client\Provider\Google(array_merge([
             'clientId' => $clientId,
             'clientSecret' => $clientSecret,
             'redirectUri' => $options['redirectUri'],
-        ], $options));
+        ], $options)));
 
+        return $this;
+    }
+
+    /**
+     * Register a generic OAuth client
+     * ---
+     * Register a generic OAuth client to use with Leaf Auth, should be a league/oauth2-client compatible client.
+     * @param string $clientName The name of the client to register
+     * @param \League\OAuth2\Client\Provider\AbstractProvider $client An instance of a league/oauth2-client compatible client
+     * @return static
+     */
+    public function withProvider(string $clientName, $client)
+    {
+        $this->oauthClients[$clientName] = $client;
         return $this;
     }
 
