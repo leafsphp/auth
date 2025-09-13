@@ -10,18 +10,23 @@ function getDatabaseConnection(): array
 {
     return [
         'dbtype' => 'pgsql',
-        'port' => '5432',
-        'host' => 'ep-autumn-block-a28alwsy.eu-central-1.aws.neon.tech',
-        'username' => 'sandbox_owner',
-        'password' => 'WH1qpBIf7LYc',
-        'dbname' => 'sandbox',
+        'port' => '6543',
+        'host' => 'aws-1-eu-west-2.pooler.supabase.com',
+        'username' => 'postgres.vljhbheaihorcnvlkljw',
+        'password' => 'DV!GE7Aq6C8F55g',
+        'dbname' => 'postgres',
     ];
 }
 
 function dbInstance(): \Leaf\Db
 {
     $db = new \Leaf\Db();
-    $db->connect(getDatabaseConnection());
+
+    try {
+        $db->connect(getDatabaseConnection());
+    } catch (\Throwable $th) {
+        throw $th;
+    }
 
     return $db;
 }
