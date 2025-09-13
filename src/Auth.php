@@ -45,53 +45,55 @@ class Auth
 
     public function __construct()
     {
-        $this->middleware('auth.required', function () {
-            response()->redirect('/auth/login');
-        });
+        if (class_exists('Leaf\App')) {
+            $this->middleware('auth.required', function () {
+                response()->redirect('/auth/login');
+            });
 
-        $this->middleware('auth.guest', function () {
-            response()->redirect('/dashboard');
-        });
+            $this->middleware('auth.guest', function () {
+                response()->redirect('/dashboard');
+            });
 
-        $this->middleware('is', function ($role) {
-            \Leaf\Exception\General::error(
-                '404',
-                '<p>The page you are looking for could not be found.</p>',
-                403
-            );
-        });
+            $this->middleware('is', function ($role) {
+                \Leaf\Exception\General::error(
+                    '404',
+                    '<p>The page you are looking for could not be found.</p>',
+                    403
+                );
+            });
 
-        $this->middleware('isNot', function () {
-            \Leaf\Exception\General::error(
-                '404',
-                '<p>The page you are looking for could not be found.</p>',
-                403
-            );
-        });
+            $this->middleware('isNot', function () {
+                \Leaf\Exception\General::error(
+                    '404',
+                    '<p>The page you are looking for could not be found.</p>',
+                    403
+                );
+            });
 
-        $this->middleware('can', function () {
-            \Leaf\Exception\General::error(
-                '404',
-                '<p>The page you are looking for could not be found.</p>',
-                403
-            );
-        });
+            $this->middleware('can', function () {
+                \Leaf\Exception\General::error(
+                    '404',
+                    '<p>The page you are looking for could not be found.</p>',
+                    403
+                );
+            });
 
-        $this->middleware('cannot', function () {
-            \Leaf\Exception\General::error(
-                '404',
-                '<p>The page you are looking for could not be found.</p>',
-                403
-            );
-        });
+            $this->middleware('cannot', function () {
+                \Leaf\Exception\General::error(
+                    '404',
+                    '<p>The page you are looking for could not be found.</p>',
+                    403
+                );
+            });
 
-        $this->middleware('auth.verified', function () {
-            response()->redirect('/auth/verify');
-        });
+            $this->middleware('auth.verified', function () {
+                response()->redirect('/auth/verify');
+            });
 
-        $this->middleware('auth.unverified', function () {
-            response()->redirect('/dashboard');
-        });
+            $this->middleware('auth.unverified', function () {
+                response()->redirect('/dashboard');
+            });
+        }
 
         if (
             class_exists('League\OAuth2\Client\Provider\Google') &&
