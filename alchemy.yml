@@ -3,11 +3,14 @@ app:
 
 tests:
   engine: pest
-  parallel: true
+  parallel: false
   paths:
     - tests
   files:
     - '*.test.php'
+  coverage:
+    local: false
+    actions: true
 
 lint:
   preset: PSR12

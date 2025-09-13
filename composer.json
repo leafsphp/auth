@@ -48,11 +48,11 @@
     "require-dev": {
         "pestphp/pest": "^1.0 | ^2.0",
         "friendsofphp/php-cs-fixer": "^3.64",
-        "leafs/alchemy": "^2.0"
+        "leafs/alchemy": "*"
     },
     "scripts": {
-        "test": "./vendor/bin/alchemy setup --test",
         "alchemy": "./vendor/bin/alchemy setup",
+        "test": "./vendor/bin/alchemy setup --test",
         "lint": "./vendor/bin/alchemy setup --lint",
         "actions": "./vendor/bin/alchemy setup --actions"
     }
