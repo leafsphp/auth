@@ -221,8 +221,8 @@ class Auth
 
         Config::set(
             is_string($config)
-            ? [$config => $value]
-            : $config
+                ? [$config => $value]
+                : $config
         );
     }
 
