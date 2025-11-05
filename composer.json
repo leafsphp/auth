@@ -42,13 +42,16 @@
     },
     "config": {
         "allow-plugins": {
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
         }
     },
     "require-dev": {
         "pestphp/pest": "^1.0 | ^2.0",
         "friendsofphp/php-cs-fixer": "^3.64",
-        "leafs/alchemy": "*"
+        "leafs/alchemy": "*",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/extension-installer": "^1.4"
     },
     "scripts": {
         "alchemy": "./vendor/bin/alchemy setup",
