@@ -1,0 +1,97 @@
+parameters:
+	ignoreErrors:
+		-
+			rawMessage: 'Call to static method error() on an unknown class Leaf\Exception\General.'
+			identifier: class.notFound
+			count: 4
+			path: src/Auth.php
+
+		-
+			rawMessage: Function _env not found.
+			identifier: function.notFound
+			count: 7
+			path: src/Auth.php
+
+		-
+			rawMessage: Function app not found.
+			identifier: function.notFound
+			count: 9
+			path: src/Auth.php
+
+		-
+			rawMessage: Instantiated class League\OAuth2\Client\Provider\Google not found.
+			identifier: class.notFound
+			count: 1
+			path: src/Auth.php
+
+		-
+			rawMessage: Access to constant STATUS_ACTIVE on an unknown class Leaf\Billing\Subscription.
+			identifier: class.notFound
+			count: 1
+			path: src/Auth/User.php
+
+		-
+			rawMessage: Access to constant STATUS_CANCELLED on an unknown class Leaf\Billing\Subscription.
+			identifier: class.notFound
+			count: 1
+			path: src/Auth/User.php
+
+		-
+			rawMessage: Access to constant STATUS_TRIAL on an unknown class Leaf\Billing\Subscription.
+			identifier: class.notFound
+			count: 1
+			path: src/Auth/User.php
+
+		-
+			rawMessage: Function billing not found.
+			identifier: function.notFound
+			count: 3
+			path: src/Auth/User.php
+
+		-
+			rawMessage: 'Call to static method get() on an unknown class Leaf\Config.'
+			identifier: class.notFound
+			count: 1
+			path: src/functions.php
+
+		-
+			rawMessage: 'Call to static method getStatic() on an unknown class Leaf\Config.'
+			identifier: class.notFound
+			count: 1
+			path: src/functions.php
+
+		-
+			rawMessage: 'Call to static method singleton() on an unknown class Leaf\Config.'
+			identifier: class.notFound
+			count: 1
+			path: src/functions.php
+
+		-
+			rawMessage: 'Undefined variable: $this'
+			identifier: variable.undefined
+			count: 1
+			path: tests/register.test.php
+
+		-
+			rawMessage: Function createUsersTable not found.
+			identifier: function.notFound
+			count: 1
+			path: tests/table.test.php
+
+		-
+			rawMessage: 'Undefined variable: $this'
+			identifier: variable.undefined
+			count: 5
+			path: tests/table.test.php
+
+		-
+			rawMessage: 'Undefined variable: $this'
+			identifier: variable.undefined
+			count: 7
+			path: tests/update.test.php
+
+		-
+			rawMessage: 'Undefined variable: $this'
+			identifier: variable.undefined
+			count: 2
+			path: tests/user.test.php
