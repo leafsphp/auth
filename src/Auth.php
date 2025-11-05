@@ -2,12 +2,17 @@
 
 namespace Leaf;
 
+use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Leaf\Auth\Config;
 use Leaf\Auth\User;
+use Leaf\Exception\General;
 use Leaf\Helpers\Password;
 use Leaf\Http\Session;
+use League\OAuth2\Client\Provider\Google;
+use PDO;
+use Throwable;
 
 /**
  * Leaf Simple Auth
@@ -55,7 +60,7 @@ class Auth
             });
 
             $this->middleware('is', function ($role) {
-                \Leaf\Exception\General::error(
+                General::error(
                     '404',
                     '<p>The page you are looking for could not be found.</p>',
                     403
@@ -63,7 +68,7 @@ class Auth
             });
 
             $this->middleware('isNot', function () {
-                \Leaf\Exception\General::error(
+                General::error(
                     '404',
                     '<p>The page you are looking for could not be found.</p>',
                     403
@@ -71,7 +76,7 @@ class Auth
             });
 
             $this->middleware('can', function () {
-                \Leaf\Exception\General::error(
+                General::error(
                     '404',
                     '<p>The page you are looking for could not be found.</p>',
                     403
@@ -79,7 +84,7 @@ class Auth
             });
 
             $this->middleware('cannot', function () {
-                \Leaf\Exception\General::error(
+                General::error(
                     '404',
                     '<p>The page you are looking for could not be found.</p>',
                     403
@@ -141,10 +146,10 @@ class Auth
     /**
      * Pass in db connection instance directly
      *
-     * @param \PDO $connection A connection instance of your db
+     * @param PDO $connection A connection instance of your db
      * @return $this;
      */
-    public function dbConnection(\PDO $connection)
+    public function dbConnection(PDO $connection)
     {
         $this->db = new Db();
         $this->db->connection($connection);
@@ -174,7 +179,7 @@ class Auth
             $options['redirectUri'] = _env('APP_URL') . '/auth/google/callback';
         }
 
-        $this->withProvider($clientName, new \League\OAuth2\Client\Provider\Google(array_merge([
+        $this->withProvider($clientName, new Google(array_merge([
             'clientId' => $clientId,
             'clientSecret' => $clientSecret,
             'redirectUri' => $options['redirectUri'],
@@ -283,8 +288,8 @@ class Auth
                 $this->errorsArray['auth'] = Config::get('messages.loginParamsError');
                 return false;
             }
-        } catch (\Throwable $th) {
-            throw new \Exception($th->getMessage());
+        } catch (Throwable $th) {
+            throw new Exception($th->getMessage());
         }
 
         if ($passwordKey !== false) {
@@ -350,8 +355,8 @@ class Auth
                 $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
                 return false;
             }
-        } catch (\Throwable $th) {
-            throw new \Exception($th->getMessage());
+        } catch (Throwable $th) {
+            throw new Exception($th->getMessage());
         }
 
         $user = $this->db->select($table)->where($userData)->first();
@@ -420,8 +425,8 @@ class Auth
                 $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
                 return false;
             }
-        } catch (\Throwable $th) {
-            throw new \Exception($th->getMessage());
+        } catch (Throwable $th) {
+            throw new Exception($th->getMessage());
         }
 
         if (Config::get('session')) {
@@ -483,8 +488,8 @@ class Auth
                 $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
                 return false;
             }
-        } catch (\Throwable $th) {
-            throw new \Exception($th->getMessage());
+        } catch (Throwable $th) {
+            throw new Exception($th->getMessage());
         }
 
         $this->user->{$passwordKey} = $newPassword;
@@ -592,8 +597,8 @@ class Auth
                 $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
                 return false;
             }
-        } catch (\Throwable $th) {
-            throw new \Exception($th->getMessage());
+        } catch (Throwable $th) {
+            throw new Exception($th->getMessage());
         }
 
         $user = $this->db->select($table)->where($userData)->first();
@@ -690,8 +695,8 @@ class Auth
                 $this->errorsArray = $this->db->errors();
                 return null;
             }
-        } catch (\Throwable $th) {
-            throw new \Exception($th->getMessage());
+        } catch (Throwable $th) {
+            throw new Exception($th->getMessage());
         }
 
         return $this->user = (new User(
@@ -736,8 +741,8 @@ class Auth
      */
     public function middleware(string $middleware, callable $callback)
     {
-        if (!class_exists(\Leaf\App::class)) {
-            throw new \Exception('This feature is only available for Leaf apps');
+        if (!class_exists(App::class)) {
+            throw new Exception('This feature is only available for Leaf apps');
         }
 
         if ($middleware === 'auth.required') {
@@ -833,7 +838,7 @@ class Auth
                 $bearerToken,
                 new Key(Config::get('token.secret'), 'HS256')
             );
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $this->errorsArray['token'] = $th->getMessage();
             return null;
         }
@@ -875,7 +880,7 @@ class Auth
             }
 
             return $user;
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $this->errorsArray['token'] = $th->getMessage();
             return null;
         }
@@ -894,13 +899,13 @@ class Auth
     protected function checkDbConnection(): void
     {
         if (!$this->db && function_exists('db')) {
-            if (db()->connection() instanceof \PDO || db()->autoConnect()) {
+            if (db()->connection() instanceof PDO || db()->autoConnect()) {
                 $this->db = db();
             }
         }
 
         if (!$this->db) {
-            throw new \Exception('You need to connect to your database first');
+            throw new Exception('You need to connect to your database first');
         }
     }
 
@@ -916,7 +921,7 @@ class Auth
     protected function sessionCheck()
     {
         if (!Config::get('session')) {
-            throw new \Exception('Turn on sessions to use this feature.');
+            throw new Exception('Turn on sessions to use this feature.');
         }
     }
 
