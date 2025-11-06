@@ -14,7 +14,7 @@ trait UsesSubscriptions
 {
     /**
      * User Subscription
-     * @var mixed[]|null
+     * @var array<string, mixed>|null
      */
     protected $subscription = null;
 
@@ -49,7 +49,7 @@ trait UsesSubscriptions
      */
     public function hasSubscription(): bool
     {
-        return $this->subscription() && $this->subscription['status'] !== \Leaf\Billing\Subscription::STATUS_CANCELLED;
+        return $this->subscription() && ($this->subscription['status'] ?? null) !== \Leaf\Billing\Subscription::STATUS_CANCELLED;
     }
 
     /**
@@ -58,7 +58,7 @@ trait UsesSubscriptions
      */
     public function hasActiveSubscription(): bool
     {
-        return $this->subscription() && ($this->subscription['status'] === \Leaf\Billing\Subscription::STATUS_ACTIVE || $this->subscription['status'] === \Leaf\Billing\Subscription::STATUS_TRIAL);
+        return $this->subscription() && (($this->subscription['status'] ?? null) === \Leaf\Billing\Subscription::STATUS_ACTIVE || ($this->subscription['status'] ?? null) === \Leaf\Billing\Subscription::STATUS_TRIAL);
     }
 
     /**
