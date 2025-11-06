@@ -7,42 +7,6 @@ parameters:
 			path: src/Auth.php
 
 		-
-			rawMessage: 'Call to static method error() on an unknown class Leaf\Exception\General.'
-			identifier: class.notFound
-			count: 4
-			path: src/Auth.php
-
-		-
-			rawMessage: Function _env not found.
-			identifier: function.notFound
-			count: 7
-			path: src/Auth.php
-
-		-
-			rawMessage: Function app not found.
-			identifier: function.notFound
-			count: 9
-			path: src/Auth.php
-
-		-
-			rawMessage: Instantiated class League\OAuth2\Client\Provider\Google not found.
-			identifier: class.notFound
-			count: 1
-			path: src/Auth.php
-
-		-
-			rawMessage: 'Method Leaf\Auth::client() has invalid return type League\OAuth2\Client\Provider\AbstractProvider.'
-			identifier: class.notFound
-			count: 1
-			path: src/Auth.php
-
-		-
-			rawMessage: 'Parameter $client of method Leaf\Auth::withProvider() has invalid type League\OAuth2\Client\Provider\AbstractProvider.'
-			identifier: class.notFound
-			count: 1
-			path: src/Auth.php
-
-		-
 			rawMessage: 'Variable $credentials in isset() is never defined.'
 			identifier: isset.variable
 			count: 2
@@ -73,22 +37,28 @@ parameters:
 			path: src/Auth/User.php
 
 		-
-			rawMessage: 'Call to static method get() on an unknown class Leaf\Config.'
-			identifier: class.notFound
+			rawMessage: 'Function createTableForUsers() has parameter $table with no type specified.'
+			identifier: missingType.parameter
 			count: 1
-			path: src/functions.php
+			path: tests/Pest.php
 
 		-
-			rawMessage: 'Call to static method getStatic() on an unknown class Leaf\Config.'
-			identifier: class.notFound
+			rawMessage: 'Function deleteUser() has no return type specified.'
+			identifier: missingType.return
 			count: 1
-			path: src/functions.php
+			path: tests/Pest.php
 
 		-
-			rawMessage: 'Call to static method singleton() on an unknown class Leaf\Config.'
-			identifier: class.notFound
+			rawMessage: 'Function deleteUser() has parameter $table with no type specified.'
+			identifier: missingType.parameter
 			count: 1
-			path: src/functions.php
+			path: tests/Pest.php
+
+		-
+			rawMessage: 'Function getDatabaseConnection() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/Pest.php
 
 		-
 			rawMessage: Access to an undefined property Leaf\Auth\User::$username.

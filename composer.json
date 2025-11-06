@@ -51,7 +51,9 @@
         "friendsofphp/php-cs-fixer": "^3.64",
         "leafs/alchemy": "*",
         "phpstan/phpstan": "^2.1",
-        "phpstan/extension-installer": "^1.4"
+        "phpstan/extension-installer": "^1.4",
+        "leafs/leaf": "^4.4",
+        "league/oauth2-google": "^4.0"
     },
     "scripts": {
         "alchemy": "./vendor/bin/alchemy setup",
