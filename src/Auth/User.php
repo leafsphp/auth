@@ -20,7 +20,7 @@ class User
 
     /**
      * Internal instance of Leaf database
-     * @var \Leaf\DB
+     * @var \Leaf\Db
      */
     protected $db;
 
