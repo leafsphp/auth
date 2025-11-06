@@ -142,7 +142,7 @@ class Auth
      * Pass in db connection instance directly
      *
      * @param \PDO $connection A connection instance of your db
-     * @return $this;
+     * @return $this
      */
     public function dbConnection(\PDO $connection)
     {
@@ -553,7 +553,7 @@ class Auth
      * ---
      * Create an account for another user
      *
-     * @param array The user details to save
+     * @param array $userData The user details to save
      */
     public function createUserFor($userData)
     {
@@ -619,7 +619,7 @@ class Auth
      * ---
      * Sign out the currently authenticated user
      *
-     * @param string|array|callable|null $redirectUrl Redirect to this url after logout
+     * @param string|array|callable|null $action Redirect to this url after logout
      * @return bool
      */
     public function logout($action = null): bool
