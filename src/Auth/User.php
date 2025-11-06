@@ -30,16 +30,21 @@ class User
      */
     protected $session;
 
-    /**
-     * User Information
-     */
+    /** @var array<string, mixed> User Information */
     protected array $data = [];
 
     /**
-     * User Tokens
+     * @var array{
+     *     access?: string,
+     *     refresh?: string,
+     * } User Tokens
      */
     protected array $tokens = [];
 
+    /**
+     * @param array<string, mixed> $data
+     * @param bool $session
+     */
     public function __construct($data, $session = true)
     {
         $this->data = $data;
@@ -125,7 +130,10 @@ class User
 
     /**
      * Return generated tokens
-     * @return array
+     * @return array{
+     *     access?: string,
+     *     refresh?: string,
+     * }
      */
     public function tokens(): array
     {
@@ -134,6 +142,7 @@ class User
 
     /**
      * Generate a new JWT for the user
+     * @param int $tokenLifetime
      * @return string
      */
     public function generateToken($tokenLifetime): string
@@ -214,6 +223,7 @@ class User
         }
     }
 
+    /** @return array<string, mixed> */
     public function get()
     {
         $userData = $this->data;
@@ -258,6 +268,10 @@ class User
         return json_encode($this->get());
     }
 
+    /**
+     * @param string $name
+     * @return ?mixed
+     */
     public function __get($name)
     {
         // using data instead of get() here because
@@ -266,16 +280,29 @@ class User
         return $this->data[$name] ?? null;
     }
 
+    /**
+     * @param string $name
+     * @param mixed $value
+     * @return void
+     */
     public function __set($name, $value)
     {
         $this->data[$name] = $value;
     }
 
+    /**
+     * @param string $name
+     * @return bool
+     */
     public function __isset($name)
     {
         return isset($this->data[$name]);
     }
 
+    /**
+     * @param string $name
+     * @return void
+     */
     public function __unset($name)
     {
         unset($this->data[$name]);

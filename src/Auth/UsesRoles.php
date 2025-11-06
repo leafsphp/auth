@@ -12,20 +12,16 @@ namespace Leaf\Auth;
  */
 trait UsesRoles
 {
-    /**
-     * User Permissions
-     */
+    /** @var string[] User Permissions */
     protected array $permissions = [];
 
-    /**
-     * User Roles
-     */
+    /** @var string[] User Roles */
     protected array $roles = [];
 
     /**
      * Assign new role to user
      *
-     * @param string|array $role The role to assign
+     * @param string|string[] $role The role to assign
      * @return bool
      */
     public function assign($role): bool
@@ -55,7 +51,7 @@ trait UsesRoles
 
     /**
      * Check if user has a permission
-     * @param string|array $permission The permission(s) to check
+     * @param string|string[] $permission The permission(s) to check
      * @return bool
      */
     public function can($permission): bool
@@ -69,6 +65,7 @@ trait UsesRoles
 
     /**
      * Check if a user does not have a permission
+     * @param string[] $permission
      */
     public function cannot($permission): bool
     {
@@ -77,7 +74,7 @@ trait UsesRoles
 
     /**
      * Check if user has a role
-     * @param string|array $role The role(s) to check
+     * @param string|string[] $role The role(s) to check
      * @return bool
      */
     public function is($role): bool
@@ -91,6 +88,7 @@ trait UsesRoles
 
     /**
      * Check if user does not have a role
+     * @param string[] $role
      */
     public function isNot($role): bool
     {
@@ -99,7 +97,7 @@ trait UsesRoles
 
     /**
      * Return the user's roles
-     * @return array
+     * @return string[]
      */
     public function roles(): array
     {
@@ -108,7 +106,7 @@ trait UsesRoles
 
     /**
      * Return the user's permissions
-     * @return array
+     * @return string[]
      */
     public function permissions(): array
     {
@@ -117,7 +115,7 @@ trait UsesRoles
 
     /**
      * Remove a role from a user
-     * @param string|array $role The role(s) to revoke
+     * @param string|string[] $role The role(s) to revoke
      */
     public function unassign($role): void
     {
@@ -140,7 +138,7 @@ trait UsesRoles
     /**
      * Set the roles and permissions for a user
      *
-     * @param string|array $roles The role(s) to set
+     * @param string|string[] $roles The role(s) to set
      */
     protected function setRolesAndPermissions($roles): void
     {
@@ -166,8 +164,8 @@ trait UsesRoles
     /**
      * Get the permissions for a role
      *
-     * @param string|array $roles
-     * @return array
+     * @param string|string[] $roles
+     * @return string[]
      */
     protected function getRolePermissions($roles): array
     {

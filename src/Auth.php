@@ -34,13 +34,11 @@ class Auth
 
     /**
      * All errors caught
-     * @var array
+     * @var array<string, string>
      */
     protected $errorsArray = [];
 
-    /**
-     * Configured oauth clients
-     */
+    /** @var array<string, \League\OAuth2\Client\Provider\AbstractProvider> Configured oauth clients */
     protected $oauthClients = [];
 
     public function __construct()
@@ -113,7 +111,14 @@ class Auth
 
     /**
      * Connect leaf auth to the database
-     * @param array $dbConfig Configuration for leaf db connection
+     * @param array{
+     *     host?: string,
+     *     dbname?: string,
+     *     username?: string,
+     *     password?: string,
+     *     dbtype?: string,
+     *     pdoOptions?: mixed[],
+     * } $dbConfig Configuration for leaf db connection
      * @return $this
      */
     public function connect($dbConfig = [])
@@ -127,7 +132,7 @@ class Auth
     /**
      * Connect to database using environment variables
      *
-     * @param array $pdoOptions Options for PDO connection
+     * @param mixed[] $pdoOptions Options for PDO connection
      * @return $this
      */
     public function autoConnect(array $pdoOptions = [])
@@ -158,7 +163,10 @@ class Auth
      * Register a Google OAuth client to use with Leaf Auth, should be a league/oauth2-client compatible client.
      * @param string $clientId
      * @param string $clientSecret
-     * @param array $options
+     * @param array{
+     *     name?: string,
+     *     redirectUri?: string,
+     * } $options
      * @return static
      */
     public function withGoogle(
@@ -210,8 +218,9 @@ class Auth
     /**
      * Get/Set Leaf Auth config
      *
-     * @param string|array $config The auth config key or array of config
+     * @param string|array<string, mixed> $config The auth config key or array of config
      * @param mixed $value The value if $config is a string
+     * @return mixed|void
      */
     public function config($config, $value = null)
     {
@@ -229,7 +238,7 @@ class Auth
     /**
      * Create roles and permissions
      *
-     * @param array $roles Array of roles and their permissions
+     * @param array<string, string[]> $roles Array of roles and their permissions
      * @return Auth
      */
     public function createRoles(array $roles)
@@ -244,7 +253,7 @@ class Auth
     /**
      * Return all roles and their permissions
      *
-     * @return array
+     * @return array<string, string[]>
      */
     public function roles()
     {
@@ -256,7 +265,7 @@ class Auth
      * ---
      * Verify user credentials and sign them in with token or session
      *
-     * @param array $credentials User credentials
+     * @param array<string, mixed> $credentials User credentials
      * @return bool
      */
     public function login(array $credentials): bool
@@ -310,7 +319,7 @@ class Auth
      * ---
      * Save a new user to the database
      *
-     * @param array $userData User data
+     * @param array<string, mixed> $userData User data
      * @return bool
      */
     public function register(array $userData): bool
@@ -371,7 +380,7 @@ class Auth
      * ---
      * Update user data in the database
      *
-     * @param array $userData User data
+     * @param array<string, mixed> $userData User data
      * @return bool
      */
     public function update(array $userData): bool
@@ -495,7 +504,7 @@ class Auth
     /**
      * Create a new user from OAuth
      *
-     * @param array $userData User data
+     * @param array<string, mixed> $userData User data
      *
      * @return bool
      */
@@ -553,7 +562,9 @@ class Auth
      * ---
      * Create an account for another user
      *
-     * @param array $userData The user details to save
+     * @param array<string, mixed> $userData The user details to save
+     * @return User|false|never
+     * @throws \Exception If database connection is not established
      */
     public function createUserFor($userData)
     {
@@ -608,6 +619,7 @@ class Auth
 
     /**
      * Get saved OAuth token
+     * @return mixed
      */
     public function oauthToken()
     {
@@ -619,7 +631,7 @@ class Auth
      * ---
      * Sign out the currently authenticated user
      *
-     * @param string|array|callable|null $action Redirect to this url after logout
+     * @param string|mixed[]|callable|null $action Redirect to this url after logout
      * @return bool
      */
     public function logout($action = null): bool
@@ -716,7 +728,10 @@ class Auth
 
     /**
      * Get generated access tokens
-     * @return array|null
+     * @return array{
+     *     access?: string,
+     *     refresh?: string,
+     * }|null
      */
     public function tokens()
     {
@@ -733,6 +748,8 @@ class Auth
      * Register auth middleware for your Leaf apps
      * @param string $middleware The middleware to register
      * @param callable $callback The callback to run if middleware fails
+     * @return void|never
+     * @throws \Exception If not used with leafs/leaf installed
      */
     public function middleware(string $middleware, callable $callback)
     {
@@ -741,16 +758,18 @@ class Auth
         }
 
         if ($middleware === 'auth.required') {
-            return app()->registerMiddleware('auth.required', function () use ($callback) {
+            app()->registerMiddleware('auth.required', function () use ($callback) {
                 if (!$this->user()) {
                     $callback();
                     exit;
                 }
             });
+
+            return;
         }
 
         if ($middleware === 'auth.guest') {
-            return app()->registerMiddleware('auth.guest', function () use ($callback) {
+            app()->registerMiddleware('auth.guest', function () use ($callback) {
                 if ($this->user()) {
                     $callback();
                     exit;
@@ -758,60 +777,74 @@ class Auth
 
                 auth()->clearErrors();
             });
+
+            return;
         }
 
         if ($middleware === 'is') {
-            return app()->registerMiddleware('is', function ($role) use ($callback) {
+            app()->registerMiddleware('is', function ($role) use ($callback) {
                 if (!$this->user() || $this->user()->isNot($role)) {
                     $callback($role);
                     exit;
                 }
             });
+
+            return;
         }
 
         if ($middleware === 'isNot') {
-            return app()->registerMiddleware('isNot', function ($role) use ($callback) {
+            app()->registerMiddleware('isNot', function ($role) use ($callback) {
                 if (!$this->user() || $this->user()->is($role)) {
                     $callback($role);
                     exit;
                 }
             });
+
+            return;
         }
 
         if ($middleware === 'can') {
-            return app()->registerMiddleware('can', function ($role) use ($callback) {
+            app()->registerMiddleware('can', function ($role) use ($callback) {
                 if (!$this->user() || $this->user()->cannot($role)) {
                     $callback($role);
                     exit;
                 }
             });
+
+            return;
         }
 
         if ($middleware === 'cannot') {
-            return app()->registerMiddleware('cannot', function ($role) use ($callback) {
+            app()->registerMiddleware('cannot', function ($role) use ($callback) {
                 if (!$this->user() || $this->user()->can($role)) {
                     $callback($role);
                     exit;
                 }
             });
+
+            return;
         }
 
         if ($middleware === 'auth.verified') {
-            return app()->registerMiddleware('auth.verified', function () use ($callback) {
+            app()->registerMiddleware('auth.verified', function () use ($callback) {
                 if (!$this->user() || !$this->user()->isVerified()) {
                     $callback();
                     exit;
                 }
             });
+
+            return;
         }
 
         if ($middleware === 'auth.unverified') {
-            return app()->registerMiddleware('auth.unverified', function () use ($callback) {
+            app()->registerMiddleware('auth.unverified', function () use ($callback) {
                 if (!$this->user() || $this->user()->isVerified()) {
                     $callback();
                     exit;
                 }
             });
+
+            return;
         }
 
         app()->registerMiddleware($middleware, $callback);
@@ -819,6 +852,7 @@ class Auth
 
     /**
      * Parse the current user's token
+     * @return array<string, mixed>|null
      */
     public function parseToken()
     {
@@ -904,6 +938,10 @@ class Auth
         }
     }
 
+    /**
+     * @param string|array<string, mixed> $value
+     * @return ?mixed
+     */
     protected function getFromSession($value)
     {
         if ($this->checkAndExpireSession()) {
@@ -913,6 +951,10 @@ class Auth
         return Session::get($value);
     }
 
+    /**
+     * @return void|never
+     * @throws \Exception If sessions are not enabled
+     */
     protected function sessionCheck()
     {
         if (!Config::get('session')) {
@@ -937,6 +979,7 @@ class Auth
         return $isSessionExpired;
     }
 
+    /** @return ?string */
     protected function getTokenFromRequest()
     {
         $headers = null;
@@ -966,6 +1009,7 @@ class Auth
         return null;
     }
 
+    /** @return ?mixed */
     protected function getTokenFromSession()
     {
         return Session::get('auth.token');
@@ -973,6 +1017,7 @@ class Auth
 
     /**
      * Clear all errors caught
+     * @return void
      */
     public function clearErrors()
     {
@@ -981,6 +1026,7 @@ class Auth
 
     /**
      * Return all errors caught
+     * @return array<string, mixed>
      */
     public function errors(): array
     {

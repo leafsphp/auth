@@ -14,14 +14,14 @@ trait UsesSubscriptions
 {
     /**
      * User Subscription
-     * @var array|null
+     * @var mixed[]|null
      */
     protected $subscription = null;
 
     /**
      * Get current subscription
      *
-     * @return array|null
+     * @return mixed[]|null
      */
     public function subscription(): ?array
     {

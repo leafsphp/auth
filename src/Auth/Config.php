@@ -12,10 +12,7 @@ namespace Leaf\Auth;
  */
 class Config
 {
-    /**
-     * configuration for Leaf Auth
-     * @var array
-     */
+    /** @var array<string, mixed> Configuration for Leaf Auth */
     protected static array $config = [
         'id.key' => 'id',
         'db.table' => 'users',
@@ -42,13 +39,12 @@ class Config
         'messages.loginPasswordError' => 'Password is incorrect!',
     ];
 
-    /**
-     * Additional user information for cache
-     */
+    /** @var array<string, mixed> Additional user information for cache */
     protected static array $userCache = [];
 
     /**
      * Set Leaf Auth config
+     * @param array<string, mixed> $config
      */
     public static function set($config): void
     {
@@ -57,6 +53,7 @@ class Config
 
     /**
      * Overwrite Leaf Auth config
+     * @param array<string, mixed> $config
      */
     public static function overwrite($config): void
     {
@@ -65,6 +62,8 @@ class Config
 
     /**
      * Get Leaf Auth config
+     * @param ?string $key
+     * @return ?mixed
      */
     public static function get($key = null)
     {
@@ -77,6 +76,8 @@ class Config
 
     /**
      * Set user cache
+     * @param string $key
+     * @param mixed $value
      */
     public static function setUserCache($key, $value): void
     {
@@ -89,6 +90,8 @@ class Config
 
     /**
      * Get user cache
+     * @param ?string $key
+     * @return mixed|array<string, mixed>
      */
     public static function getUserCache($key = null)
     {
