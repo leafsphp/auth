@@ -81,7 +81,7 @@ class User
 
         $sessionLifetime = $sessionLifetime && !is_numeric($sessionLifetime)
             ? strtotime($sessionLifetime)
-            : (time() + $sessionLifetime);
+            : (time() + intval($sessionLifetime));
 
         $this->tokens['access'] = $this->generateToken($sessionLifetime);
         $this->tokens['refresh'] = $this->generateToken($sessionLifetime + 259200);
