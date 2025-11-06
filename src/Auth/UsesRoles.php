@@ -166,7 +166,7 @@ trait UsesRoles
     /**
      * Get the permissions for a role
      *
-     * @param string|array $role
+     * @param string|array $roles
      * @return array
      */
     protected function getRolePermissions($roles): array
