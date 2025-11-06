@@ -21,7 +21,6 @@ trait UsesSubscriptions
     /**
      * Get current subscription
      *
-     * @param string|array $subscription The subscription to assign
      * @return array|null
      */
     public function subscription(): ?array
