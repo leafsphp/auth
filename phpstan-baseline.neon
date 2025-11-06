@@ -67,6 +67,60 @@ parameters:
 			path: tests/login.test.php
 
 		-
+			rawMessage: Access to an undefined property object::$accessToken.
+			identifier: property.notFound
+			count: 1
+			path: tests/login.test.php
+
+		-
+			rawMessage: Access to an undefined property object::$refreshToken.
+			identifier: property.notFound
+			count: 1
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::not().'
+			identifier: method.notFound
+			count: 1
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBe().'
+			identifier: method.notFound
+			count: 4
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeFalse().'
+			identifier: method.notFound
+			count: 2
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeInstanceOf().'
+			identifier: method.notFound
+			count: 2
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeNull().'
+			identifier: method.notFound
+			count: 2
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeString().'
+			identifier: method.notFound
+			count: 2
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeTrue().'
+			identifier: method.notFound
+			count: 3
+			path: tests/login.test.php
+
+		-
 			rawMessage: 'Call to method not() of internal class Pest\Expectation from outside its root namespace Pest.'
 			identifier: method.internalClass
 			count: 1
@@ -127,6 +181,36 @@ parameters:
 			path: tests/register.test.php
 
 		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::not().'
+			identifier: method.notFound
+			count: 1
+			path: tests/register.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBe().'
+			identifier: method.notFound
+			count: 3
+			path: tests/register.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeFalse().'
+			identifier: method.notFound
+			count: 1
+			path: tests/register.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeInstanceOf().'
+			identifier: method.notFound
+			count: 2
+			path: tests/register.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeTrue().'
+			identifier: method.notFound
+			count: 6
+			path: tests/register.test.php
+
+		-
 			rawMessage: 'Call to method not() of internal class Pest\Expectation from outside its root namespace Pest.'
 			identifier: method.internalClass
 			count: 1
@@ -172,6 +256,42 @@ parameters:
 			rawMessage: Access to an undefined property Leaf\Auth\User::$username.
 			identifier: property.notFound
 			count: 6
+			path: tests/session.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::not().'
+			identifier: method.notFound
+			count: 1
+			path: tests/session.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBe().'
+			identifier: method.notFound
+			count: 20
+			path: tests/session.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeGreaterThan().'
+			identifier: method.notFound
+			count: 1
+			path: tests/session.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeInstanceOf().'
+			identifier: method.notFound
+			count: 8
+			path: tests/session.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeNull().'
+			identifier: method.notFound
+			count: 6
+			path: tests/session.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeTrue().'
+			identifier: method.notFound
+			count: 8
 			path: tests/session.test.php
 
 		-
@@ -223,6 +343,12 @@ parameters:
 			path: tests/table.test.php
 
 		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBe().'
+			identifier: method.notFound
+			count: 5
+			path: tests/table.test.php
+
+		-
 			rawMessage: 'Call to method toBe() of internal class Pest\Expectation from outside its root namespace Pest.'
 			identifier: method.internalClass
 			count: 5
@@ -250,6 +376,30 @@ parameters:
 			rawMessage: Access to an undefined property Leaf\Auth\User::$username.
 			identifier: property.notFound
 			count: 2
+			path: tests/update.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::not().'
+			identifier: method.notFound
+			count: 2
+			path: tests/update.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBe().'
+			identifier: method.notFound
+			count: 3
+			path: tests/update.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeFalse().'
+			identifier: method.notFound
+			count: 1
+			path: tests/update.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeTrue().'
+			identifier: method.notFound
+			count: 1
 			path: tests/update.test.php
 
 		-
@@ -291,6 +441,30 @@ parameters:
 		-
 			rawMessage: Access to an undefined property Leaf\Auth\User::$username.
 			identifier: property.notFound
+			count: 2
+			path: tests/user.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBe().'
+			identifier: method.notFound
+			count: 2
+			path: tests/user.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeInstanceOf().'
+			identifier: method.notFound
+			count: 3
+			path: tests/user.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeNull().'
+			identifier: method.notFound
+			count: 1
+			path: tests/user.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeTrue().'
+			identifier: method.notFound
 			count: 2
 			path: tests/user.test.php
 

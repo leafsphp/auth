@@ -265,7 +265,7 @@ class User
 
     public function __toString()
     {
-        return json_encode($this->get());
+        return json_encode($this->get()) ?: '';
     }
 
     /**
