@@ -73,6 +73,6 @@ trait UsesSubscriptions
             return true;
         }
 
-        return billing()->cancelSubcription($subscription['subscription_id']);
+        return billing()->cancelSubscription($subscription['subscription_id']);
     }
 }
