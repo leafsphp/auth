@@ -13,30 +13,6 @@ parameters:
 			path: src/Auth.php
 
 		-
-			rawMessage: Access to constant STATUS_ACTIVE on an unknown class Leaf\Billing\Subscription.
-			identifier: class.notFound
-			count: 1
-			path: src/Auth/User.php
-
-		-
-			rawMessage: Access to constant STATUS_CANCELLED on an unknown class Leaf\Billing\Subscription.
-			identifier: class.notFound
-			count: 1
-			path: src/Auth/User.php
-
-		-
-			rawMessage: Access to constant STATUS_TRIAL on an unknown class Leaf\Billing\Subscription.
-			identifier: class.notFound
-			count: 1
-			path: src/Auth/User.php
-
-		-
-			rawMessage: Function billing not found.
-			identifier: function.notFound
-			count: 3
-			path: src/Auth/User.php
-
-		-
 			rawMessage: 'Function createTableForUsers() has parameter $table with no type specified.'
 			identifier: missingType.parameter
 			count: 1
@@ -59,24 +35,6 @@ parameters:
 			identifier: missingType.iterableValue
 			count: 1
 			path: tests/Pest.php
-
-		-
-			rawMessage: Access to an undefined property Leaf\Auth\User::$username.
-			identifier: property.notFound
-			count: 2
-			path: tests/login.test.php
-
-		-
-			rawMessage: Access to an undefined property object::$accessToken.
-			identifier: property.notFound
-			count: 1
-			path: tests/login.test.php
-
-		-
-			rawMessage: Access to an undefined property object::$refreshToken.
-			identifier: property.notFound
-			count: 1
-			path: tests/login.test.php
 
 		-
 			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::not().'
@@ -169,16 +127,22 @@ parameters:
 			path: tests/login.test.php
 
 		-
-			rawMessage: Access to an undefined property Leaf\Auth\User::$password.
-			identifier: property.notFound
-			count: 2
-			path: tests/register.test.php
+			rawMessage: Cannot access property $accessToken on object|null.
+			identifier: property.nonObject
+			count: 1
+			path: tests/login.test.php
 
 		-
-			rawMessage: Access to an undefined property Leaf\Auth\User::$username.
-			identifier: property.notFound
+			rawMessage: Cannot access property $refreshToken on object|null.
+			identifier: property.nonObject
+			count: 1
+			path: tests/login.test.php
+
+		-
+			rawMessage: Cannot access property $username on Leaf\Auth\User|null.
+			identifier: property.nonObject
 			count: 2
-			path: tests/register.test.php
+			path: tests/login.test.php
 
 		-
 			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::not().'
@@ -247,16 +211,22 @@ parameters:
 			path: tests/register.test.php
 
 		-
+			rawMessage: Cannot access property $password on Leaf\Auth\User|null.
+			identifier: property.nonObject
+			count: 2
+			path: tests/register.test.php
+
+		-
+			rawMessage: Cannot access property $username on Leaf\Auth\User|null.
+			identifier: property.nonObject
+			count: 2
+			path: tests/register.test.php
+
+		-
 			rawMessage: 'Undefined variable: $this'
 			identifier: variable.undefined
 			count: 1
 			path: tests/register.test.php
-
-		-
-			rawMessage: Access to an undefined property Leaf\Auth\User::$username.
-			identifier: property.notFound
-			count: 6
-			path: tests/session.test.php
 
 		-
 			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::not().'
@@ -337,10 +307,10 @@ parameters:
 			path: tests/session.test.php
 
 		-
-			rawMessage: Access to an undefined property Leaf\Auth\User::$username.
-			identifier: property.notFound
-			count: 2
-			path: tests/table.test.php
+			rawMessage: Cannot access property $username on Leaf\Auth\User|null.
+			identifier: property.nonObject
+			count: 6
+			path: tests/session.test.php
 
 		-
 			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBe().'
@@ -361,6 +331,12 @@ parameters:
 			path: tests/table.test.php
 
 		-
+			rawMessage: Cannot access property $username on Leaf\Auth\User|null.
+			identifier: property.nonObject
+			count: 2
+			path: tests/table.test.php
+
+		-
 			rawMessage: Function createUsersTable not found.
 			identifier: function.notFound
 			count: 1
@@ -371,12 +347,6 @@ parameters:
 			identifier: variable.undefined
 			count: 5
 			path: tests/table.test.php
-
-		-
-			rawMessage: Access to an undefined property Leaf\Auth\User::$username.
-			identifier: property.notFound
-			count: 2
-			path: tests/update.test.php
 
 		-
 			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::not().'
@@ -433,16 +403,16 @@ parameters:
 			path: tests/update.test.php
 
 		-
+			rawMessage: Cannot access property $username on Leaf\Auth\User|null.
+			identifier: property.nonObject
+			count: 2
+			path: tests/update.test.php
+
+		-
 			rawMessage: 'Undefined variable: $this'
 			identifier: variable.undefined
 			count: 7
 			path: tests/update.test.php
-
-		-
-			rawMessage: Access to an undefined property Leaf\Auth\User::$username.
-			identifier: property.notFound
-			count: 2
-			path: tests/user.test.php
 
 		-
 			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBe().'
@@ -489,6 +459,12 @@ parameters:
 		-
 			rawMessage: 'Call to method toBeTrue() of internal class Pest\Expectation from outside its root namespace Pest.'
 			identifier: method.internalClass
+			count: 2
+			path: tests/user.test.php
+
+		-
+			rawMessage: Cannot access property $username on Leaf\Auth\User|null.
+			identifier: property.nonObject
 			count: 2
 			path: tests/user.test.php
 
