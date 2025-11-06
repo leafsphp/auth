@@ -22,9 +22,9 @@ class Auth
 {
     /**
      * The currently authenticated user
-     * @var User
+     * @var ?User
      */
-    protected $user;
+    protected $user = null;
 
     /**
      * Internal instance of Leaf DB

@@ -259,6 +259,12 @@ parameters:
 			path: tests/table.test.php
 
 		-
+			rawMessage: Cannot access offset 'user' on bool.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: tests/table.test.php
+
+		-
 			rawMessage: Function createUsersTable not found.
 			identifier: function.notFound
 			count: 1
