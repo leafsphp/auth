@@ -63,7 +63,7 @@ test('logout can use logout callback to run custom action', function () {
     expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);
     expect($auth->user()->username)->toBe($testUser['username']);
 
-    $auth->logout(function ($auth) use ($testUser) {
+    $auth->logout(function ($auth) {
         expect($auth)->toBeInstanceOf(\Leaf\Auth::class);
     });
 
