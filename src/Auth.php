@@ -337,7 +337,7 @@ class Auth
             $userData['email'] = strtolower($userData['email']);
         }
 
-        if (isset($credentials[Config::get('id.key')])) {
+        if (isset($userData[Config::get('id.key')])) {
             $userData[Config::get('id.key')] = is_callable($userData[Config::get('id.key')])
                 ? call_user_func($userData[Config::get('id.key')])
                 : $userData[Config::get('id.key')];
@@ -579,7 +579,7 @@ class Auth
             $userData['email'] = strtolower($userData['email']);
         }
 
-        if (isset($credentials[Config::get('id.key')])) {
+        if (isset($userData[Config::get('id.key')])) {
             $userData[Config::get('id.key')] = is_callable($userData[Config::get('id.key')])
                 ? call_user_func($userData[Config::get('id.key')])
                 : $userData[Config::get('id.key')];
