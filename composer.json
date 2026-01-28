@@ -36,7 +36,6 @@
         "leafs/password": "*",
         "leafs/session": "*",
         "leafs/db": "*",
-        "leafs/form": "*",
         "leafs/http": "*",
         "firebase/php-jwt": "^6.10"
     },
