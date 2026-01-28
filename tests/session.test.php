@@ -1,5 +1,7 @@
 <?php
 
+use Leaf\Auth\User;
+
 beforeAll(function () {
     createTableForUsers();
     dbInstance()->delete('users')->execute();
@@ -30,7 +32,7 @@ test('register should create a new session when session => true', function () {
     $success = $auth->register($userData);
 
     expect($success)->toBeTrue();
-    expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);
+    expect($auth->user())->toBeInstanceOf(User::class);
     expect($auth->user()->username)->toBe($userData['username']);
 
     expect(session_status())->toBe(PHP_SESSION_ACTIVE);
@@ -51,7 +53,7 @@ test('register should not create a new session when session => false', function 
     $success = $auth->register($userData);
 
     expect($success)->toBeTrue();
-    expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);
+    expect($auth->user())->toBeInstanceOf(User::class);
 
     expect(session_status())->toBe(PHP_SESSION_NONE);
     expect($_SESSION['auth']['user']['username'] ?? null)->toBeNull();
@@ -71,7 +73,7 @@ test('login should create session when session => true', function () {
     $success = $auth->login($userData);
 
     expect($success)->toBeTrue();
-    expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);
+    expect($auth->user())->toBeInstanceOf(User::class);
     expect($auth->user()->username)->toBe($userData['username']);
 
     expect(session_status())->toBe(PHP_SESSION_ACTIVE);
@@ -94,7 +96,7 @@ test('session should create auth.ttl when session.lifetime is not 0', function (
     $success = $auth->login($userData);
 
     expect($success)->toBeTrue();
-    expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);
+    expect($auth->user())->toBeInstanceOf(User::class);
     expect($auth->user()->username)->toBe($userData['username']);
 
     expect(session_status())->toBe(PHP_SESSION_ACTIVE);
@@ -117,7 +119,7 @@ test('session should not create auth.ttl when session.lifetime is 0', function (
     $success = $auth->login($userData);
 
     expect($success)->toBeTrue();
-    expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);
+    expect($auth->user())->toBeInstanceOf(User::class);
     expect($auth->user()->username)->toBe($userData['username']);
 
     expect(session_status())->toBe(PHP_SESSION_ACTIVE);
@@ -140,7 +142,7 @@ test('session should expire after session.lifetime', function () {
     $success = $auth->login($userData);
 
     expect($success)->toBeTrue();
-    expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);
+    expect($auth->user())->toBeInstanceOf(User::class);
     expect($auth->user()->username)->toBe($userData['username']);
 
     expect(session_status())->toBe(PHP_SESSION_ACTIVE);
@@ -172,7 +174,7 @@ test('login should regenerate session id when session => true and session is alr
     $newSessionId = session_id();
 
     expect($success)->toBeTrue();
-    expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);
+    expect($auth->user())->toBeInstanceOf(User::class);
     expect($auth->user()->username)->toBe($userData['username']);
 
     expect(session_status())->toBe(PHP_SESSION_ACTIVE);
@@ -195,7 +197,7 @@ test('logout should remove auth info from session when session => true', functio
     $success = $auth->login($userData);
 
     expect($success)->toBeTrue();
-    expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);
+    expect($auth->user())->toBeInstanceOf(User::class);
     expect($_SESSION['auth']['user']['username'] ?? null)->toBe($userData['username']);
 
     $auth->logout();

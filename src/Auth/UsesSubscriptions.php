@@ -2,6 +2,8 @@
 
 namespace Leaf\Auth;
 
+use Leaf\Billing\Subscription;
+
 /**
  * Functionality for user subscriptions
  * ----
@@ -50,7 +52,7 @@ trait UsesSubscriptions
      */
     public function hasSubscription(): bool
     {
-        return $this->subscription() && $this->subscription['status'] !== \Leaf\Billing\Subscription::STATUS_CANCELLED;
+        return $this->subscription() && $this->subscription['status'] !== Subscription::STATUS_CANCELLED;
     }
 
     /**
@@ -59,7 +61,7 @@ trait UsesSubscriptions
      */
     public function hasActiveSubscription(): bool
     {
-        return $this->subscription() && ($this->subscription['status'] === \Leaf\Billing\Subscription::STATUS_ACTIVE || $this->subscription['status'] === \Leaf\Billing\Subscription::STATUS_TRIAL);
+        return $this->subscription() && ($this->subscription['status'] === Subscription::STATUS_ACTIVE || $this->subscription['status'] === Subscription::STATUS_TRIAL);
     }
 
     /**

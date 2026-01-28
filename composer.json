@@ -47,7 +47,8 @@
     "require-dev": {
         "pestphp/pest": "^1.0 | ^2.0",
         "friendsofphp/php-cs-fixer": "^3.64",
-        "leafs/alchemy": "*"
+        "leafs/alchemy": "*",
+        "rector/rector": "^2.2"
     },
     "scripts": {
         "alchemy": "./vendor/bin/alchemy setup",

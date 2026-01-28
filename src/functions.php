@@ -1,5 +1,8 @@
 <?php
 
+use Leaf\Auth;
+use Leaf\Config;
+
 if (!function_exists('auth') && class_exists('Leaf\App')) {
     /**
      * Return the leaf auth object
@@ -8,12 +11,12 @@ if (!function_exists('auth') && class_exists('Leaf\App')) {
      */
     function auth()
     {
-        if (!(\Leaf\Config::getStatic('auth'))) {
-            \Leaf\Config::singleton('auth', function () {
-                return new \Leaf\Auth();
+        if (!(Config::getStatic('auth'))) {
+            Config::singleton('auth', function () {
+                return new Auth();
             });
         }
 
-        return \Leaf\Config::get('auth');
+        return Config::get('auth');
     }
 }

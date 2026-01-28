@@ -1,5 +1,8 @@
 <?php
 
+use Leaf\Auth;
+use Leaf\Db;
+
 dataset('test-user', [[[
     'username' => 'test-user',
     'email' => 'test-user@example.com',
@@ -18,22 +21,22 @@ function getDatabaseConnection(): array
     ];
 }
 
-function dbInstance(): \Leaf\Db
+function dbInstance(): Db
 {
-    $db = new \Leaf\Db();
+    $db = new Db();
 
     try {
         $db->connect(getDatabaseConnection());
-    } catch (\Throwable $th) {
+    } catch (Throwable $th) {
         throw $th;
     }
 
     return $db;
 }
 
-function authInstance(): \Leaf\Auth
+function authInstance(): Auth
 {
-    $auth = new \Leaf\Auth();
+    $auth = new Auth();
     $auth->dbConnection(dbInstance()->connection());
 
     return $auth;
@@ -41,7 +44,7 @@ function authInstance(): \Leaf\Auth
 
 function deleteUser(string $username, $table = 'users')
 {
-    $db = new \Leaf\Db();
+    $db = new Db();
     $db->connect(getDatabaseConnection());
 
     $db->delete($table)->where('username', $username)->execute();
@@ -64,7 +67,7 @@ function createTableForUsers($table = 'users'): void
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )")
             ->execute();
-    } catch (\Throwable $th) {
-        throw new \Exception('Failed to create table for users: ' . $th->getMessage());
+    } catch (Throwable $th) {
+        throw new Exception('Failed to create table for users: ' . $th->getMessage());
     }
 }

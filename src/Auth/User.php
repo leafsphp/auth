@@ -2,8 +2,11 @@
 
 namespace Leaf\Auth;
 
+use Exception;
 use Firebase\JWT\JWT;
+use Leaf\Db;
 use Leaf\Http\Session;
+use Throwable;
 
 /**
  * Auth User
@@ -20,7 +23,7 @@ class User
 
     /**
      * Internal instance of Leaf database
-     * @var \Leaf\DB
+     * @var Db
      */
     protected $db;
 
@@ -69,7 +72,7 @@ class User
                     $sessionLifetime = strtotime($sessionLifetime);
 
                     if (!$sessionLifetime) {
-                        throw new \Exception('Invalid session lifetime');
+                        throw new Exception('Invalid session lifetime');
                     }
                 } else {
                     $sessionLifetime = time() + $sessionLifetime;
@@ -209,7 +212,7 @@ class User
                 ->execute();
 
             return true;
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             return false;
         }
     }
@@ -243,7 +246,7 @@ class User
 
     /**
      * Set user db instance
-     * @param \Leaf\Db $db
+     * @param Db $db
      * @return User
      */
     public function setDb($db)
@@ -293,14 +296,14 @@ class User
      *
      * @param mixed $method The table to relate to
      * @param mixed $args
-     * @throws \Exception
+     * @throws Exception
      *
      * @return Model
      */
     public function __call($method, $args)
     {
         if (!class_exists('Leaf\App')) {
-            throw new \Exception('Relations are only available in Leaf apps.');
+            throw new Exception('Relations are only available in Leaf apps.');
         }
 
         return (new Model([
