@@ -1,0 +1,475 @@
+parameters:
+	ignoreErrors:
+		-
+			rawMessage: Access to an undefined property Leaf\Auth\User::$email.
+			identifier: property.notFound
+			count: 1
+			path: src/Auth.php
+
+		-
+			rawMessage: 'Variable $credentials in isset() is never defined.'
+			identifier: isset.variable
+			count: 2
+			path: src/Auth.php
+
+		-
+			rawMessage: 'Function createTableForUsers() has parameter $table with no type specified.'
+			identifier: missingType.parameter
+			count: 1
+			path: tests/Pest.php
+
+		-
+			rawMessage: 'Function deleteUser() has no return type specified.'
+			identifier: missingType.return
+			count: 1
+			path: tests/Pest.php
+
+		-
+			rawMessage: 'Function deleteUser() has parameter $table with no type specified.'
+			identifier: missingType.parameter
+			count: 1
+			path: tests/Pest.php
+
+		-
+			rawMessage: 'Function getDatabaseConnection() return type has no value type specified in iterable type array.'
+			identifier: missingType.iterableValue
+			count: 1
+			path: tests/Pest.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::not().'
+			identifier: method.notFound
+			count: 1
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBe().'
+			identifier: method.notFound
+			count: 4
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeFalse().'
+			identifier: method.notFound
+			count: 2
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeInstanceOf().'
+			identifier: method.notFound
+			count: 2
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeNull().'
+			identifier: method.notFound
+			count: 2
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeString().'
+			identifier: method.notFound
+			count: 2
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeTrue().'
+			identifier: method.notFound
+			count: 3
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to method not() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 1
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to method toBe() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 4
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to method toBeFalse() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 2
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to method toBeInstanceOf() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 2
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to method toBeNull() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 2
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to method toBeNull() of internal class Pest\Expectation<mixed> from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 1
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to method toBeString() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 2
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to method toBeTrue() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 3
+			path: tests/login.test.php
+
+		-
+			rawMessage: Cannot access property $accessToken on object|null.
+			identifier: property.nonObject
+			count: 1
+			path: tests/login.test.php
+
+		-
+			rawMessage: Cannot access property $refreshToken on object|null.
+			identifier: property.nonObject
+			count: 1
+			path: tests/login.test.php
+
+		-
+			rawMessage: Cannot access property $username on Leaf\Auth\User|null.
+			identifier: property.nonObject
+			count: 2
+			path: tests/login.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::not().'
+			identifier: method.notFound
+			count: 1
+			path: tests/register.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBe().'
+			identifier: method.notFound
+			count: 3
+			path: tests/register.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeFalse().'
+			identifier: method.notFound
+			count: 1
+			path: tests/register.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeInstanceOf().'
+			identifier: method.notFound
+			count: 2
+			path: tests/register.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeTrue().'
+			identifier: method.notFound
+			count: 6
+			path: tests/register.test.php
+
+		-
+			rawMessage: 'Call to method not() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 1
+			path: tests/register.test.php
+
+		-
+			rawMessage: 'Call to method toBe() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 3
+			path: tests/register.test.php
+
+		-
+			rawMessage: 'Call to method toBe() of internal class Pest\Expectation<mixed> from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 1
+			path: tests/register.test.php
+
+		-
+			rawMessage: 'Call to method toBeFalse() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 1
+			path: tests/register.test.php
+
+		-
+			rawMessage: 'Call to method toBeInstanceOf() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 2
+			path: tests/register.test.php
+
+		-
+			rawMessage: 'Call to method toBeTrue() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 6
+			path: tests/register.test.php
+
+		-
+			rawMessage: Cannot access property $password on Leaf\Auth\User|null.
+			identifier: property.nonObject
+			count: 2
+			path: tests/register.test.php
+
+		-
+			rawMessage: Cannot access property $username on Leaf\Auth\User|null.
+			identifier: property.nonObject
+			count: 2
+			path: tests/register.test.php
+
+		-
+			rawMessage: 'Undefined variable: $this'
+			identifier: variable.undefined
+			count: 1
+			path: tests/register.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::not().'
+			identifier: method.notFound
+			count: 1
+			path: tests/session.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBe().'
+			identifier: method.notFound
+			count: 20
+			path: tests/session.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeGreaterThan().'
+			identifier: method.notFound
+			count: 1
+			path: tests/session.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeInstanceOf().'
+			identifier: method.notFound
+			count: 8
+			path: tests/session.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeNull().'
+			identifier: method.notFound
+			count: 6
+			path: tests/session.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeTrue().'
+			identifier: method.notFound
+			count: 8
+			path: tests/session.test.php
+
+		-
+			rawMessage: 'Call to method not() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 1
+			path: tests/session.test.php
+
+		-
+			rawMessage: 'Call to method toBe() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 20
+			path: tests/session.test.php
+
+		-
+			rawMessage: 'Call to method toBe() of internal class Pest\Expectation<mixed> from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 1
+			path: tests/session.test.php
+
+		-
+			rawMessage: 'Call to method toBeGreaterThan() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 1
+			path: tests/session.test.php
+
+		-
+			rawMessage: 'Call to method toBeInstanceOf() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 8
+			path: tests/session.test.php
+
+		-
+			rawMessage: 'Call to method toBeNull() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 6
+			path: tests/session.test.php
+
+		-
+			rawMessage: 'Call to method toBeTrue() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 8
+			path: tests/session.test.php
+
+		-
+			rawMessage: Cannot access property $username on Leaf\Auth\User|null.
+			identifier: property.nonObject
+			count: 6
+			path: tests/session.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBe().'
+			identifier: method.notFound
+			count: 5
+			path: tests/table.test.php
+
+		-
+			rawMessage: 'Call to method toBe() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 5
+			path: tests/table.test.php
+
+		-
+			rawMessage: Cannot access offset 'user' on bool.
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 3
+			path: tests/table.test.php
+
+		-
+			rawMessage: Cannot access property $username on Leaf\Auth\User|null.
+			identifier: property.nonObject
+			count: 2
+			path: tests/table.test.php
+
+		-
+			rawMessage: Function createUsersTable not found.
+			identifier: function.notFound
+			count: 1
+			path: tests/table.test.php
+
+		-
+			rawMessage: 'Undefined variable: $this'
+			identifier: variable.undefined
+			count: 5
+			path: tests/table.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::not().'
+			identifier: method.notFound
+			count: 2
+			path: tests/update.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBe().'
+			identifier: method.notFound
+			count: 3
+			path: tests/update.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeFalse().'
+			identifier: method.notFound
+			count: 1
+			path: tests/update.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeTrue().'
+			identifier: method.notFound
+			count: 1
+			path: tests/update.test.php
+
+		-
+			rawMessage: 'Call to method not() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 2
+			path: tests/update.test.php
+
+		-
+			rawMessage: 'Call to method toBe() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 3
+			path: tests/update.test.php
+
+		-
+			rawMessage: 'Call to method toBe() of internal class Pest\Expectation<mixed> from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 2
+			path: tests/update.test.php
+
+		-
+			rawMessage: 'Call to method toBeFalse() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 1
+			path: tests/update.test.php
+
+		-
+			rawMessage: 'Call to method toBeTrue() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 1
+			path: tests/update.test.php
+
+		-
+			rawMessage: Cannot access property $username on Leaf\Auth\User|null.
+			identifier: property.nonObject
+			count: 2
+			path: tests/update.test.php
+
+		-
+			rawMessage: 'Undefined variable: $this'
+			identifier: variable.undefined
+			count: 7
+			path: tests/update.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBe().'
+			identifier: method.notFound
+			count: 2
+			path: tests/user.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeInstanceOf().'
+			identifier: method.notFound
+			count: 3
+			path: tests/user.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeNull().'
+			identifier: method.notFound
+			count: 1
+			path: tests/user.test.php
+
+		-
+			rawMessage: 'Call to an undefined method Pest\Expectation|Pest\Support\Extendable::toBeTrue().'
+			identifier: method.notFound
+			count: 2
+			path: tests/user.test.php
+
+		-
+			rawMessage: 'Call to method toBe() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 2
+			path: tests/user.test.php
+
+		-
+			rawMessage: 'Call to method toBeInstanceOf() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 3
+			path: tests/user.test.php
+
+		-
+			rawMessage: 'Call to method toBeNull() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 1
+			path: tests/user.test.php
+
+		-
+			rawMessage: 'Call to method toBeTrue() of internal class Pest\Expectation from outside its root namespace Pest.'
+			identifier: method.internalClass
+			count: 2
+			path: tests/user.test.php
+
+		-
+			rawMessage: Cannot access property $username on Leaf\Auth\User|null.
+			identifier: property.nonObject
+			count: 2
+			path: tests/user.test.php
+
+		-
+			rawMessage: 'Undefined variable: $this'
+			identifier: variable.undefined
+			count: 2
+			path: tests/user.test.php

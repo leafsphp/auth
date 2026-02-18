@@ -31,11 +31,16 @@ class Model
      */
     protected Db $db;
 
-    /**
-     * User data to save
-     */
+    /** @var array<string, mixed> User data to save */
     protected array $dataToSave = [];
 
+    /**
+     * @param array{
+     *     db: \Leaf\Db,
+     *     user: User,
+     *     table: string,
+     * } $data
+     */
     public function __construct($data)
     {
         $this->db = $data['db'];
@@ -46,7 +51,7 @@ class Model
     /**
      * Create a new model resource
      *
-     * @param array $data Data to be inserted
+     * @param array<string, mixed> $data Data to be inserted
      *
      * @return PDOStatement|null
      */
@@ -66,7 +71,7 @@ class Model
     /**
      * Update a model resource
      *
-     * @param array $data Data to be updated
+     * @param array<string, mixed> $data Data to be updated
      *
      * @return Db
      */
@@ -117,11 +122,20 @@ class Model
         return $success;
     }
 
+    /**
+     * @param string $name
+     * @param mixed $value
+     */
     public function __set($name, $value)
     {
         $this->dataToSave[$name] = $value;
     }
 
+    /**
+     * @param string $name
+     * @param mixed[] $arguments
+     * @return mixed
+     */
     public function __call($name, $arguments)
     {
         return $this->table()->$name(...$arguments);

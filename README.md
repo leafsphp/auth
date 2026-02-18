@@ -6,6 +6,7 @@
   <br><br>
 </p>
 
+![PHPStan: Level 8](https://img.shields.io/badge/PHPStan-level%208-brightgreen.svg?style=flat)
 [![Latest Stable Version](https://poser.pugx.org/leafs/auth/v/stable)](https://packagist.org/packages/leafs/auth)
 [![Total Downloads](https://poser.pugx.org/leafs/auth/downloads)](https://packagist.org/packages/leafs/auth)
 [![License](https://poser.pugx.org/leafs/auth/license)](https://packagist.org/packages/leafs/auth)

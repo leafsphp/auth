@@ -59,6 +59,7 @@ test('update should work with user defined table', function () {
         $this->fail(json_encode($auth->errors()));
     }
 
+    // TODO: $response is a bool, not a bool|array
     $response = $auth->update([
         'username' => 'test-user55',
         'email' => 'test-user55@example.com',

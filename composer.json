@@ -41,13 +41,19 @@
     },
     "config": {
         "allow-plugins": {
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
         }
     },
     "require-dev": {
         "pestphp/pest": "^1.0 | ^2.0",
         "friendsofphp/php-cs-fixer": "^3.64",
         "leafs/alchemy": "*",
+        "phpstan/phpstan": "^2.1",
+        "phpstan/extension-installer": "^1.4",
+        "leafs/leaf": "^4.4",
+        "league/oauth2-google": "^4.0",
+        "leafs/billing": "^0.2.0"
         "rector/rector": "^2.2"
     },
     "scripts": {

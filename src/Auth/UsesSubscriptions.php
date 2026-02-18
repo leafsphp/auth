@@ -16,15 +16,14 @@ trait UsesSubscriptions
 {
     /**
      * User Subscription
-     * @var array|null
+     * @var array<string, mixed>|null
      */
     protected $subscription = null;
 
     /**
      * Get current subscription
      *
-     * @param string|array $subscription The subscription to assign
-     * @return array|null
+     * @return mixed[]|null
      */
     public function subscription(): ?array
     {
@@ -76,6 +75,6 @@ trait UsesSubscriptions
             return true;
         }
 
-        return billing()->cancelSubcription($subscription['subscription_id']);
+        return billing()->cancelSubscription($subscription['subscription_id']);
     }
 }

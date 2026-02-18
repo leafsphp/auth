@@ -1,0 +1,10 @@
+includes:
+  - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+  - phpstan-baseline.neon
+
+parameters:
+  level: 8
+  paths:
+    - src
+    - tests
+  treatPhpDocTypesAsCertain: false
