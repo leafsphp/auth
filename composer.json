@@ -53,7 +53,7 @@
         "phpstan/extension-installer": "^1.4",
         "leafs/leaf": "^4.4",
         "league/oauth2-google": "^4.0",
-        "leafs/billing": "^0.2.0"
+        "leafs/billing": "^0.2.0",
         "rector/rector": "^2.2"
     },
     "scripts": {
