@@ -37,7 +37,7 @@
         "leafs/session": "*",
         "leafs/db": "*",
         "leafs/http": "*",
-        "firebase/php-jwt": "^6.10"
+        "firebase/php-jwt": "^7.0"
     },
     "config": {
         "allow-plugins": {
