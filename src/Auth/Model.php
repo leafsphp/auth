@@ -2,6 +2,8 @@
 
 namespace Leaf\Auth;
 
+use Leaf\Date;
+use Leaf\Db;
 use PDOStatement;
 
 /**
@@ -27,7 +29,7 @@ class Model
     /**
      * DB connection
      */
-    protected \Leaf\Db $db;
+    protected Db $db;
 
     /** @var array<string, mixed> User data to save */
     protected array $dataToSave = [];
@@ -58,7 +60,7 @@ class Model
         $data['user_id'] = $this->user->id();
 
         if (Config::get('timestamps')) {
-            $now = (new \Leaf\Date())->tick()->format(Config::get('timestamps.format'));
+            $now = (new Date())->tick()->format(Config::get('timestamps.format'));
             $data['created_at'] = $now;
             $data['updated_at'] = $now;
         }
@@ -71,11 +73,11 @@ class Model
      *
      * @param array<string, mixed> $data Data to be updated
      *
-     * @return \Leaf\Db
+     * @return Db
      */
-    public function update(array $data): \Leaf\Db
+    public function update(array $data): Db
     {
-        $data['updated_at'] = (new \Leaf\Date())->tick()->format(Config::get('timestamps.format'));
+        $data['updated_at'] = (new Date())->tick()->format(Config::get('timestamps.format'));
 
         return $this->db->update($this->table)
             ->params($data)
@@ -85,9 +87,9 @@ class Model
     /**
      * Delete a model resource
      *
-     * @return \Leaf\Db
+     * @return Db
      */
-    public function delete(): \Leaf\Db
+    public function delete(): Db
     {
         return $this->db->delete($this->table)
             ->where('user_id', $this->user->id());
@@ -98,9 +100,9 @@ class Model
      *
      * @param string $columns Columns to search by separated by commas or *
      *
-     * @return \Leaf\Db
+     * @return Db
      */
-    public function table($columns = '*'): \Leaf\Db
+    public function table($columns = '*'): Db
     {
         return $this->db->select($this->table, $columns)
             ->where('user_id', $this->user->id());

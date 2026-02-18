@@ -2,6 +2,8 @@
 
 namespace Leaf\Auth;
 
+use Throwable;
+
 /**
  * Functionality for user permissions
  * ----
@@ -42,7 +44,7 @@ trait UsesRoles
                 ])
                 ->where(Config::get('id.key'), $this->data[Config::get('id.key')])
                 ->execute();
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             return false;
         }
 

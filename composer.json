@@ -36,9 +36,8 @@
         "leafs/password": "*",
         "leafs/session": "*",
         "leafs/db": "*",
-        "leafs/form": "*",
         "leafs/http": "*",
-        "firebase/php-jwt": "^6.10"
+        "firebase/php-jwt": "^7.0"
     },
     "config": {
         "allow-plugins": {
@@ -55,6 +54,7 @@
         "leafs/leaf": "^4.4",
         "league/oauth2-google": "^4.0",
         "leafs/billing": "^0.2.0"
+        "rector/rector": "^2.2"
     },
     "scripts": {
         "alchemy": "./vendor/bin/alchemy setup",

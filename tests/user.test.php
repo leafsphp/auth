@@ -1,5 +1,8 @@
 <?php
 
+use Leaf\Auth;
+use Leaf\Auth\User;
+
 beforeAll(function () {
     createTableForUsers();
     dbInstance()->delete('users')->execute();
@@ -13,7 +16,7 @@ beforeAll(function () {
                 'password' => password_hash('password', PASSWORD_BCRYPT)
             ])
             ->execute();
-    } catch (\Throwable $th) {
+    } catch (Throwable $th) {
         throw $th;
     }
 });
@@ -39,7 +42,7 @@ test('auth user is instance of Leaf\Auth\User', function () {
     }
 
     expect($success)->toBeTrue();
-    expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);
+    expect($auth->user())->toBeInstanceOf(User::class);
     expect($auth->user()->username)->toBe($testUser['username']);
 });
 
@@ -60,11 +63,11 @@ test('logout can use logout callback to run custom action', function () {
     }
 
     expect($success)->toBeTrue();
-    expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);
+    expect($auth->user())->toBeInstanceOf(User::class);
     expect($auth->user()->username)->toBe($testUser['username']);
 
-    $auth->logout(function ($auth) {
-        expect($auth)->toBeInstanceOf(\Leaf\Auth::class);
+    $auth->logout(function ($auth) use ($testUser) {
+        expect($auth)->toBeInstanceOf(Auth::class);
     });
 
     expect($auth->user())->toBeNull();

@@ -1,5 +1,7 @@
 <?php
 
+use Leaf\Auth\User;
+
 beforeAll(function () {
     createTableForUsers();
 
@@ -12,7 +14,7 @@ beforeAll(function () {
                 'password' => password_hash('password', PASSWORD_BCRYPT)
             ])
             ->execute();
-    } catch (\Throwable $th) {
+    } catch (Throwable $th) {
         throw $th;
     }
 });
@@ -33,7 +35,7 @@ test('user can login', function () {
     $success = $auth->login($testUser);
 
     expect($success)->toBeTrue();
-    expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);
+    expect($auth->user())->toBeInstanceOf(User::class);
     expect($auth->user()->username)->toBe($testUser['username']);
 });
 
@@ -100,7 +102,7 @@ test('login should work without password is password.key is false', function () 
     $success = $auth->login($userData);
 
     expect($success)->toBeTrue();
-    expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);
+    expect($auth->user())->toBeInstanceOf(User::class);
     expect($auth->user()->username)->toBe($userData['username']);
 
     $auth->config('password.key', 'password');

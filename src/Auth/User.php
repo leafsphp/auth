@@ -3,6 +3,8 @@
 namespace Leaf\Auth;
 
 use Firebase\JWT\JWT;
+use Leaf\Date;
+use Leaf\Helpers\Password;
 use Leaf\Http\Session;
 
 /**
@@ -40,6 +42,12 @@ class User
      * } User Tokens
      */
     protected array $tokens = [];
+
+    /**
+     * All errors caught
+     * @var array
+     */
+    protected $errorsArray = [];
 
     /**
      * @param array<string, mixed> $data
@@ -103,6 +111,170 @@ class User
     public function id()
     {
         return $this->data[Config::get('id.key')] ?? null;
+    }
+
+    /**
+     * Update user data
+     * ---
+     * Update user data in the database
+     *
+     * @param array $userData User data
+     * @return bool
+     */
+    public function update(array $userData): bool
+    {
+        $user = $this->get();
+
+        if (!$user) {
+            return false;
+        }
+
+        $idKey = Config::get('id.key');
+        $table = Config::get('db.table');
+
+        if (Config::get('timestamps')) {
+            $userData['updated_at'] = (new Date())->tick()->format(Config::get('timestamps.format'));
+        }
+
+        if (isset($userData['email'])) {
+            $userData['email'] = strtolower($userData['email']);
+        }
+
+        if (\count(Config::get('unique')) > 0) {
+            foreach (Config::get('unique') as $unique) {
+                if (!isset($userData[$unique])) {
+                    continue;
+                }
+
+                $data = $this->db->select($table, Config::get('id.key'))->where($unique, $userData[$unique])->first();
+
+                if ($data && $data[Config::get('id.key')] !== $this->id()) {
+                    $this->errorsArray[$unique] = "$unique already exists";
+                }
+            }
+
+            if (\count($this->errorsArray) > 0) {
+                return false;
+            }
+        }
+
+        try {
+            $query = $this->db->update($table)->params($userData)->where($idKey, $this->id())->execute();
+
+            if (!$query) {
+                $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
+                return false;
+            }
+        } catch (\Throwable $th) {
+            throw new \Exception($th->getMessage());
+        }
+
+        if (Config::get('session')) {
+            session_regenerate_id();
+        }
+
+        foreach ($userData as $key => $value) {
+            $this->data[$key] = $value;
+        }
+
+        return true;
+    }
+
+    /**
+     * Update user password
+     * ---
+     * Update user password in the database
+     *
+     * @param string $oldPassword Old password
+     * @param string $newPassword New password
+     * @return bool
+     */
+    public function updatePassword(string $oldPassword, string $newPassword): bool
+    {
+        $user = $this->get();
+
+        if (!$user) {
+            return false;
+        }
+
+        $passwordKey = Config::get('password.key');
+
+        if (Config::get('password.verify') !== false && isset($user[$passwordKey])) {
+            $passwordIsValid = (is_callable(Config::get('password.verify')))
+                ? call_user_func(Config::get('password.verify'), $oldPassword, $user[$passwordKey])
+                : Password::verify($oldPassword, $user[$passwordKey]);
+
+            if (!$passwordIsValid) {
+                $this->errorsArray['password'] = Config::get('messages.loginPasswordError');
+                return false;
+            }
+        }
+
+        $newPassword = (Config::get('password.encode') !== false)
+            ? ((is_callable(Config::get('password.encode')))
+                ? call_user_func(Config::get('password.encode'), $newPassword)
+                : Password::hash($newPassword))
+            : $newPassword;
+
+        try {
+            $query = $this->db->update(Config::get('db.table'))
+                ->params([$passwordKey => $newPassword])
+                ->where(Config::get('id.key'), $this->id())
+                ->execute();
+
+            if (!$query) {
+                $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
+                return false;
+            }
+        } catch (\Throwable $th) {
+            throw new \Exception($th->getMessage());
+        }
+
+        $this->data[$passwordKey] = $newPassword;
+
+        return true;
+    }
+
+    /**
+     * Reset user password
+     * ---
+     * Reset user password in the database
+     *
+     * @param string $newPassword New password
+     * @return bool
+     */
+    public function resetPassword(string $newPassword): bool
+    {
+        $user = $this->get();
+
+        if (!$user) {
+            return false;
+        }
+
+        $passwordKey = Config::get('password.key');
+        $newPassword = (Config::get('password.encode') !== false)
+            ? ((is_callable(Config::get('password.encode')))
+                ? call_user_func(Config::get('password.encode'), $newPassword)
+                : Password::hash($newPassword))
+            : $newPassword;
+
+        try {
+            $query = $this->db->update(Config::get('db.table'))
+                ->params([$passwordKey => $newPassword])
+                ->where(Config::get('id.key'), $this->id())
+                ->execute();
+
+            if (!$query) {
+                $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
+                return false;
+            }
+        } catch (\Throwable $th) {
+            throw new \Exception($th->getMessage());
+        }
+
+        $this->data[$passwordKey] = $newPassword;
+
+        return true;
     }
 
     /**
@@ -261,6 +433,15 @@ class User
         $this->db = $db;
 
         return $this;
+    }
+
+    /**
+     * Get user errors
+     * @return array
+     */
+    public function errors()
+    {
+        return $this->errorsArray;
     }
 
     public function __toString()

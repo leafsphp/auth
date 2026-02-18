@@ -1,5 +1,7 @@
 <?php
 
+use Leaf\Auth\User;
+
 beforeAll(function () {
     createTableForUsers();
     dbInstance()->delete('users')->execute();
@@ -26,7 +28,7 @@ test('user can register an account', function () {
     }
 
     expect($success)->toBeTrue();
-    expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);
+    expect($auth->user())->toBeInstanceOf(User::class);
     expect($auth->user()->username)->toBe($userData['username']);
 });
 
@@ -47,7 +49,7 @@ test('user can login after registering', function () {
     $loginSuccess = $auth->login($userData);
 
     expect($loginSuccess)->toBeTrue();
-    expect($auth->user())->toBeInstanceOf(\Leaf\Auth\User::class);
+    expect($auth->user())->toBeInstanceOf(User::class);
     expect($auth->user()->username)->toBe($userData['username']);
 });
 
