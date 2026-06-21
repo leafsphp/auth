@@ -55,18 +55,34 @@ function createTableForUsers($table = 'users'): void
     $db = dbInstance();
 
     try {
-        $db
-            ->query("CREATE TABLE IF NOT EXISTS $table (
-                id SERIAL PRIMARY KEY,
-                username VARCHAR(255) NOT NULL,
-                email VARCHAR(255) NOT NULL,
-                password VARCHAR(255) NOT NULL,
-                permissions JSONB,
-                roles JSONB,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )")
-            ->execute();
+        switch ($_ENV['DB_CONNECTION']) {
+            case 'mysql':
+                $sql = "CREATE TABLE IF NOT EXISTS $table (
+                    id SERIAL PRIMARY KEY,
+                    username VARCHAR(255) NOT NULL,
+                    email VARCHAR(255) NOT NULL,
+                    password VARCHAR(255) NOT NULL,
+                    permissions JSON,
+                    roles JSON,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )";
+                break;
+
+            default:
+                $sql = "CREATE TABLE IF NOT EXISTS $table (
+                    id SERIAL PRIMARY KEY,
+                    username VARCHAR(255) NOT NULL,
+                    email VARCHAR(255) NOT NULL,
+                    password VARCHAR(255) NOT NULL,
+                    permissions JSONB,
+                    roles JSONB,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )";
+        }
+
+        $db->query($sql)->execute();
     } catch (Throwable $th) {
         throw new Exception('Failed to create table for users: ' . $th->getMessage());
     }
