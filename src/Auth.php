@@ -125,7 +125,7 @@ class Auth
             return _env($name, $default);
         }
 
-        // Return the value if found, otherwise false like getenv().
+        // Return the value if found, otherwise $default.
         return $_ENV[$name] ?? $default;
     }
 
