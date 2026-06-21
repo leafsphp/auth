@@ -99,19 +99,34 @@ class Auth
         }
 
         if (
-            class_exists('League\OAuth2\Client\Provider\Google') &&
-            _env('GOOGLE_AUTH_CLIENT_ID') &&
-            _env('GOOGLE_AUTH_CLIENT_SECRET')
+            $this->env('GOOGLE_AUTH_CLIENT_ID')
+            && $this->env('GOOGLE_AUTH_CLIENT_SECRET')
+            && class_exists(Google::class)
         ) {
             $this->withGoogle(
-                _env('GOOGLE_AUTH_CLIENT_ID'),
-                _env('GOOGLE_AUTH_CLIENT_SECRET'),
+                $this->env('GOOGLE_AUTH_CLIENT_ID'),
+                $this->env('GOOGLE_AUTH_CLIENT_SECRET'),
                 [
                     'name' => 'google',
-                    'redirectUri' => _env('GOOGLE_AUTH_REDIRECT_URI', _env('APP_URL') . '/auth/register/google'),
+                    'redirectUri' => $this->env(
+                        'GOOGLE_AUTH_REDIRECT_URI',
+                        $this->env('APP_URL') . '/auth/register/google'
+                    ),
                 ]
             );
         }
+    }
+
+    /** @return mixed Returns the value of the environment variable by using Leaf's `_env` primarily */
+    private function env(string $name, $default = false)
+    {
+        // If `_env` function of Leaf is defined, use it.
+        if (function_exists('_env')) {
+            return _env($name, $default);
+        }
+
+        // Return the value if found, otherwise false like getenv().
+        return $_ENV[$name] ?? $default;
     }
 
     /**
@@ -171,7 +186,7 @@ class Auth
      * @param array{
      *     name?: string,
      *     redirectUri?: string,
-     * } $options
+     * } $options If `$options['redirectUri']` is not set, it will default to `$_ENV['APP_URL']/auth/google/callback`
      * @return static
      */
     public function withGoogle(
@@ -184,7 +199,7 @@ class Auth
         unset($options['name']);
 
         if (!isset($options['redirectUri'])) {
-            $options['redirectUri'] = _env('APP_URL') . '/auth/google/callback';
+            $options['redirectUri'] = $this->env('APP_URL') . '/auth/google/callback';
         }
 
         $this->withProvider($clientName, new Google(array_merge([
