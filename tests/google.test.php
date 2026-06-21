@@ -13,7 +13,8 @@ namespace Tests {
      *
      * @return Expectation
      */
-    function expect($value = null) {
+    function expect($value = null): Expectation
+    {
         return \expect($value);
     }
 }
