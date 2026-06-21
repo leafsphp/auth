@@ -119,7 +119,9 @@ class User
      * ---
      * Update user data in the database
      *
-     * @param array $userData User data
+     * @param array{
+     *   email?: string,
+     * } | array<string, mixed> $userData User data
      * @return bool
      */
     public function update(array $userData): bool
