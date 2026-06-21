@@ -292,7 +292,7 @@ class User
             'refreshToken' => $this->tokens['refresh'] ?? null,
         ];
 
-        if (count($this->roles ?? [])) {
+        if (count($this->roles)) {
             $dataToReturn->roles = $this->roles;
         }
 
