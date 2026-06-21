@@ -11,13 +11,19 @@ dataset('test-user', [[[
 
 function getDatabaseConnection(): array
 {
+    if (file_exists(__DIR__ . '/../.env.php')) {
+        $_ENV = require __DIR__ . '/../.env.php';
+    }
+
+    $_ENV += require __DIR__ . '/../.env.example.php';
+
     return [
-        'dbtype' => 'pgsql',
-        'port' => '6543',
-        'host' => 'aws-1-eu-west-2.pooler.supabase.com',
-        'username' => 'postgres.vljhbheaihorcnvlkljw',
-        'password' => 'DV!GE7Aq6C8F55g',
-        'dbname' => 'postgres',
+        'dbtype' => $_ENV['DB_CONNECTION'],
+        'port' => $_ENV['DB_PORT'],
+        'host' => $_ENV['DB_HOST'],
+        'username' => $_ENV['DB_USERNAME'],
+        'password' => $_ENV['DB_PASSWORD'],
+        'dbname' => $_ENV['DB_DATABASE'],
     ];
 }
 
