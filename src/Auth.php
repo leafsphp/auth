@@ -152,7 +152,7 @@ class Auth
      * Pass in db connection instance directly
      *
      * @param PDO $connection A connection instance of your db
-     * @return $this;
+     * @return $this
      */
     public function dbConnection(PDO $connection)
     {
