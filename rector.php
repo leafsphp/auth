@@ -8,9 +8,9 @@ return RectorConfig::configure()
     ->withDowngradeSets(php80: true)
     ->withFluentCallNewLine()
     ->withImportNames(
-        importNames: false,
-        importDocBlockNames: false,
-        importShortClasses: false,
+        importNames: true,
+        importDocBlockNames: true,
+        importShortClasses: true,
         removeUnusedImports: true,
     )
     ->withPaths([

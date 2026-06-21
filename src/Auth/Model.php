@@ -35,11 +35,7 @@ class Model
     protected array $dataToSave = [];
 
     /**
-     * @param array{
-     *     db: \Leaf\Db,
-     *     user: User,
-     *     table: string,
-     * } $data
+     * @param array{db: Db, user: User, table: string} $data
      */
     public function __construct($data)
     {
