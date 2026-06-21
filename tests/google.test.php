@@ -27,7 +27,7 @@ namespace {
 
     use function Tests\expect;
 
-    test('initializes google withou leafs/leaf', function (): void {
+    test('initializes google without leafs/leaf', function (): void {
         $_ENV = [
             'GOOGLE_AUTH_CLIENT_ID' => '{google-auth-client-id}',
             'GOOGLE_AUTH_CLIENT_SECRET' => '{google-auth-client-secret}',
