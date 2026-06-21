@@ -117,7 +117,10 @@ class Auth
         }
     }
 
-    /** @return mixed Returns the value of the environment variable by using Leaf's `_env` primarily */
+    /**
+     * @param mixed $default
+     * @return mixed Returns the value of the environment variable by using Leaf's `_env` primarily
+     */
     private function env(string $name, $default = false)
     {
         // If `_env` function of Leaf is defined, use it.
