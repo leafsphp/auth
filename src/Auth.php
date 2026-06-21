@@ -186,7 +186,7 @@ class Auth
      * @param array{
      *     name?: string,
      *     redirectUri?: string,
-     * } $options If `$options['redirectUri']` is not set, it will default to `$_ENV['APP_URL']/auth/google/callback`
+     * } $options If `$options['redirectUri']` is not set, it will default to the value of `APP_URL` (as resolved by this class's environment helper) with `/auth/google/callback` appended; if `APP_URL` is unset or empty, the default will be `/auth/google/callback`.
      * @return static
      */
     public function withGoogle(
