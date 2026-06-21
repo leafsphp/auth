@@ -33,9 +33,9 @@ class Auth
 
     /**
      * Internal instance of Leaf DB
-     * @var Db
+     * @var ?Db
      */
-    protected $db;
+    protected $db = null;
 
     /**
      * All errors caught
