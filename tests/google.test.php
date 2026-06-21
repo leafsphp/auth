@@ -22,6 +22,7 @@ namespace Tests {
 namespace {
 
     use Leaf\Auth;
+    use League\OAuth2\Client\Provider\AbstractProvider;
     use League\OAuth2\Client\Provider\Google;
 
     use function Tests\expect;
@@ -35,8 +36,11 @@ namespace {
         ];
 
         $auth = new Auth();
+
+        /** @var Google|AbstractProvider|null */
         $google = $auth->client('google');
-        assert($google instanceof Google);
+
+        expect($google)->toBeInstanceOf(Google::class);
 
         $reflectionClass = new ReflectionClass(Google::class);
         $clientId = $reflectionClass->getProperty('clientId');
@@ -65,8 +69,10 @@ namespace {
         ];
 
         $auth = new Auth();
+        /** @var Google|AbstractProvider|null */
         $google = $auth->client('google');
-        assert($google instanceof Google);
+
+        expect($google)->toBeInstanceOf(Google::class);
 
         $reflectionClass = new ReflectionClass(Google::class);
         $redirectUri = $reflectionClass->getProperty('redirectUri');
@@ -83,8 +89,10 @@ namespace {
         ];
 
         $auth = new Auth();
+        /** @var Google|AbstractProvider|null */
         $google = $auth->withGoogle('', '')->client('google');
-        assert($google instanceof Google);
+
+        expect($google)->toBeInstanceOf(Google::class);
 
         $reflectionClass = new ReflectionClass(Google::class);
         $redirectUri = $reflectionClass->getProperty('redirectUri');
