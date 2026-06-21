@@ -32,6 +32,7 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
+        "php": ">=8.0",
         "leafs/date": "*",
         "leafs/password": "*",
         "leafs/session": "*",
