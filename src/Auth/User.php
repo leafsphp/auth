@@ -296,7 +296,7 @@ class User
             $dataToReturn->roles = $this->roles;
         }
 
-        if (count($this->permissions ?? [])) {
+        if (count($this->permissions)) {
             $dataToReturn->permissions = $this->permissions;
         }
 
