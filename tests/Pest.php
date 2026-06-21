@@ -11,13 +11,19 @@ dataset('test-user', [[[
 
 function getDatabaseConnection(): array
 {
+    if (file_exists(__DIR__ . '/../.env.php')) {
+        $_ENV = require __DIR__ . '/../.env.php';
+    }
+
+    $_ENV += require __DIR__ . '/../.env.example.php';
+
     return [
-        'dbtype' => 'pgsql',
-        'port' => '6543',
-        'host' => 'aws-1-eu-west-2.pooler.supabase.com',
-        'username' => 'postgres.vljhbheaihorcnvlkljw',
-        'password' => 'DV!GE7Aq6C8F55g',
-        'dbname' => 'postgres',
+        'dbtype' => $_ENV['DB_CONNECTION'],
+        'port' => $_ENV['DB_PORT'],
+        'host' => $_ENV['DB_HOST'],
+        'username' => $_ENV['DB_USERNAME'],
+        'password' => $_ENV['DB_PASSWORD'],
+        'dbname' => $_ENV['DB_DATABASE'],
     ];
 }
 
@@ -55,18 +61,34 @@ function createTableForUsers($table = 'users'): void
     $db = dbInstance();
 
     try {
-        $db
-            ->query("CREATE TABLE IF NOT EXISTS $table (
-                id SERIAL PRIMARY KEY,
-                username VARCHAR(255) NOT NULL,
-                email VARCHAR(255) NOT NULL,
-                password VARCHAR(255) NOT NULL,
-                permissions JSONB,
-                roles JSONB,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )")
-            ->execute();
+        switch ($_ENV['DB_CONNECTION']) {
+            case 'mysql':
+                $sql = "CREATE TABLE IF NOT EXISTS $table (
+                    id SERIAL PRIMARY KEY,
+                    username VARCHAR(255) NOT NULL,
+                    email VARCHAR(255) NOT NULL,
+                    password VARCHAR(255) NOT NULL,
+                    permissions JSON,
+                    roles JSON,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )";
+                break;
+
+            default:
+                $sql = "CREATE TABLE IF NOT EXISTS $table (
+                    id SERIAL PRIMARY KEY,
+                    username VARCHAR(255) NOT NULL,
+                    email VARCHAR(255) NOT NULL,
+                    password VARCHAR(255) NOT NULL,
+                    permissions JSONB,
+                    roles JSONB,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )";
+        }
+
+        $db->query($sql)->execute();
     } catch (Throwable $th) {
         throw new Exception('Failed to create table for users: ' . $th->getMessage());
     }
