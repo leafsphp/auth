@@ -46,7 +46,7 @@ class User
 
     /**
      * All errors caught
-     * @var array
+     * @var array<string, string>
      */
     protected $errorsArray = [];
 
