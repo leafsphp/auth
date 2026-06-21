@@ -930,6 +930,7 @@ class Auth
         return $this->db;
     }
 
+    /** @phpstan-assert Db $this->db */
     protected function checkDbConnection(): void
     {
         if (!$this->db && function_exists('db')) {
