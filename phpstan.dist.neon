@@ -1,10 +1,15 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fadrian06/phpstan/refs/heads/add-schema/schema.json
 includes:
   - vendor/phpstan/phpstan/conf/bleedingEdge.neon
   - phpstan-baseline.neon
 
 parameters:
+  errorFormat: table
+  excludePaths:
+    - tests
   level: 8
   paths:
     - src
-    - tests
-  treatPhpDocTypesAsCertain: false
+  reportIgnoresWithoutComments: true
+  reportUnmatchedIgnoredErrors: true
+  treatPhpDocTypesAsCertain: true
