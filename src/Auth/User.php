@@ -46,7 +46,9 @@ class User
 
     /**
      * All errors caught
-     * @var array<string, string>
+     * @var array{
+     *   password?: string,
+     * } | array<string, string>
      */
     protected $errorsArray = [];
 
@@ -440,7 +442,9 @@ class User
 
     /**
      * Get user errors
-     * @return array
+     * @return array{
+     *   password?: string,
+     * } | array<string, string>
      */
     public function errors()
     {

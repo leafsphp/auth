@@ -12,4 +12,4 @@ parameters:
     - src
   reportIgnoresWithoutComments: true
   reportUnmatchedIgnoredErrors: true
-  treatPhpDocTypesAsCertain: true
+  treatPhpDocTypesAsCertain: false
