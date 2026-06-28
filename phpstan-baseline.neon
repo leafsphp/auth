@@ -1,0 +1,19 @@
+parameters:
+	ignoreErrors:
+		-
+			rawMessage: 'Method Leaf\Auth::db() should return Leaf\Db but returns Leaf\Db|null.'
+			identifier: return.type
+			count: 1
+			path: src/Auth.php
+
+		-
+			rawMessage: 'Parameter #1 $db of method Leaf\Auth\User::setDb() expects Leaf\Db, Leaf\Db|null given.'
+			identifier: argument.type
+			count: 1
+			path: src/Auth.php
+
+		-
+			rawMessage: 'Offset ''status'' might not exist on array<string, mixed>|null.'
+			identifier: offsetAccess.notFound
+			count: 2
+			path: src/Auth/User.php

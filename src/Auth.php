@@ -34,9 +34,9 @@ class Auth
 
     /**
      * Internal instance of Leaf DB
-     * @var Db
+     * @var ?Db
      */
-    protected $db;
+    protected $db = null;
 
     /**
      * All errors caught
@@ -171,7 +171,7 @@ class Auth
      * Pass in db connection instance directly
      *
      * @param PDO $connection A connection instance of your db
-     * @return $this;
+     * @return $this
      */
     public function dbConnection(PDO $connection)
     {
@@ -949,6 +949,7 @@ class Auth
         return $this->db;
     }
 
+    /** @phpstan-assert Db $this->db */
     protected function checkDbConnection(): void
     {
         if (!$this->db && function_exists('db')) {

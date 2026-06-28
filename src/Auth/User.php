@@ -18,6 +18,7 @@ use Leaf\Http\Session;
  *
  * @since 3.0.0
  * @version 1.0.0
+ * @property mixed $email
  */
 class User
 {
@@ -49,7 +50,9 @@ class User
 
     /**
      * All errors caught
-     * @var array
+     * @var array{
+     *   password?: string,
+     * } | array<string, string>
      */
     protected $errorsArray = [];
 
@@ -122,7 +125,9 @@ class User
      * ---
      * Update user data in the database
      *
-     * @param array $userData User data
+     * @param array{
+     *   email?: string,
+     * } | array<string, mixed> $userData User data
      * @return bool
      */
     public function update(array $userData): bool
@@ -293,11 +298,11 @@ class User
             'refreshToken' => $this->tokens['refresh'] ?? null,
         ];
 
-        if (count($this->roles ?? [])) {
+        if (count($this->roles)) {
             $dataToReturn->roles = $this->roles;
         }
 
-        if (count($this->permissions ?? [])) {
+        if (count($this->permissions)) {
             $dataToReturn->permissions = $this->permissions;
         }
 
@@ -441,7 +446,9 @@ class User
 
     /**
      * Get user errors
-     * @return array
+     * @return array{
+     *   password?: string,
+     * } | array<string, string>
      */
     public function errors()
     {
