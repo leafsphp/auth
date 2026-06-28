@@ -42,9 +42,7 @@ function authInstance(): Auth
 
 function deleteUser(string $username, $table = 'users')
 {
-    $db = dbInstance();
-
-    $db->delete($table)->where('username', $username)->execute();
+    dbInstance()->delete($table)->where('username', $username)->execute();
 }
 
 function createTableForUsers($table = 'users'): void
