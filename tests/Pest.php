@@ -20,22 +20,32 @@ function getDatabaseConnection(): array
 
     return [
         'dbtype' => $_ENV['DB_CONNECTION'],
-        'port' => $_ENV['DB_PORT'],
-        'host' => $_ENV['DB_HOST'],
-        'username' => $_ENV['DB_USERNAME'],
-        'password' => $_ENV['DB_PASSWORD'],
+        'port' => $_ENV['DB_PORT'] ?? '',
+        'host' => $_ENV['DB_HOST'] ?? '',
+        'username' => $_ENV['DB_USERNAME'] ?? '',
+        'password' => $_ENV['DB_PASSWORD'] ?? '',
         'dbname' => $_ENV['DB_DATABASE'],
     ];
 }
 
 function dbInstance(): Db
 {
-    $db = new Db();
+    static $db = null;
 
-    try {
-        $db->connect(getDatabaseConnection());
-    } catch (Throwable $th) {
-        throw $th;
+    if ($db === null) {
+        $db = new Db();
+        $connection = getDatabaseConnection();
+
+        try {
+            $db->connect($connection);
+
+            // Leaf DB keeps reconnecting while deferred config is set.
+            // This breaks SQLite :memory: tests because each query gets a new DB.
+            $db->connection();
+            $db->config(['deferred' => false]);
+        } catch (Throwable $th) {
+            throw $th;
+        }
     }
 
     return $db;
@@ -52,8 +62,7 @@ function authInstance(): Auth
 
 function deleteUser(string $username, $table = 'users')
 {
-    $db = new Db();
-    $db->connect(getDatabaseConnection());
+    $db = dbInstance();
 
     $db->delete($table)->where('username', $username)->execute();
 }
@@ -61,9 +70,23 @@ function deleteUser(string $username, $table = 'users')
 function createTableForUsers($table = 'users'): void
 {
     $db = dbInstance();
+    $connection = getDatabaseConnection();
 
     try {
-        switch ($_ENV['DB_CONNECTION']) {
+        switch ($connection['dbtype']) {
+            case 'sqlite':
+                $sql = "CREATE TABLE IF NOT EXISTS $table (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    username TEXT NOT NULL,
+                    email TEXT NOT NULL,
+                    password TEXT NOT NULL,
+                    permissions TEXT,
+                    roles TEXT,
+                    created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+                )";
+                break;
+
             case 'mysql':
                 $sql = "CREATE TABLE IF NOT EXISTS $table (
                     id SERIAL PRIMARY KEY,
