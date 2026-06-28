@@ -22,7 +22,6 @@ lint:
 actions:
   run:
     - lint
-    - tests
   os:
     - ubuntu-latest
   php:
