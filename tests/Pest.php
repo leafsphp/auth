@@ -49,42 +49,38 @@ function createTableForUsers($table = 'users'): void
 {
     $db = dbInstance();
 
-    try {
-        $sql = match ($_ENV['DB_CONNECTION']) {
-            'sqlite' => "CREATE TABLE IF NOT EXISTS $table (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT NOT NULL,
-                email TEXT NOT NULL,
-                password TEXT NOT NULL,
-                permissions TEXT,
-                roles TEXT,
-                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
-                updated_at TEXT DEFAULT CURRENT_TIMESTAMP
-            )",
-            'mysql' => "CREATE TABLE IF NOT EXISTS $table (
-                id SERIAL PRIMARY KEY,
-                username VARCHAR(255) NOT NULL,
-                email VARCHAR(255) NOT NULL,
-                password VARCHAR(255) NOT NULL,
-                permissions JSON,
-                roles JSON,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )",
-            default => "CREATE TABLE IF NOT EXISTS $table (
-                id SERIAL PRIMARY KEY,
-                username VARCHAR(255) NOT NULL,
-                email VARCHAR(255) NOT NULL,
-                password VARCHAR(255) NOT NULL,
-                permissions JSONB,
-                roles JSONB,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )",
-        };
+    $sql = match ($_ENV['DB_CONNECTION']) {
+        'sqlite' => "CREATE TABLE IF NOT EXISTS $table (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL,
+            email TEXT NOT NULL,
+            password TEXT NOT NULL,
+            permissions TEXT,
+            roles TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )",
+        'mysql' => "CREATE TABLE IF NOT EXISTS $table (
+            id SERIAL PRIMARY KEY,
+            username VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            password VARCHAR(255) NOT NULL,
+            permissions JSON,
+            roles JSON,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )",
+        default => "CREATE TABLE IF NOT EXISTS $table (
+            id SERIAL PRIMARY KEY,
+            username VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL,
+            password VARCHAR(255) NOT NULL,
+            permissions JSONB,
+            roles JSONB,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )",
+    };
 
-        $db->query($sql)->execute();
-    } catch (Throwable $th) {
-        throw new Exception('Failed to create table for users: ' . $th->getMessage());
-    }
+    $db->query($sql)->execute();
 }
