@@ -24,6 +24,7 @@ actions:
     - lint
   os:
     - ubuntu-latest
+    - windows-latest
   php:
     extensions: json, zip, dom, curl, libxml, mbstring, PDO_PGSQL
     versions:
