@@ -10,7 +10,7 @@
         "php",
         "framework"
     ],
-    "homepage": "https://leafphp.netlify.app/#/",
+    "homepage": "https://leafphp.dev/docs/auth/",
     "type": "library",
     "license": "MIT",
     "authors": [
