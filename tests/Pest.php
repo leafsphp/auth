@@ -4,22 +4,13 @@ use Leaf\Auth;
 use Leaf\Db;
 use Leaf\Helpers\Password;
 
-function getDatabaseConnection(): array
+function loadEnvironmentVariables(): void
 {
     if (file_exists(__DIR__ . '/../.env.php')) {
         $_ENV = require __DIR__ . '/../.env.php';
     }
 
     $_ENV += require __DIR__ . '/../.env.example.php';
-
-    return [
-        'dbtype' => $_ENV['DB_CONNECTION'],
-        'port' => $_ENV['DB_PORT'] ?? '',
-        'host' => $_ENV['DB_HOST'] ?? '',
-        'username' => $_ENV['DB_USERNAME'] ?? '',
-        'password' => $_ENV['DB_PASSWORD'] ?? '',
-        'dbname' => $_ENV['DB_DATABASE'],
-    ];
 }
 
 function dbInstance(): Db
@@ -27,11 +18,10 @@ function dbInstance(): Db
     static $db = null;
 
     if ($db === null) {
-        $db = new Db();
-        $connection = getDatabaseConnection();
-
         try {
-            $db->connect($connection);
+            loadEnvironmentVariables();
+            $db = new Db();
+            $db->autoConnect();
 
             // Leaf DB keeps reconnecting while deferred config is set.
             // This breaks SQLite :memory: tests because each query gets a new DB.
@@ -64,10 +54,9 @@ function deleteUser(string $username, $table = 'users')
 function createTableForUsers($table = 'users'): void
 {
     $db = dbInstance();
-    $connection = getDatabaseConnection();
 
     try {
-        switch ($connection['dbtype']) {
+        switch ($_ENV['DB_CONNECTION']) {
             case 'sqlite':
                 $sql = "CREATE TABLE IF NOT EXISTS $table (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
