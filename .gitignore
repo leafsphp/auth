@@ -20,6 +20,9 @@ Thumbs.db
 # phpstorm
 .idea/*
 
+# sublime text
+*.sublime-*
+
 # Alchemy
 .alchemy
 .phpunit.result.cache

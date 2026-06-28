@@ -2,6 +2,7 @@
 
 use Leaf\Auth;
 use Leaf\Db;
+use Leaf\Helpers\Password;
 
 dataset('test-user', [[[
     'username' => 'test-user',
@@ -44,6 +45,7 @@ function authInstance(): Auth
 {
     $auth = new Auth();
     $auth->dbConnection(dbInstance()->connection());
+    $auth->config('token.secret', Password::hash(uniqid()));
 
     return $auth;
 }

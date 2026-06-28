@@ -4,7 +4,6 @@ includes:
   - phpstan-baseline.neon
 
 parameters:
-  errorFormat: table
   excludePaths:
     - tests
   level: 8
