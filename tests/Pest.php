@@ -4,12 +4,6 @@ use Leaf\Auth;
 use Leaf\Db;
 use Leaf\Helpers\Password;
 
-dataset('test-user', [[[
-    'username' => 'test-user',
-    'email' => 'test-user@example.com',
-    'password' => 'password'
-]]]);
-
 function getDatabaseConnection(): array
 {
     if (file_exists(__DIR__ . '/../.env.php')) {
