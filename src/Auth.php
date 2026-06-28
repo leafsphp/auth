@@ -2,6 +2,7 @@
 
 namespace Leaf;
 
+use League\OAuth2\Client\Provider\AbstractProvider;
 use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
@@ -43,7 +44,7 @@ class Auth
      */
     protected $errorsArray = [];
 
-    /** @var array<string, \League\OAuth2\Client\Provider\AbstractProvider> Configured oauth clients */
+    /** @var array<string, AbstractProvider> Configured oauth clients */
     protected $oauthClients = [];
 
     public function __construct()
@@ -219,7 +220,7 @@ class Auth
      * ---
      * Register a generic OAuth client to use with Leaf Auth, should be a league/oauth2-client compatible client.
      * @param string $clientName The name of the client to register
-     * @param \League\OAuth2\Client\Provider\AbstractProvider $client An instance of a league/oauth2-client compatible client
+     * @param AbstractProvider $client An instance of a league/oauth2-client compatible client
      * @return static
      */
     public function withProvider(string $clientName, $client)
@@ -231,7 +232,7 @@ class Auth
     /**
      * Return an oauth client
      * @param string $clientName The name of the client to return
-     * @return \League\OAuth2\Client\Provider\AbstractProvider|null
+     * @return AbstractProvider|null
      */
     public function client(string $clientName)
     {
@@ -587,7 +588,7 @@ class Auth
      *
      * @param array<string, mixed> $userData The user details to save
      * @return User|false|never
-     * @throws \Exception If database connection is not established
+     * @throws Exception If database connection is not established
      */
     public function createUserFor($userData)
     {
@@ -772,7 +773,7 @@ class Auth
      * @param string $middleware The middleware to register
      * @param callable $callback The callback to run if middleware fails
      * @return void|never
-     * @throws \Exception If not used with leafs/leaf installed
+     * @throws Exception If not used with leafs/leaf installed
      */
     public function middleware(string $middleware, callable $callback)
     {
@@ -976,7 +977,7 @@ class Auth
 
     /**
      * @return void|never
-     * @throws \Exception If sessions are not enabled
+     * @throws Exception If sessions are not enabled
      */
     protected function sessionCheck()
     {
