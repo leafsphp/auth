@@ -3,8 +3,10 @@ includes:
   - phpstan-baseline.neon
 
 parameters:
+  excludePaths:
+    - tests
   level: 8
   paths:
     - src
-    - tests
+  reportUnmatchedIgnoredErrors: true
   treatPhpDocTypesAsCertain: false
