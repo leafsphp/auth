@@ -47,8 +47,8 @@
         }
     },
     "require-dev": {
-        "pestphp/pest": "^1.0 | ^2.0",
         "friendsofphp/php-cs-fixer": "^3.64",
+        "pestphp/pest": "^1.23",
         "leafs/alchemy": "*",
         "phpstan/phpstan": "^2.1",
         "phpstan/extension-installer": "^1.4",
