@@ -18,18 +18,14 @@ function dbInstance(): Db
     static $db = null;
 
     if ($db === null) {
-        try {
-            loadEnvironmentVariables();
-            $db = new Db();
-            $db->autoConnect();
+        loadEnvironmentVariables();
+        $db = new Db();
+        $db->autoConnect();
 
-            // Leaf DB keeps reconnecting while deferred config is set.
-            // This breaks SQLite :memory: tests because each query gets a new DB.
-            $db->connection();
-            $db->config(['deferred' => false]);
-        } catch (Throwable $th) {
-            throw $th;
-        }
+        // Leaf DB keeps reconnecting while deferred config is set.
+        // This breaks SQLite :memory: tests because each query gets a new DB.
+        $db->connection();
+        $db->config(['deferred' => false]);
     }
 
     return $db;
