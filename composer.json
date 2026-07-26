@@ -62,5 +62,10 @@
         "test": "./vendor/bin/alchemy setup --test",
         "lint": "./vendor/bin/alchemy setup --lint",
         "actions": "./vendor/bin/alchemy setup --actions"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-v5.x": "5.0.x-dev"
+        }
     }
 }
