@@ -49,7 +49,7 @@
     "require-dev": {
         "pestphp/pest": "^1.0 | ^2.0",
         "friendsofphp/php-cs-fixer": "^3.64",
-        "leafs/alchemy": "*",
+        "leafs/alchemy": "v5.x-dev",
         "phpstan/phpstan": "^2.1",
         "phpstan/extension-installer": "^1.4",
         "leafs/leaf": "^4.4",
@@ -59,9 +59,9 @@
     },
     "scripts": {
         "alchemy": "./vendor/bin/alchemy setup",
-        "test": "./vendor/bin/alchemy setup --test",
-        "lint": "./vendor/bin/alchemy setup --lint",
-        "actions": "./vendor/bin/alchemy setup --actions"
+        "test": "./vendor/bin/alchemy test",
+        "lint": "./vendor/bin/alchemy lint",
+        "ci": "./vendor/bin/alchemy ci"
     },
     "extra": {
         "branch-alias": {
