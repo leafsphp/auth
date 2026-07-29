@@ -26,3 +26,7 @@ Thumbs.db
 # Alchemy
 .alchemy
 .phpunit.result.cache
+
+# Alchemy-generated (kept for IDE support, never committed)
+phpunit.xml
+.php-cs-fixer.cache

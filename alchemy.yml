@@ -36,3 +36,24 @@ actions:
   events:
     - push
     - pull_request
+
+refactor:
+  paths:
+    - src
+    - tests
+  php: '8.2'
+  fluent-new-line: true
+  import-names: true
+
+analyse:
+  level: 8
+  paths:
+    - src
+  includes:
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+    - phpstan-baseline.neon
+  excludePaths:
+    - tests
+  reportIgnoresWithoutComments: true
+  reportUnmatchedIgnoredErrors: true
+  treatPhpDocTypesAsCertain: false

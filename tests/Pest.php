@@ -18,6 +18,21 @@ function getDatabaseConnection(): array
 
     $_ENV += require __DIR__ . '/../.env.example.php';
 
+    // fresh database file per suite run
+    static $cleaned = false;
+
+    if (!$cleaned && $_ENV['DB_CONNECTION'] === 'sqlite' && file_exists($_ENV['DB_DATABASE'])) {
+        unlink($_ENV['DB_DATABASE']);
+        $cleaned = true;
+    }
+
+    if ($_ENV['DB_CONNECTION'] === 'sqlite') {
+        return [
+            'dbtype' => 'sqlite',
+            'dbname' => $_ENV['DB_DATABASE'],
+        ];
+    }
+
     return [
         'dbtype' => $_ENV['DB_CONNECTION'],
         'port' => $_ENV['DB_PORT'],
@@ -30,12 +45,13 @@ function getDatabaseConnection(): array
 
 function dbInstance(): Db
 {
-    $db = new Db();
+    // one shared connection for the whole process — opening a second
+    // handle onto the same sqlite file deadlocks on write locks
+    static $db = null;
 
-    try {
+    if ($db === null) {
+        $db = new Db();
         $db->connect(getDatabaseConnection());
-    } catch (Throwable $th) {
-        throw $th;
     }
 
     return $db;
@@ -52,8 +68,7 @@ function authInstance(): Auth
 
 function deleteUser(string $username, $table = 'users')
 {
-    $db = new Db();
-    $db->connect(getDatabaseConnection());
+    $db = dbInstance();
 
     $db->delete($table)->where('username', $username)->execute();
 }
@@ -64,6 +79,19 @@ function createTableForUsers($table = 'users'): void
 
     try {
         switch ($_ENV['DB_CONNECTION']) {
+            case 'sqlite':
+                $sql = "CREATE TABLE IF NOT EXISTS $table (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    username TEXT NOT NULL,
+                    email TEXT NOT NULL,
+                    password TEXT NOT NULL,
+                    permissions TEXT,
+                    roles TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )";
+                break;
+
             case 'mysql':
                 $sql = "CREATE TABLE IF NOT EXISTS $table (
                     id SERIAL PRIMARY KEY,

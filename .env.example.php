@@ -2,11 +2,13 @@
 
 declare(strict_types=1);
 
+// sqlite needs zero setup and runs on every CI OS — point these at your own
+// mysql/postgres instance via .env.php when you want to test a real driver
 return [
-    'DB_CONNECTION' => 'pgsql',
-    'DB_PORT' => 6543,
-    'DB_HOST' => 'aws-1-eu-west-2.pooler.supabase.com',
-    'DB_USERNAME' => 'postgres.vljhbheaihorcnvlkljw',
-    'DB_PASSWORD' => 'DV!GE7Aq6C8F55g',
-    'DB_DATABASE' => 'postgres',
+    'DB_CONNECTION' => 'sqlite',
+    'DB_PORT' => '',
+    'DB_HOST' => '',
+    'DB_USERNAME' => '',
+    'DB_PASSWORD' => '',
+    'DB_DATABASE' => sys_get_temp_dir() . '/leaf-auth-tests.sqlite',
 ];
