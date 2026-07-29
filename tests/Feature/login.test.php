@@ -5,18 +5,14 @@ use Leaf\Auth\User;
 beforeAll(function () {
     createTableForUsers();
 
-    try {
-        dbInstance()
-            ->insert('users')
-            ->params([
-                'username' => 'test-user',
-                'email' => 'test-user@example.com',
-                'password' => password_hash('password', PASSWORD_BCRYPT)
-            ])
-            ->execute();
-    } catch (Throwable $th) {
-        throw $th;
-    }
+    dbInstance()
+        ->insert('users')
+        ->params([
+            'username' => 'test-user',
+            'email' => 'test-user@example.com',
+            'password' => password_hash('password', PASSWORD_BCRYPT)
+        ])
+        ->execute();
 });
 
 afterAll(function () {
