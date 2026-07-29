@@ -1,6 +1,6 @@
 name: Lint code
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   lint:
@@ -10,15 +10,13 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.head_ref }}
+        uses: actions/checkout@v6
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
-          extensions: json, zip, dom, curl, libxml, mbstring
+          php-version: '8.0'
+          extensions: json
           tools: composer:v2
           coverage: none
 
@@ -29,6 +27,6 @@ jobs:
         run: composer run lint
 
       - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: stefanzweifel/git-auto-commit-action@v7
         with:
           commit_message: 'chore: fix styling'
