@@ -32,8 +32,12 @@ trait UsesRoles
 
         $roleKey = Config::get('roles.key');
 
-        if (!($this->data[$roleKey] ?? null)) {
-            $this->db->query('ALTER TABLE ' . Config::get('db.table') . " ADD COLUMN $roleKey TEXT NOT NULL")->execute();
+        if (!array_key_exists($roleKey, (array) $this->data)) {
+            try {
+                $this->db->query('ALTER TABLE ' . Config::get('db.table') . " ADD COLUMN $roleKey TEXT")->execute();
+            } catch (Throwable $th) {
+                // column already exists in the table, it just wasn't selected
+            }
         }
 
         try {
@@ -121,10 +125,10 @@ trait UsesRoles
      */
     public function unassign($role): void
     {
-        $this->roles = array_diff(
+        $this->roles = array_values(array_diff(
             $this->roles,
             is_array($role) ? $role : [$role]
-        );
+        ));
 
         $this->permissions = $this->getRolePermissions($this->roles);
 
