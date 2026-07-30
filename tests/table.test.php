@@ -59,7 +59,6 @@ test('update should work with user defined table', function () {
         $this->fail(json_encode($auth->errors()));
     }
 
-    // TODO: $response is a bool, not a bool|array
     $response = $auth->update([
         'username' => 'test-user55',
         'email' => 'test-user55@example.com',
@@ -69,15 +68,15 @@ test('update should work with user defined table', function () {
         $this->fail(json_encode($auth->errors()));
     }
 
-    expect($response['user']['username'])->toBe('test-user55');
-    expect($response['user']['email'])->toBe('test-user55@example.com');
-})->skip();
+    expect($auth->user()->username)->toBe('test-user55');
+    expect($auth->user()->email)->toBe('test-user55@example.com');
+});
 
 test('user table can use uuid as id', function () {
-    createUsersTable('uuid_users', true);
+    createTableForUsers('uuid_users', uuid: true);
 
     $auth = authInstance();
-    $auth->config(['session' => false, 'db.table' => 'uuid_users']);
+    $auth->config(['session' => false, 'db.table' => 'uuid_users', 'id.key' => 'id']);
 
     $response = $auth->register([
         'id' => '123e4567-e89b-12d3-a456-426614174000',
@@ -90,5 +89,6 @@ test('user table can use uuid as id', function () {
         $this->fail(json_encode($auth->errors()));
     }
 
-    expect($response['user']['username'])->toBe('test-user');
-})->skip();
+    expect($auth->user()->username)->toBe('test-user');
+    expect($auth->user()->id)->toBe('123e4567-e89b-12d3-a456-426614174000');
+});

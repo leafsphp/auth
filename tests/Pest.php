@@ -73,15 +73,16 @@ function deleteUser(string $username, $table = 'users')
     $db->delete($table)->where('username', $username)->execute();
 }
 
-function createTableForUsers($table = 'users'): void
+function createTableForUsers($table = 'users', bool $uuid = false): void
 {
     $db = dbInstance();
+    $idColumn = $uuid ? 'id TEXT PRIMARY KEY' : null;
 
     try {
         switch ($_ENV['DB_CONNECTION']) {
             case 'sqlite':
                 $sql = "CREATE TABLE IF NOT EXISTS $table (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    " . ($idColumn ?? 'id INTEGER PRIMARY KEY AUTOINCREMENT') . ",
                     username TEXT NOT NULL,
                     email TEXT NOT NULL,
                     password TEXT NOT NULL,
@@ -94,7 +95,7 @@ function createTableForUsers($table = 'users'): void
 
             case 'mysql':
                 $sql = "CREATE TABLE IF NOT EXISTS $table (
-                    id SERIAL PRIMARY KEY,
+                    " . ($idColumn ?? 'id SERIAL PRIMARY KEY') . ",
                     username VARCHAR(255) NOT NULL,
                     email VARCHAR(255) NOT NULL,
                     password VARCHAR(255) NOT NULL,
@@ -107,7 +108,7 @@ function createTableForUsers($table = 'users'): void
 
             default:
                 $sql = "CREATE TABLE IF NOT EXISTS $table (
-                    id SERIAL PRIMARY KEY,
+                    " . ($idColumn ?? 'id SERIAL PRIMARY KEY') . ",
                     username VARCHAR(255) NOT NULL,
                     email VARCHAR(255) NOT NULL,
                     password VARCHAR(255) NOT NULL,
