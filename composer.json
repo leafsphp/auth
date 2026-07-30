@@ -32,7 +32,7 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.0",
+        "php": "^8.2",
         "leafs/date": "*",
         "leafs/password": "*",
         "leafs/session": "*",
@@ -47,21 +47,24 @@
         }
     },
     "require-dev": {
-        "pestphp/pest": "^1.0 | ^2.0",
-        "friendsofphp/php-cs-fixer": "^3.64",
+        "pestphp/pest": "*",
+        "friendsofphp/php-cs-fixer": "*",
         "leafs/alchemy": "v5.x-dev",
-        "phpstan/phpstan": "^2.1",
-        "phpstan/extension-installer": "^1.4",
+        "phpstan/phpstan": "*",
+        "phpstan/extension-installer": "*",
         "leafs/leaf": "^4.4",
         "league/oauth2-google": "^4.0",
         "leafs/billing": "^0.2.0",
-        "rector/rector": "^2.2"
+        "rector/rector": "*"
     },
     "scripts": {
-        "alchemy": "./vendor/bin/alchemy setup",
-        "test": "./vendor/bin/alchemy test",
-        "lint": "./vendor/bin/alchemy lint",
-        "ci": "./vendor/bin/alchemy ci"
+        "test": "@php vendor/bin/alchemy test",
+        "alchemy": "@php vendor/bin/alchemy all",
+        "lint": "@php vendor/bin/alchemy lint",
+        "fmt": "@php vendor/bin/alchemy fmt",
+        "refactor": "@php vendor/bin/alchemy refactor",
+        "analyse": "@php vendor/bin/alchemy analyse",
+        "ci": "@php vendor/bin/alchemy ci"
     },
     "extra": {
         "branch-alias": {
