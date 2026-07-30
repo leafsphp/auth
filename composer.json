@@ -52,9 +52,9 @@
         "leafs/alchemy": "v5.x-dev",
         "phpstan/phpstan": "*",
         "phpstan/extension-installer": "*",
-        "leafs/leaf": "^4.4",
-        "league/oauth2-google": "^4.0",
-        "leafs/billing": "^0.2.0",
+        "leafs/leaf": "*",
+        "league/oauth2-google": "*",
+        "leafs/billing": "v5.x-dev",
         "rector/rector": "*"
     },
     "scripts": {
