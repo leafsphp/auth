@@ -106,6 +106,13 @@ class User
         $this->tokens['access'] = $this->generateToken($sessionLifetime);
         $this->tokens['refresh'] = $this->generateToken($sessionLifetime + 259200);
 
+        if (function_exists('crash')) {
+            crash()->context(['user' => array_filter([
+                'id' => $this->id(),
+                'email' => $data['email'] ?? null,
+            ])]);
+        }
+
         if ($data[Config::get('roles.key')] ?? null) {
             $this->setRolesAndPermissions(json_decode($data[Config::get('roles.key')], true));
         }
