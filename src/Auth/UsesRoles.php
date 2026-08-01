@@ -28,6 +28,17 @@ trait UsesRoles
      */
     public function assign($role): bool
     {
+        $unknown = $this->unknownRoles($role);
+
+        if (!empty($unknown)) {
+            trigger_error(
+                'Cannot assign unknown role(s): ' . implode(', ', $unknown)
+                    . '. Register them with auth()->createRoles() first.'
+            );
+
+            return false;
+        }
+
         $this->setRolesAndPermissions($role);
 
         $roleKey = Config::get('roles.key');
@@ -139,6 +150,24 @@ trait UsesRoles
             ])
             ->where(Config::get('id.key'), $this->data[Config::get('id.key')])
             ->execute();
+    }
+
+    /**
+     * Return any of the given roles that haven't been registered
+     *
+     * @param string|string[] $roles The role(s) to check
+     * @return string[]
+     */
+    protected function unknownRoles($roles): array
+    {
+        $registered = Config::get('roles') ?? [];
+
+        return array_values(array_filter(
+            is_string($roles) ? [$roles] : $roles,
+            function ($role) use ($registered) {
+                return !array_key_exists($role, $registered);
+            }
+        ));
     }
 
     /**

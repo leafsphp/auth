@@ -74,13 +74,35 @@ test('assign accepts multiple roles and merges permissions without duplicates', 
     expect($user->permissions())->toBe(['view-ticket', 'edit-ticket']);
 });
 
-test('assigning an unknown role is ignored', function () {
+test('assigning an unknown role fails loudly instead of silently doing nothing', function () {
     $user = $this->auth->user();
 
-    $user->assign('superadmin');
+    $errors = [];
+    set_error_handler(function ($errno, $errstr) use (&$errors) {
+        $errors[] = $errstr;
+        return true;
+    });
 
+    $result = $user->assign('superadmin');
+
+    restore_error_handler();
+
+    expect($result)->toBeFalse();
+    expect($errors)->toHaveCount(1);
+    expect($errors[0])->toContain('superadmin');
     expect($user->roles())->toBe([]);
     expect($user->permissions())->toBe([]);
+});
+
+test('a known role mixed with an unknown one assigns nothing', function () {
+    $user = $this->auth->user();
+
+    set_error_handler(fn () => true);
+    $result = $user->assign(['admin', 'nope']);
+    restore_error_handler();
+
+    expect($result)->toBeFalse();
+    expect($user->roles())->toBe([]);
 });
 
 test('is and can accept arrays and match any entry', function () {
@@ -124,4 +146,82 @@ test('unassign revokes a role and recalculates permissions', function () {
     $freshAuth->login(['username' => 'role-user', 'password' => 'password']);
 
     expect($freshAuth->user()->roles())->toBe(['guest']);
+});
+
+/*
+ * Route middleware. The registered middleware calls the failure handler and
+ * then exits, so each test hands it a handler that throws: a thrown marker
+ * means "denied" and the exit is never reached, while no throw means the
+ * request was allowed through.
+ */
+
+class MiddlewareDenied extends \Exception
+{
+}
+
+function registerRoleMiddleware(Leaf\Auth $auth): void
+{
+    foreach (['is', 'isNot', 'can', 'cannot'] as $name) {
+        $auth->middleware($name, function () use ($name) {
+            throw new MiddlewareDenied($name);
+        });
+    }
+}
+
+function runRoleMiddleware(string $name, $args)
+{
+    $registered = (new ReflectionClass(Leaf\Router::class))->getProperty('namedMiddleware');
+    $registered->setAccessible(true);
+
+    return $registered->getValue()[$name](is_array($args) ? $args : [$args]);
+}
+
+test('is middleware allows a user holding the role', function () {
+    $this->auth->user()->assign('admin');
+    registerRoleMiddleware($this->auth);
+
+    expect(fn () => runRoleMiddleware('is', ['admin']))->not->toThrow(MiddlewareDenied::class);
+});
+
+test('is middleware blocks a user without the role', function () {
+    $this->auth->user()->assign('guest');
+    registerRoleMiddleware($this->auth);
+
+    expect(fn () => runRoleMiddleware('is', ['admin']))->toThrow(MiddlewareDenied::class);
+});
+
+test('is middleware allows any role in a piped list', function () {
+    $this->auth->user()->assign('support');
+    registerRoleMiddleware($this->auth);
+
+    // 'is:admin|support' reaches the middleware already exploded
+    expect(fn () => runRoleMiddleware('is', ['admin', 'support']))->not->toThrow(MiddlewareDenied::class);
+});
+
+test('can middleware allows a permission the role grants', function () {
+    $this->auth->user()->assign('support');
+    registerRoleMiddleware($this->auth);
+
+    expect(fn () => runRoleMiddleware('can', ['edit-ticket']))->not->toThrow(MiddlewareDenied::class);
+});
+
+test('can middleware blocks a permission the role does not grant', function () {
+    $this->auth->user()->assign('support');
+    registerRoleMiddleware($this->auth);
+
+    expect(fn () => runRoleMiddleware('can', ['delete-ticket']))->toThrow(MiddlewareDenied::class);
+});
+
+test('isNot middleware blocks a user holding the role', function () {
+    $this->auth->user()->assign('admin');
+    registerRoleMiddleware($this->auth);
+
+    expect(fn () => runRoleMiddleware('isNot', ['admin']))->toThrow(MiddlewareDenied::class);
+});
+
+test('cannot middleware blocks a user holding the permission', function () {
+    $this->auth->user()->assign('admin');
+    registerRoleMiddleware($this->auth);
+
+    expect(fn () => runRoleMiddleware('cannot', ['delete-ticket']))->toThrow(MiddlewareDenied::class);
 });
