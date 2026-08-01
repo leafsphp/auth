@@ -81,6 +81,41 @@ trait UsesSubscriptions
     }
 
     /**
+     * Check if user is actively subscribed to a specific plan
+     *
+     * Matches on the subscription name or on the billing tier's name or id,
+     * so `isSubscribedTo('Starter')` works whether you named the
+     * subscription after the tier or not.
+     *
+     * @param string $plan The plan name or tier id to check
+     * @return bool
+     */
+    public function isSubscribedTo(string $plan): bool
+    {
+        if (!$this->hasActiveSubscription()) {
+            return false;
+        }
+
+        $subscription = $this->subscription();
+
+        if (($subscription['name'] ?? null) === $plan) {
+            return true;
+        }
+
+        $tier = $subscription['tier'] ?? null;
+
+        if ($tier instanceof \Leaf\Billing\Tier) {
+            $tier = $tier->toArray();
+        }
+
+        if (!is_array($tier)) {
+            return false;
+        }
+
+        return ($tier['name'] ?? null) === $plan || ($tier['id'] ?? null) === $plan;
+    }
+
+    /**
      * Check if user is on a trial
      * @return bool
      */
