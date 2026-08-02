@@ -3,7 +3,7 @@ app:
 
 tests:
   engine: pest
-  parallel: false
+  parallel: true
   paths:
     - tests
   files:
@@ -22,17 +22,16 @@ lint:
 actions:
   run:
     - lint
-    - tests
   os:
     - ubuntu-latest
+    - windows-latest
   php:
-    extensions: json, zip, dom, curl, libxml, mbstring, PDO_PGSQL
+    extensions: json
     versions:
       - '8.3'
       - '8.2'
       - '8.1'
       - '8.0'
-      - '7.4'
   events:
     - push
     - pull_request
