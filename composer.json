@@ -65,10 +65,5 @@
         "refactor": "@php vendor/bin/alchemy refactor",
         "analyse": "@php vendor/bin/alchemy analyse",
         "ci": "@php vendor/bin/alchemy ci"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-v5.x": "5.0.x-dev"
-        }
     }
 }
