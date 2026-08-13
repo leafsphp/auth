@@ -10,5 +10,5 @@ return [
     'DB_HOST' => '',
     'DB_USERNAME' => '',
     'DB_PASSWORD' => '',
-    'DB_DATABASE' => sys_get_temp_dir() . '/leaf-auth-tests.sqlite',
+    'DB_DATABASE' => ':memory:', // in-memory sqlite: no files, no cleanup, fastest
 ];

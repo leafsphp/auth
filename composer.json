@@ -10,7 +10,7 @@
         "php",
         "framework"
     ],
-    "homepage": "https://leafphp.netlify.app/#/",
+    "homepage": "https://leafphp.dev",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -29,7 +29,7 @@
             "src/functions.php"
         ]
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
         "php": "^8.2",
@@ -55,7 +55,8 @@
         "leafs/leaf": "^5.0",
         "league/oauth2-google": "*",
         "leafs/billing": "^5.0",
-        "rector/rector": "*"
+        "rector/rector": "*",
+        "ext-pdo_sqlite": "*"
     },
     "scripts": {
         "test": "@php vendor/bin/alchemy test",
