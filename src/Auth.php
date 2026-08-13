@@ -8,7 +8,7 @@ use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Leaf\Auth\Config;
 use Leaf\Auth\User;
-use Leaf\Exception\General;
+use Leaf\Crash\Pages;
 use Leaf\Helpers\Password;
 use Leaf\Http\Session;
 use League\OAuth2\Client\Provider\Google;
@@ -59,33 +59,33 @@ class Auth
             });
 
             $this->middleware('is', function ($role) {
-                General::error(
-                    '404',
-                    '<p>The page you are looking for could not be found.</p>',
+                Pages::error(
+                    'Page not found',
+                    'The page you are looking for could not be found.',
                     403
                 );
             });
 
             $this->middleware('isNot', function () {
-                General::error(
-                    '404',
-                    '<p>The page you are looking for could not be found.</p>',
+                Pages::error(
+                    'Page not found',
+                    'The page you are looking for could not be found.',
                     403
                 );
             });
 
             $this->middleware('can', function () {
-                General::error(
-                    '404',
-                    '<p>The page you are looking for could not be found.</p>',
+                Pages::error(
+                    'Page not found',
+                    'The page you are looking for could not be found.',
                     403
                 );
             });
 
             $this->middleware('cannot', function () {
-                General::error(
-                    '404',
-                    '<p>The page you are looking for could not be found.</p>',
+                Pages::error(
+                    'Page not found',
+                    'The page you are looking for could not be found.',
                     403
                 );
             });

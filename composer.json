@@ -33,11 +33,11 @@
     "prefer-stable": true,
     "require": {
         "php": "^8.2",
-        "leafs/date": "*",
-        "leafs/password": "*",
-        "leafs/session": "*",
-        "leafs/db": "*",
-        "leafs/http": "*",
+        "leafs/date": "^5.0",
+        "leafs/password": "^5.0",
+        "leafs/session": "^5.0",
+        "leafs/db": "^5.0",
+        "leafs/http": "5.0-alpha",
         "firebase/php-jwt": "^7.0"
     },
     "config": {
@@ -49,12 +49,12 @@
     "require-dev": {
         "pestphp/pest": "*",
         "friendsofphp/php-cs-fixer": "*",
-        "leafs/alchemy": "v5.x-dev",
+        "leafs/alchemy": "^5.0",
         "phpstan/phpstan": "*",
         "phpstan/extension-installer": "*",
-        "leafs/leaf": "*",
+        "leafs/leaf": "5.0-alpha",
         "league/oauth2-google": "*",
-        "leafs/billing": "v5.x-dev",
+        "leafs/billing": "5.0-alpha",
         "rector/rector": "*"
     },
     "scripts": {
