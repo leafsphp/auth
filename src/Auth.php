@@ -119,14 +119,18 @@ class Auth
     }
 
     /**
+     * Read an environment value, with or without leaf core around.
+     * Reads live rather than through _env()'s per-process cache: these
+     * reads happen once during setup (e.g. resolving the Google redirect
+     * URI), so the uncached read costs nothing and stays honest when the
+     * environment is set at runtime.
      * @param mixed $default
-     * @return mixed Returns the value of the environment variable by using Leaf's `_env` primarily
+     * @return mixed
      */
     private function env(string $name, $default = false)
     {
-        // If `_env` function of Leaf is defined, use it.
-        if (function_exists('_env')) {
-            return _env($name, $default);
+        if (function_exists('_envUncached')) {
+            return _envUncached($name, $default);
         }
 
         // Return the value if found, otherwise $default.
