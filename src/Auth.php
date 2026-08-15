@@ -298,6 +298,8 @@ class Auth
      */
     public function login(array $credentials): bool
     {
+        $this->errorsArray = [];
+
         $this->checkDbConnection();
 
         $table = Config::get('db.table');
@@ -352,6 +354,10 @@ class Auth
      */
     public function register(array $userData): bool
     {
+        // each operation owns its error state: stale errors from a
+        // previous call must never leak into this result
+        $this->errorsArray = [];
+
         $this->checkDbConnection();
 
         $table = Config::get('db.table');
@@ -413,6 +419,10 @@ class Auth
      */
     public function update(array $userData): bool
     {
+        // each operation owns its error state: stale errors from a
+        // previous call must never leak into this result
+        $this->errorsArray = [];
+
         $this->checkDbConnection();
 
         $user = $this->user();
@@ -596,6 +606,10 @@ class Auth
      */
     public function createUserFor($userData)
     {
+        // each operation owns its error state: stale errors from a
+        // previous call must never leak into this result
+        $this->errorsArray = [];
+
         $this->checkDbConnection();
 
         $table = Config::get('db.table');
@@ -893,7 +907,7 @@ class Auth
         try {
             return (array) JWT::decode(
                 $bearerToken,
-                new Key(Config::get('token.secret'), 'HS256')
+                new Key(Config::tokenSecret(), 'HS256')
             );
         } catch (Throwable $th) {
             $this->errorsArray['token'] = $th->getMessage();
@@ -911,7 +925,7 @@ class Auth
         try {
             $decodedToken = (array) JWT::decode(
                 $token,
-                new Key(Config::get('token.secret') . '-verification', 'HS256')
+                new Key(Config::tokenSecret() . '-verification', 'HS256')
             );
 
             if (!isset($decodedToken['user.email'])) {

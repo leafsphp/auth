@@ -336,7 +336,7 @@ class User
     public function generateToken($tokenLifetime): string
     {
         $userIdKey = Config::get('id.key');
-        $secretPhrase = Config::get('token.secret');
+        $secretPhrase = Config::tokenSecret();
 
         $payload = [
             'user.id' => $this->data[$userIdKey],
@@ -357,7 +357,7 @@ class User
     public function generateVerificationToken($expiresIn = null, ?string $purpose = null): string
     {
         $userIdKey = Config::get('id.key');
-        $secretPhrase = Config::get('token.secret') . '-verification';
+        $secretPhrase = Config::tokenSecret() . '-verification';
 
         $payload = [
             'user.id' => $this->data[$userIdKey],
@@ -422,15 +422,17 @@ class User
 
         if (count($hidden) > 0) {
             foreach ($hidden as $item) {
-                if (isset($userData[$item])) {
+                // array_key_exists, not isset: a present-but-null column
+                // (like the roles column before first assign) must hide too
+                if (array_key_exists($item, $userData)) {
                     unset($userData[$item]);
                 }
 
-                if ($item === 'field.id' && isset($userData[$idKey])) {
+                if ($item === 'field.id' && array_key_exists($idKey, $userData)) {
                     unset($userData[$idKey]);
                 }
 
-                if ($item === 'field.password' && isset($userData[$passwordKey])) {
+                if ($item === 'field.password' && array_key_exists($passwordKey, $userData)) {
                     unset($userData[$passwordKey]);
                 }
             }

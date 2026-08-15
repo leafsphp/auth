@@ -12,6 +12,44 @@ namespace Leaf\Auth;
  */
 class Config
 {
+    /**
+     * Resolve the JWT signing secret. A secret set in config wins, then
+     * AUTH_TOKEN_SECRET from the env, then a secret derived from APP_KEY.
+     * Without any of the three, token operations throw instead of signing
+     * with a guessable default.
+     * @return string
+     */
+    public static function tokenSecret(): string
+    {
+        $secret = static::get('token.secret');
+
+        if ($secret) {
+            return $secret;
+        }
+
+        $env = function (string $key) {
+            if (function_exists('_envUncached')) {
+                return _envUncached($key);
+            }
+
+            $value = $_ENV[$key] ?? getenv($key);
+
+            return ($value === false || $value === '') ? null : $value;
+        };
+
+        if ($envSecret = $env('AUTH_TOKEN_SECRET')) {
+            return $envSecret;
+        }
+
+        if ($appKey = $env('APP_KEY')) {
+            return hash_hmac('sha256', 'leaf.auth.token.v1', $appKey);
+        }
+
+        throw new \RuntimeException(
+            'No auth token secret is set. Generate an APP_KEY with `php leaf key:generate`, set AUTH_TOKEN_SECRET in your .env, or set `token.secret` in your auth config.'
+        );
+    }
+
     /** @var array<string, mixed> Configuration for Leaf Auth */
     protected static array $config = [
         'id.key' => 'id',
@@ -32,8 +70,8 @@ class Config
         'session.lifetime' => 60 * 60 * 24,
         'session.cookie' => ['secure' => true, 'httponly' => true, 'samesite' => 'lax'],
 
-        'token.lifetime' => null,
-        'token.secret' => '@_leaf$0Secret!',
+        'token.lifetime' => 60 * 60 * 24 * 365,
+        'token.secret' => null,
 
         'messages.loginParamsError' => 'Incorrect credentials!',
         'messages.loginPasswordError' => 'Password is incorrect!',
