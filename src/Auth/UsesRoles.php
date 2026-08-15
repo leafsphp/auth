@@ -82,7 +82,7 @@ trait UsesRoles
 
     /**
      * Check if a user does not have a permission
-     * @param string[] $permission
+     * @param string|string[] $permission
      */
     public function cannot($permission): bool
     {
@@ -105,7 +105,7 @@ trait UsesRoles
 
     /**
      * Check if user does not have a role
-     * @param string[] $role
+     * @param string|string[] $role
      */
     public function isNot($role): bool
     {
