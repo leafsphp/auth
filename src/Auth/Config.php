@@ -64,7 +64,7 @@ class Config
         'password.key' => 'password',
 
         'unique' => ['email', 'username'],
-        'hidden' => ['field.id', 'field.password'],
+        'hidden' => ['field.id', 'field.password', 'remember_token'],
 
         'session' => false,
         'session.lifetime' => 60 * 60 * 24,
