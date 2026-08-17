@@ -46,7 +46,7 @@ class Config
         }
 
         throw new \RuntimeException(
-            'No auth token secret is set. Generate an APP_KEY with `php leaf key:generate`, set AUTH_TOKEN_SECRET in your .env, or set `token.secret` in your auth config.'
+            'No auth token secret is set. Set `token.secret` in your auth config, or export AUTH_TOKEN_SECRET in the environment your app actually runs with. In Leaf MVC you can run `leaf key:generate` instead; lite apps have no key:generate and do not load .env files.'
         );
     }
 
@@ -72,6 +72,9 @@ class Config
 
         'token.lifetime' => 60 * 60 * 24 * 365,
         'token.secret' => null,
+
+        'redirect.login' => '/auth/login',
+        'redirect.guest' => '/dashboard',
 
         'messages.loginParamsError' => 'Incorrect credentials!',
         'messages.loginPasswordError' => 'Password is incorrect!',
