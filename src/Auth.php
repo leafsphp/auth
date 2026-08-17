@@ -51,11 +51,11 @@ class Auth
     {
         if (class_exists('Leaf\App')) {
             $this->middleware('auth.required', function () {
-                response()->redirect('/auth/login');
+                response()->redirect(Config::get('redirect.login') ?? '/auth/login');
             });
 
             $this->middleware('auth.guest', function () {
-                response()->redirect('/dashboard');
+                response()->redirect(Config::get('redirect.guest') ?? '/dashboard');
             });
 
             $this->middleware('is', function ($role) {
