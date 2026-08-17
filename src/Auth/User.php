@@ -49,6 +49,12 @@ class User
     protected array $tokens = [];
 
     /**
+     * Expiry used when tokens are lazily minted
+     * @var int
+     */
+    protected $tokenLifetime;
+
+    /**
      * All errors caught
      * @var array{
      *   password?: string,
@@ -103,8 +109,7 @@ class User
             ? strtotime($sessionLifetime)
             : (time() + intval($sessionLifetime));
 
-        $this->tokens['access'] = $this->generateToken($sessionLifetime);
-        $this->tokens['refresh'] = $this->generateToken($sessionLifetime + 259200);
+        $this->tokenLifetime = $sessionLifetime;
 
         if (function_exists('crash')) {
             crash()->context(['user' => array_filter([
@@ -299,10 +304,12 @@ class User
      */
     public function getAuthInfo(): object
     {
+        $tokens = $this->tokens();
+
         $dataToReturn = (object) [
             'user' => $this->get(),
-            'accessToken' => $this->tokens['access'] ?? null,
-            'refreshToken' => $this->tokens['refresh'] ?? null,
+            'accessToken' => $tokens['access'] ?? null,
+            'refreshToken' => $tokens['refresh'] ?? null,
         ];
 
         if (count($this->roles)) {
@@ -325,6 +332,11 @@ class User
      */
     public function tokens(): array
     {
+        if (!isset($this->tokens['access'])) {
+            $this->tokens['access'] = $this->generateToken($this->tokenLifetime);
+            $this->tokens['refresh'] = $this->generateToken($this->tokenLifetime + 259200);
+        }
+
         return $this->tokens;
     }
 
@@ -420,10 +432,10 @@ class User
         $hidden = array_merge(Config::get('hidden'), [Config::get('roles.key')]);
         $passwordKey = Config::get('password.key');
 
+        unset($userData[$passwordKey], $userData['remember_token']);
+
         if (count($hidden) > 0) {
             foreach ($hidden as $item) {
-                // array_key_exists, not isset: a present-but-null column
-                // (like the roles column before first assign) must hide too
                 if (array_key_exists($item, $userData)) {
                     unset($userData[$item]);
                 }

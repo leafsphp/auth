@@ -112,3 +112,44 @@ test('a present-but-null roles column is hidden from get()', function () {
 
     expect($user->get())->not->toHaveKey(Config::get('roles.key'));
 });
+
+test('the password hash never leaks from get(), whatever hidden says', function () {
+    // following the old docs (literal 'password') with a custom
+    // password.key put the bcrypt hash in the session and Inertia props
+    Config::set(['password.key' => 'pass', 'hidden' => ['password', 'remember_token']]);
+
+    $user = new \Leaf\Auth\User([
+        'id' => 1,
+        'email' => 'leak-check@example.com',
+        'pass' => '$2y$10$fakehashfakehashfakehash',
+        'remember_token' => 'session-equivalent-secret',
+    ], false);
+
+    expect($user->get())->not->toHaveKey('pass')
+        ->and($user->get())->not->toHaveKey('remember_token');
+
+    Config::set(['password.key' => 'password', 'hidden' => ['field.id', 'field.password', 'remember_token']]);
+});
+
+test('session-only users need no token secret until tokens are read', function () {
+    Config::set(['token.secret' => null]);
+    unset($_ENV['APP_KEY'], $_ENV['AUTH_TOKEN_SECRET']);
+
+    // constructing a user must not mint JWTs — session apps never read them
+    $user = new \Leaf\Auth\User(['id' => 5, 'email' => 'lazy@example.com'], false);
+
+    expect($user->get())->toHaveKey('email');
+
+    // reading tokens is the moment the secret becomes required
+    expect(fn () => $user->tokens())
+        ->toThrow(RuntimeException::class, 'No auth token secret');
+});
+
+test('middleware redirect targets are configurable', function () {
+    expect(Config::get('redirect.login'))->toBe('/auth/login')
+        ->and(Config::get('redirect.guest'))->toBe('/dashboard');
+
+    Config::set(['redirect.guest' => '/']);
+    expect(Config::get('redirect.guest'))->toBe('/');
+    Config::set(['redirect.guest' => '/dashboard']);
+});
