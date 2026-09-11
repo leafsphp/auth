@@ -47,10 +47,6 @@ namespace {
         $clientSecret = $reflectionClass->getProperty('clientSecret');
         $redirectUri = $reflectionClass->getProperty('redirectUri');
 
-        $clientId->setAccessible(true);
-        $clientSecret->setAccessible(true);
-        $redirectUri->setAccessible(true);
-
         expect($clientId->getValue($google))
             ->toBe($_ENV['GOOGLE_AUTH_CLIENT_ID']);
 
@@ -77,8 +73,6 @@ namespace {
         $reflectionClass = new ReflectionClass(Google::class);
         $redirectUri = $reflectionClass->getProperty('redirectUri');
 
-        $redirectUri->setAccessible(true);
-
         expect($redirectUri->getValue($google))
             ->toBe("{$_ENV['APP_URL']}/auth/register/google");
     });
@@ -96,8 +90,6 @@ namespace {
 
         $reflectionClass = new ReflectionClass(Google::class);
         $redirectUri = $reflectionClass->getProperty('redirectUri');
-
-        $redirectUri->setAccessible(true);
 
         expect($redirectUri->getValue($google))
             ->toBe("{$_ENV['APP_URL']}/auth/google/callback");

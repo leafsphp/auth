@@ -171,7 +171,6 @@ function registerRoleMiddleware(Auth $auth): void
 
 function runRoleMiddleware(string $name, $args)
 {
-    $registered->setAccessible(true);
     $registered = (new ReflectionClass(Router::class))->getProperty('namedMiddleware');
 
     return $registered->getValue()[$name](is_array($args) ? $args : [$args]);
