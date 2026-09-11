@@ -206,9 +206,7 @@ class Auth
 
         unset($options['name']);
 
-        if (!isset($options['redirectUri'])) {
-            $options['redirectUri'] = $this->env('APP_URL') . '/auth/google/callback';
-        }
+        $options['redirectUri'] ??= $this->env('APP_URL') . '/auth/google/callback';
 
         $this->withProvider($clientName, new Google(array_merge([
             'clientId' => $clientId,
