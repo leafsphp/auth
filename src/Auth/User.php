@@ -420,7 +420,7 @@ class User implements Stringable
                 ->execute();
 
             return true;
-        } catch (Throwable $th) {
+        } catch (Throwable) {
             return false;
         }
     }

@@ -46,7 +46,7 @@ trait UsesRoles
         if (!array_key_exists($roleKey, (array) $this->data)) {
             try {
                 $this->db->query('ALTER TABLE ' . Config::get('db.table') . " ADD COLUMN $roleKey TEXT")->execute();
-            } catch (Throwable $th) {
+            } catch (Throwable) {
                 // column already exists in the table, it just wasn't selected
             }
         }
@@ -59,7 +59,7 @@ trait UsesRoles
                 ])
                 ->where(Config::get('id.key'), $this->data[Config::get('id.key')])
                 ->execute();
-        } catch (Throwable $th) {
+        } catch (Throwable) {
             return false;
         }
 
