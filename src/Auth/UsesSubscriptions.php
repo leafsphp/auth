@@ -46,7 +46,7 @@ trait UsesSubscriptions
             $this->subscription['tier'] = billing()->tier($this->subscription['plan_id']);
         }
 
-        return $this->subscription ? $this->subscription : null;
+        return $this->subscription ?: null;
     }
 
     /**
