@@ -59,12 +59,12 @@
         "ext-pdo_sqlite": "*"
     },
     "scripts": {
-        "test": "@php vendor/bin/alchemy test",
-        "alchemy": "@php vendor/bin/alchemy all",
-        "lint": "@php vendor/bin/alchemy lint",
-        "fmt": "@php vendor/bin/alchemy fmt",
-        "refactor": "@php vendor/bin/alchemy refactor",
-        "analyse": "@php vendor/bin/alchemy analyse",
-        "ci": "@php vendor/bin/alchemy ci"
+        "test": "alchemy test",
+        "alchemy": "alchemy all",
+        "lint": "alchemy lint",
+        "fmt": "alchemy fmt",
+        "refactor": "alchemy refactor",
+        "analyse": "alchemy analyse",
+        "ci": "alchemy ci"
     }
 }
