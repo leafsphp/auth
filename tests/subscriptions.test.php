@@ -1,5 +1,7 @@
 <?php
 
+use Leaf\Config;
+use Leaf\Auth\User;
 use Leaf\Billing\Subscription;
 
 /*
@@ -49,7 +51,7 @@ class FakeBillingDriver
 class_alias(FakeBillingDriver::class, 'Leaf\\Billing\\Fake');
 
 
-if (!class_exists('Leaf\\Config')) {
+if (!class_exists(Config::class)) {
     eval('namespace Leaf; class Config {
         protected static $items = [];
         public static function getStatic($key) { return static::$items[$key] ?? null; }
@@ -58,7 +60,7 @@ if (!class_exists('Leaf\\Config')) {
     }');
 }
 
-function subscriptionUser(): \Leaf\Auth\User
+function subscriptionUser(): User
 {
     $auth = authInstance();
     $auth->config(['session' => false]);

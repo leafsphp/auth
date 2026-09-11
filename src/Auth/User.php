@@ -2,6 +2,7 @@
 
 namespace Leaf\Auth;
 
+use Leaf\App;
 use Exception;
 use Throwable;
 use ReturnTypeWillChange;
@@ -540,7 +541,7 @@ class User
      */
     public function __call($method, $args)
     {
-        if (!class_exists('Leaf\App')) {
+        if (!class_exists(App::class)) {
             throw new Exception('Relations are only available in Leaf apps.');
         }
 

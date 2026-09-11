@@ -1,5 +1,6 @@
 <?php
 
+use Leaf\Auth\User;
 use Leaf\Auth\Config;
 
 /*
@@ -104,7 +105,7 @@ test('each operation starts with a clean error state', function () {
 
 test('a present-but-null roles column is hidden from get()', function () {
     $auth = authInstance();
-    $user = new \Leaf\Auth\User([
+    $user = new User([
         'id' => 1,
         'email' => 'null-roles@example.com',
         Config::get('roles.key') => null,
@@ -118,7 +119,7 @@ test('the password hash never leaks from get(), whatever hidden says', function 
     // password.key put the bcrypt hash in the session and Inertia props
     Config::set(['password.key' => 'pass', 'hidden' => ['password', 'remember_token']]);
 
-    $user = new \Leaf\Auth\User([
+    $user = new User([
         'id' => 1,
         'email' => 'leak-check@example.com',
         'pass' => '$2y$10$fakehashfakehashfakehash',
@@ -136,7 +137,7 @@ test('session-only users need no token secret until tokens are read', function (
     unset($_ENV['APP_KEY'], $_ENV['AUTH_TOKEN_SECRET']);
 
     // constructing a user must not mint JWTs — session apps never read them
-    $user = new \Leaf\Auth\User(['id' => 5, 'email' => 'lazy@example.com'], false);
+    $user = new User(['id' => 5, 'email' => 'lazy@example.com'], false);
 
     expect($user->get())->toHaveKey('email');
 

@@ -2,6 +2,8 @@
 
 namespace Leaf\Auth;
 
+use RuntimeException;
+
 /**
  * Config for Leaf Auth
  * --------
@@ -45,7 +47,7 @@ class Config
             return hash_hmac('sha256', 'leaf.auth.token.v1', $appKey);
         }
 
-        throw new \RuntimeException(
+        throw new RuntimeException(
             'No auth token secret is set. Set `token.secret` in your auth config, or export AUTH_TOKEN_SECRET in the environment your app actually runs with. In Leaf MVC you can run `leaf key:generate` instead; lite apps have no key:generate and do not load .env files.'
         );
     }

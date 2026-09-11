@@ -49,7 +49,7 @@ class Auth
 
     public function __construct()
     {
-        if (class_exists('Leaf\App')) {
+        if (class_exists(App::class)) {
             $this->middleware('auth.required', function () {
                 response()->redirect(Config::get('redirect.login') ?? '/auth/login');
             });

@@ -1,5 +1,6 @@
 <?php
 
+use Leaf\Router;
 use Leaf\Auth;
 
 /*
@@ -155,11 +156,11 @@ test('unassign revokes a role and recalculates permissions', function () {
  * request was allowed through.
  */
 
-class MiddlewareDenied extends \Exception
+class MiddlewareDenied extends Exception
 {
 }
 
-function registerRoleMiddleware(Leaf\Auth $auth): void
+function registerRoleMiddleware(Auth $auth): void
 {
     foreach (['is', 'isNot', 'can', 'cannot'] as $name) {
         $auth->middleware($name, function () use ($name) {
@@ -170,8 +171,8 @@ function registerRoleMiddleware(Leaf\Auth $auth): void
 
 function runRoleMiddleware(string $name, $args)
 {
-    $registered = (new ReflectionClass(Leaf\Router::class))->getProperty('namedMiddleware');
     $registered->setAccessible(true);
+    $registered = (new ReflectionClass(Router::class))->getProperty('namedMiddleware');
 
     return $registered->getValue()[$name](is_array($args) ? $args : [$args]);
 }

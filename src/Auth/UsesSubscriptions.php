@@ -2,6 +2,7 @@
 
 namespace Leaf\Auth;
 
+use Leaf\Billing\Tier;
 use Leaf\Billing\Subscription;
 
 /**
@@ -104,7 +105,7 @@ trait UsesSubscriptions
 
         $tier = $subscription['tier'] ?? null;
 
-        if ($tier instanceof \Leaf\Billing\Tier) {
+        if ($tier instanceof Tier) {
             $tier = $tier->toArray();
         }
 
