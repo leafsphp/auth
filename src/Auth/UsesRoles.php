@@ -164,9 +164,7 @@ trait UsesRoles
 
         return array_values(array_filter(
             is_string($roles) ? [$roles] : $roles,
-            function ($role) use ($registered) {
-                return !array_key_exists($role, $registered);
-            }
+            fn($role) => !array_key_exists($role, $registered)
         ));
     }
 

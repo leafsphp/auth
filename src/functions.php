@@ -13,9 +13,7 @@ if (!function_exists('auth') && class_exists(App::class)) {
     function auth()
     {
         if (!(Config::getStatic('auth'))) {
-            Config::singleton('auth', function () {
-                return new Auth();
-            });
+            Config::singleton('auth', fn() => new Auth());
         }
 
         return Config::get('auth');
