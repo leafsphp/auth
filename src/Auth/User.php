@@ -2,6 +2,7 @@
 
 namespace Leaf\Auth;
 
+use Stringable;
 use Leaf\App;
 use Exception;
 use Throwable;
@@ -21,7 +22,7 @@ use Leaf\Http\Session;
  * @version 1.0.0
  * @property mixed $email
  */
-class User
+class User implements Stringable
 {
     use UsesRoles;
     use UsesSubscriptions;
@@ -478,7 +479,7 @@ class User
     }
 
     #[ReturnTypeWillChange]
-    public function __toString()
+    public function __toString(): string
     {
         return json_encode($this->get()) ?: '';
     }
