@@ -2,7 +2,6 @@
 
 namespace Leaf\Auth;
 
-use Leaf\Date;
 use Leaf\Db;
 use PDOStatement;
 
@@ -56,7 +55,7 @@ class Model
         $data['user_id'] = $this->user->id();
 
         if (Config::get('timestamps')) {
-            $now = (new Date())->tick()->format(Config::get('timestamps.format'));
+            $now = tick()->format(Config::get('timestamps.format'));
             $data['created_at'] = $now;
             $data['updated_at'] = $now;
         }
@@ -73,7 +72,7 @@ class Model
      */
     public function update(array $data): Db
     {
-        $data['updated_at'] = (new Date())->tick()->format(Config::get('timestamps.format'));
+        $data['updated_at'] = tick()->format(Config::get('timestamps.format'));
 
         return $this->db->update($this->table)
             ->params($data)
