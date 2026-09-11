@@ -30,13 +30,13 @@ class Auth
      * The currently authenticated user
      * @var ?User
      */
-    protected $user = null;
+    protected $user;
 
     /**
      * Internal instance of Leaf DB
      * @var ?Db
      */
-    protected $db = null;
+    protected $db;
 
     /**
      * All errors caught

@@ -19,7 +19,7 @@ trait UsesSubscriptions
      * User Subscription
      * @var array<string, mixed>|null
      */
-    protected $subscription = null;
+    protected $subscription;
 
     /**
      * Get current subscription

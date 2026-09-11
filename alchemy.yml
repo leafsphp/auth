@@ -42,6 +42,8 @@ refactor:
   php: '8.2'
   fluent-new-line: true
   import-names: true
+  sets:
+    - dead-code
 
 analyse:
   level: 8
