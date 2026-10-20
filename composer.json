@@ -48,7 +48,7 @@
     "require-dev": {
         "leafs/alchemy": "^5.0",
         "leafs/leaf": "^5.0",
-        "league/oauth2-google": "*",
+        "league/oauth2-google": "^5.0",
         "leafs/billing": "^5.0",
         "rector/rector": "*",
         "ext-pdo_sqlite": "*"
