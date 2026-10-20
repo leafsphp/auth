@@ -7,7 +7,6 @@ use Throwable;
 use ReturnTypeWillChange;
 use Leaf\Db;
 use Firebase\JWT\JWT;
-use Leaf\Date;
 use Leaf\Helpers\Password;
 use Leaf\Http\Session;
 
@@ -154,7 +153,7 @@ class User
         $table = Config::get('db.table');
 
         if (Config::get('timestamps')) {
-            $userData['updated_at'] = (new Date())->tick()->format(Config::get('timestamps.format'));
+            $userData['updated_at'] = tick()->format(Config::get('timestamps.format'));
         }
 
         if (isset($userData['email'])) {

@@ -371,7 +371,7 @@ class Auth
         }
 
         if (Config::get('timestamps')) {
-            $now = (new Date())->tick()->format(Config::get('timestamps.format'));
+            $now = tick()->format(Config::get('timestamps.format'));
             $userData['created_at'] = $now;
             $userData['updated_at'] = $now;
         }
@@ -435,7 +435,7 @@ class Auth
         $table = Config::get('db.table');
 
         if (Config::get('timestamps')) {
-            $userData['updated_at'] = (new Date())->tick()->format(Config::get('timestamps.format'));
+            $userData['updated_at'] = tick()->format(Config::get('timestamps.format'));
         }
 
         if (isset($userData['email'])) {
@@ -623,7 +623,7 @@ class Auth
         }
 
         if (Config::get('timestamps')) {
-            $now = (new Date())->tick()->format(Config::get('timestamps.format'));
+            $now = tick()->format(Config::get('timestamps.format'));
             $userData['created_at'] = $now;
             $userData['updated_at'] = $now;
         }
