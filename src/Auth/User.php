@@ -107,11 +107,8 @@ class User implements Stringable
         }
     }
 
-    /**
-     * Return the id of current user
-     * @return string|int
-     */
-    public function id()
+    /** Return the id of current user */
+    public function id(): null|string|int
     {
         return $this->data[Config::get('id.key')] ?? null;
     }
@@ -437,13 +434,8 @@ class User implements Stringable
         return $this;
     }
 
-    /**
-     * Get user errors
-     * @return array{
-     *   password?: string,
-     * } | array<string, string>
-     */
-    public function errors()
+    /** Get user errors */
+    public function errors(): array
     {
         return $this->errorsArray;
     }
@@ -472,40 +464,29 @@ class User implements Stringable
         $this->data[$name] = $value;
     }
 
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function __isset($name)
+    /** @param string $name */
+    public function __isset($name): bool
     {
         return isset($this->data[$name]);
     }
 
-    /**
-     * @param string $name
-     * @return void
-     */
-    public function __unset($name)
+    /** @param string $name */
+    public function __unset($name): void
     {
         unset($this->data[$name]);
     }
 
     /**
      * Get a "user to many" table relation
-     *
-     * <code>
+     * ```
      * auth()->user()->orders()->all();
      * auth()->user()->transactions()->where('amount', '>', 100)->get();
      * auth()->user()->notes()->where('title', 'like', '%important%')->get();
      * auth()->user()->posts()->where('published', true)->all();
-     * </code>
-     *
-     * @param mixed $method The table to relate to
-     * @param mixed $args
-     * @throws Exception
-     * @return Model
+     * ```
+     * @throws Exception If Leaf App class does not exist
      */
-    public function __call($method, $args)
+    public function __call(mixed $method, mixed $args): Model
     {
         if (!class_exists(App::class)) {
             throw new Exception('Relations are only available in Leaf apps.');
