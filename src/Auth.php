@@ -535,7 +535,7 @@ class Auth
         $initialPassword = Config::get('password.key');
 
         $this->checkDbConnection();
-        $this->config('password.key', false);
+        $this->config('password.key', value: false);
 
         $user = $this->db->select(Config::get('db.table'))
             ->where([
@@ -575,7 +575,7 @@ class Auth
             return null;
         }
 
-        return (new User($userData, false))->setDb($this->db);
+        return (new User($userData, session: false))->setDb($this->db);
     }
 
     /**
@@ -638,7 +638,7 @@ class Auth
             return false;
         }
 
-        return (new User($user, false))->setDb($this->db);
+        return (new User($user, session: false))->setDb($this->db);
     }
 
     /**

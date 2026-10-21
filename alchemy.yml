@@ -47,6 +47,10 @@ refactor:
     - code-quality
     - coding-style
     - type-declarations
+    - type-declaration-docblocks
+    - privatization
+    # - naming
+    - named-args
 
 analyse:
   level: 8

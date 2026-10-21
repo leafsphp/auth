@@ -89,7 +89,7 @@ test('login should fail if user does not exist', function (): void {
 test('login should work without password is password.key is false', function (): void {
     $auth = authInstance();
 
-    $auth->config('password.key', false);
+    $auth->config('password.key', value: false);
 
     $userData = [
         'username' => 'test-user'

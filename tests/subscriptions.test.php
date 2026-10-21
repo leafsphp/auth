@@ -195,7 +195,7 @@ test('cancelSubscription defaults to period end and can cancel immediately', fun
     expect($user->cancelSubscription())->toBeTrue();
     expect(FakeBillingDriver::$cancelled)->toBe([['sub_1', true]]);
 
-    expect($user->cancelSubscription(false))->toBeTrue();
+    expect($user->cancelSubscription(atPeriodEnd: false))->toBeTrue();
     expect(FakeBillingDriver::$cancelled[1])->toBe(['sub_1', false]);
 });
 

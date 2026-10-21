@@ -37,7 +37,7 @@ test('tokens are minted with a future expiry on default config', function (): vo
     expect($login)->toBeTrue();
 
     $token = $auth->data()->accessToken;
-    $payload = json_decode(base64_decode(explode('.', $token)[1]), true);
+    $payload = json_decode(base64_decode(explode('.', $token)[1]), associative: true);
 
     // the born-expired bug: exp equalled iat on default config
     expect($payload['exp'])->toBeGreaterThan($payload['iat'] + 60 * 60 * 24 * 364);
@@ -109,7 +109,7 @@ test('a present-but-null roles column is hidden from get()', function (): void {
         'id' => 1,
         'email' => 'null-roles@example.com',
         Config::get('roles.key') => null,
-    ], false);
+    ], session: false);
 
     expect($user->get())->not->toHaveKey(Config::get('roles.key'));
 });
@@ -124,7 +124,7 @@ test('the password hash never leaks from get(), whatever hidden says', function 
         'email' => 'leak-check@example.com',
         'pass' => '$2y$10$fakehashfakehashfakehash',
         'remember_token' => 'session-equivalent-secret',
-    ], false);
+    ], session: false);
 
     expect($user->get())->not->toHaveKey('pass')
         ->and($user->get())->not->toHaveKey('remember_token');
@@ -137,7 +137,7 @@ test('session-only users need no token secret until tokens are read', function (
     unset($_ENV['APP_KEY'], $_ENV['AUTH_TOKEN_SECRET']);
 
     // constructing a user must not mint JWTs — session apps never read them
-    $user = new User(['id' => 5, 'email' => 'lazy@example.com'], false);
+    $user = new User(['id' => 5, 'email' => 'lazy@example.com'], session: false);
 
     expect($user->get())->toHaveKey('email');
 

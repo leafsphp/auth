@@ -121,7 +121,7 @@ class User implements Stringable
         }
 
         if ($data[Config::get('roles.key')] ?? null) {
-            $this->setRolesAndPermissions(json_decode($data[Config::get('roles.key')], true));
+            $this->setRolesAndPermissions(json_decode($data[Config::get('roles.key')], associative: true));
         }
     }
 
