@@ -17,6 +17,7 @@ const SUBSCRIPTION_TIERS = [
 class FakeBillingDriver
 {
     public static $cancelled = [];
+    
     public static $resumed = [];
 
     public function tier(string $id): ?array
