@@ -876,9 +876,8 @@ class Auth
 
     /**
      * Parse the current user's token
-     * @return array<string, mixed>|null
      */
-    public function parseToken()
+    public function parseToken(): ?array
     {
         $bearerToken = $this->getTokenFromRequest();
 
@@ -1004,8 +1003,7 @@ class Auth
         return $isSessionExpired;
     }
 
-    /** @return ?string */
-    protected function getTokenFromRequest()
+    protected function getTokenFromRequest(): ?string
     {
         $headers = null;
 

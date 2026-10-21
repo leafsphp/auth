@@ -110,9 +110,8 @@ class Model
 
     /**
      * @param string $name
-     * @param mixed $value
      */
-    public function __set($name, $value)
+    public function __set($name, mixed $value)
     {
         $this->dataToSave[$name] = $value;
     }
@@ -120,9 +119,8 @@ class Model
     /**
      * @param string $name
      * @param mixed[] $arguments
-     * @return mixed
      */
-    public function __call($name, $arguments)
+    public function __call($name, $arguments): mixed
     {
         return $this->table()->$name(...$arguments);
     }

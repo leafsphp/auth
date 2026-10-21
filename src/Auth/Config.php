@@ -119,9 +119,8 @@ class Config
     /**
      * Set user cache
      * @param string $key
-     * @param mixed $value
      */
-    public static function setUserCache($key, $value): void
+    public static function setUserCache($key, mixed $value): void
     {
         if (isset($_SESSION)) {
             $_SESSION[$key] = $value;

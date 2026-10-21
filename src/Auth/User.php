@@ -417,8 +417,7 @@ class User implements Stringable
         }
     }
 
-    /** @return array<string, mixed> */
-    public function get()
+    public function get(): array
     {
         $userData = $this->data;
 
@@ -475,9 +474,8 @@ class User implements Stringable
 
     /**
      * @param string $name
-     * @return ?mixed
      */
-    public function __get($name)
+    public function __get($name): mixed
     {
         // using data instead of get() here because
         // we want people to be able to user()->get hidden fields
@@ -487,10 +485,8 @@ class User implements Stringable
 
     /**
      * @param string $name
-     * @param mixed $value
-     * @return void
      */
-    public function __set($name, $value)
+    public function __set($name, mixed $value): void
     {
         $this->data[$name] = $value;
     }
