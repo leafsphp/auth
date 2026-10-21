@@ -188,7 +188,7 @@ class User implements Stringable
                 return false;
             }
         } catch (Throwable $th) {
-            throw new Exception($th->getMessage());
+            throw new Exception($th->getMessage(), $th->getCode(), $th);
         }
 
         if (Config::get('session')) {
@@ -248,7 +248,7 @@ class User implements Stringable
                 return false;
             }
         } catch (Throwable $th) {
-            throw new Exception($th->getMessage());
+            throw new Exception($th->getMessage(), $th->getCode(), $th);
         }
 
         $this->data[$passwordKey] = $newPassword;
@@ -289,7 +289,7 @@ class User implements Stringable
                 return false;
             }
         } catch (Throwable $th) {
-            throw new Exception($th->getMessage());
+            throw new Exception($th->getMessage(), $th->getCode(), $th);
         }
 
         $this->data[$passwordKey] = $newPassword;

@@ -114,6 +114,6 @@ function createTableForUsers($table = 'users', bool $uuid = false): void
 
         $db->query($sql)->execute();
     } catch (Throwable $th) {
-        throw new Exception('Failed to create table for users: ' . $th->getMessage());
+        throw new Exception('Failed to create table for users: ' . $th->getMessage(), $th->getCode(), $th);
     }
 }

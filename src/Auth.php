@@ -318,7 +318,7 @@ class Auth
                 return false;
             }
         } catch (Throwable $th) {
-            throw new Exception($th->getMessage());
+            throw new Exception($th->getMessage(), $th->getCode(), $th);
         }
 
         if ($passwordKey !== false) {
@@ -388,7 +388,7 @@ class Auth
                 return false;
             }
         } catch (Throwable $th) {
-            throw new Exception($th->getMessage());
+            throw new Exception($th->getMessage(), $th->getCode(), $th);
         }
 
         $user = $this->db->select($table)->where($userData)->first();
@@ -461,7 +461,7 @@ class Auth
                 return false;
             }
         } catch (Throwable $th) {
-            throw new Exception($th->getMessage());
+            throw new Exception($th->getMessage(), $th->getCode(), $th);
         }
 
         if (Config::get('session')) {
@@ -523,7 +523,7 @@ class Auth
                 return false;
             }
         } catch (Throwable $th) {
-            throw new Exception($th->getMessage());
+            throw new Exception($th->getMessage(), $th->getCode(), $th);
         }
 
         $this->user->{$passwordKey} = $newPassword;
@@ -636,7 +636,7 @@ class Auth
                 return false;
             }
         } catch (Throwable $th) {
-            throw new Exception($th->getMessage());
+            throw new Exception($th->getMessage(), $th->getCode(), $th);
         }
 
         $user = $this->db->select($table)->where($userData)->first();
@@ -734,7 +734,7 @@ class Auth
                 return null;
             }
         } catch (Throwable $th) {
-            throw new Exception($th->getMessage());
+            throw new Exception($th->getMessage(), $th->getCode(), $th);
         }
 
         return $this->user = (new User(
