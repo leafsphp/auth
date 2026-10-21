@@ -117,10 +117,8 @@ class Auth
      * reads happen once during setup (e.g. resolving the Google redirect
      * URI), so the uncached read costs nothing and stays honest when the
      * environment is set at runtime.
-     * @param mixed $default
-     * @return mixed
      */
-    private function env(string $name, $default = false)
+    private function env(string $name, mixed $default = false): mixed
     {
         if (function_exists('_envUncached')) {
             return _envUncached($name, $default);
