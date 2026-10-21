@@ -428,19 +428,17 @@ class User implements Stringable
 
         unset($userData[$passwordKey], $userData['remember_token']);
 
-        if (count($hidden) > 0) {
-            foreach ($hidden as $item) {
-                if (array_key_exists($item, $userData)) {
-                    unset($userData[$item]);
-                }
+        foreach ($hidden as $item) {
+            if (array_key_exists($item, $userData)) {
+                unset($userData[$item]);
+            }
 
-                if ($item === 'field.id' && array_key_exists($idKey, $userData)) {
-                    unset($userData[$idKey]);
-                }
+            if ($item === 'field.id' && array_key_exists($idKey, $userData)) {
+                unset($userData[$idKey]);
+            }
 
-                if ($item === 'field.password' && array_key_exists($passwordKey, $userData)) {
-                    unset($userData[$passwordKey]);
-                }
+            if ($item === 'field.password' && array_key_exists($passwordKey, $userData)) {
+                unset($userData[$passwordKey]);
             }
         }
 
