@@ -189,8 +189,6 @@ class Auth
      * Register a Google OAuth client
      * ---
      * Register a Google OAuth client to use with Leaf Auth, should be a league/oauth2-client compatible client.
-     * @param string $clientId
-     * @param string $clientSecret
      * @param array{
      *     name?: string,
      *     redirectUri?: string,
@@ -292,7 +290,6 @@ class Auth
      * Verify user credentials and sign them in with token or session
      *
      * @param array<string, mixed> $credentials User credentials
-     * @return bool
      */
     public function login(array $credentials): bool
     {
@@ -348,7 +345,6 @@ class Auth
      * Save a new user to the database
      *
      * @param array<string, mixed> $userData User data
-     * @return bool
      */
     public function register(array $userData): bool
     {
@@ -413,7 +409,6 @@ class Auth
      * Update user data in the database
      *
      * @param array<string, mixed> $userData User data
-     * @return bool
      */
     public function update(array $userData): bool
     {
@@ -487,7 +482,6 @@ class Auth
      *
      * @param string $oldPassword Old password
      * @param string $newPassword New password
-     * @return bool
      */
     public function updatePassword(string $oldPassword, string $newPassword): bool
     {
@@ -541,8 +535,6 @@ class Auth
      * Create a new user from OAuth
      *
      * @param array<string, mixed> $userData User data
-     *
-     * @return bool
      */
     public function fromOAuth(array $userData): bool
     {
@@ -672,7 +664,6 @@ class Auth
      * Sign out the currently authenticated user
      *
      * @param string|mixed[]|callable|null $action Redirect to this url after logout
-     * @return bool
      */
     public function logout($action = null): bool
     {

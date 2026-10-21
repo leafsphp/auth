@@ -48,8 +48,6 @@ class Model
      * Create a new model resource
      *
      * @param array<string, mixed> $data Data to be inserted
-     *
-     * @return PDOStatement|null
      */
     public function create(array $data): ?PDOStatement
     {
@@ -68,8 +66,6 @@ class Model
      * Update a model resource
      *
      * @param array<string, mixed> $data Data to be updated
-     *
-     * @return Db
      */
     public function update(array $data): Db
     {
@@ -82,8 +78,6 @@ class Model
 
     /**
      * Delete a model resource
-     *
-     * @return Db
      */
     public function delete(): Db
     {
@@ -95,8 +89,6 @@ class Model
      * Get a model resource
      *
      * @param string $columns Columns to search by separated by commas or *
-     *
-     * @return Db
      */
     public function table($columns = '*'): Db
     {
@@ -106,8 +98,6 @@ class Model
 
     /**
      * Save a model resource
-     *
-     * @return PDOStatement|null
      */
     public function save(): ?PDOStatement
     {

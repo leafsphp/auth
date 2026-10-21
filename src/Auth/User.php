@@ -142,7 +142,6 @@ class User implements Stringable
      * @param array{
      *   email?: string,
      * } | array<string, mixed> $userData User data
-     * @return bool
      */
     public function update(array $userData): bool
     {
@@ -210,7 +209,6 @@ class User implements Stringable
      *
      * @param string $oldPassword Old password
      * @param string $newPassword New password
-     * @return bool
      */
     public function updatePassword(string $oldPassword, string $newPassword): bool
     {
@@ -264,7 +262,6 @@ class User implements Stringable
      * Reset user password in the database
      *
      * @param string $newPassword New password
-     * @return bool
      */
     public function resetPassword(string $newPassword): bool
     {
@@ -302,7 +299,6 @@ class User implements Stringable
 
     /**
      * Get auth information to be sent to the client
-     * @return object
      */
     public function getAuthInfo(): object
     {
@@ -345,7 +341,6 @@ class User implements Stringable
     /**
      * Generate a new JWT for the user
      * @param int $tokenLifetime
-     * @return string
      */
     public function generateToken($tokenLifetime): string
     {
@@ -366,7 +361,6 @@ class User implements Stringable
      * Generate a verification token for the user
      * @param mixed $expiresIn Token expiration time
      * @param string|null $purpose Purpose of the token
-     * @return string
      */
     public function generateVerificationToken($expiresIn = null, ?string $purpose = null): string
     {
@@ -390,7 +384,6 @@ class User implements Stringable
 
     /**
      * Check if email is verified
-     * @return bool
      */
     public function isVerified(): bool
     {
@@ -399,7 +392,6 @@ class User implements Stringable
 
     /**
      * Verify user's email
-     * @return bool
      */
     public function verifyEmail(): bool
     {

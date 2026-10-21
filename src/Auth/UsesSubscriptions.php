@@ -51,7 +51,6 @@ trait UsesSubscriptions
 
     /**
      * Check if user has a subscription
-     * @return bool
      */
     public function hasSubscription(): bool
     {
@@ -63,8 +62,6 @@ trait UsesSubscriptions
      *
      * Users on a trial, and users who cancelled but are still inside the
      * period they paid for (grace period), still count as active.
-     *
-     * @return bool
      */
     public function hasActiveSubscription(): bool
     {
@@ -89,7 +86,6 @@ trait UsesSubscriptions
      * subscription after the tier or not.
      *
      * @param string $plan The plan name or tier id to check
-     * @return bool
      */
     public function isSubscribedTo(string $plan): bool
     {
@@ -118,7 +114,6 @@ trait UsesSubscriptions
 
     /**
      * Check if user is on a trial
-     * @return bool
      */
     public function onTrial(): bool
     {
@@ -137,7 +132,6 @@ trait UsesSubscriptions
 
     /**
      * Check if user cancelled but still has access until the period ends
-     * @return bool
      */
     public function onGracePeriod(): bool
     {
@@ -154,7 +148,6 @@ trait UsesSubscriptions
 
     /**
      * Check if subscription payment is past due (renewal failed, in dunning)
-     * @return bool
      */
     public function hasPastDueSubscription(): bool
     {
@@ -169,7 +162,6 @@ trait UsesSubscriptions
      * Pass false to cancel and revoke access immediately.
      *
      * @param bool $atPeriodEnd Cancel at period end instead of immediately
-     * @return bool
      */
     public function cancelSubscription(bool $atPeriodEnd = true): bool
     {
@@ -185,8 +177,6 @@ trait UsesSubscriptions
     /**
      * Resume a subscription that was cancelled at period end
      * but has not run out yet.
-     *
-     * @return bool
      */
     public function resumeSubscription(): bool
     {

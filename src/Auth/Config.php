@@ -19,7 +19,6 @@ class Config
      * AUTH_TOKEN_SECRET from the env, then a secret derived from APP_KEY.
      * Without any of the three, token operations throw instead of signing
      * with a guessable default.
-     * @return string
      */
     public static function tokenSecret(): string
     {

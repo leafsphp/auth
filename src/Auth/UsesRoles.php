@@ -24,7 +24,6 @@ trait UsesRoles
      * Assign new role to user
      *
      * @param string|string[] $role The role to assign
-     * @return bool
      */
     public function assign($role): bool
     {
@@ -69,7 +68,6 @@ trait UsesRoles
     /**
      * Check if user has a permission
      * @param string|string[] $permission The permission(s) to check
-     * @return bool
      */
     public function can($permission): bool
     {
@@ -92,7 +90,6 @@ trait UsesRoles
     /**
      * Check if user has a role
      * @param string|string[] $role The role(s) to check
-     * @return bool
      */
     public function is($role): bool
     {
