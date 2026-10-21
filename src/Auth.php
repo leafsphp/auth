@@ -147,11 +147,7 @@ class Auth
         return $this;
     }
 
-    /**
-     * Connect to database using environment variables
-     *
-     * @param mixed[] $pdoOptions Options for PDO connection
-     */
+    /** Connect to database using environment variables */
     public function autoConnect(array $pdoOptions = []): static
     {
         $this->db = new Db();
@@ -160,11 +156,7 @@ class Auth
         return $this;
     }
 
-    /**
-     * Pass in db connection instance directly
-     *
-     * @param PDO $connection A connection instance of your db
-     */
+    /** Pass in db connection instance directly */
     public function dbConnection(PDO $connection): static
     {
         $this->db = new Db();
@@ -174,13 +166,12 @@ class Auth
     }
 
     /**
-     * Register a Google OAuth client
-     * ---
-     * Register a Google OAuth client to use with Leaf Auth, should be a league/oauth2-client compatible client.
-     * @param array{
-     *     name?: string,
-     *     redirectUri?: string,
-     * } $options If `$options['redirectUri']` is not set, it will default to the value of `APP_URL` (as resolved by this class's environment helper) with `/auth/google/callback` appended; if `APP_URL` is unset or empty, the default will be `/auth/google/callback`.
+     * Register a Google OAuth client to use with Leaf Auth, should be a
+     * league/oauth2-client compatible client.
+     * @param array{name?: string, redirectUri?: string} $options
+     * - If `$options['redirectUri']` is not set, it will default to the
+     * value of `APP_URL` (as resolved by this class's environment helper)
+     * with `/auth/google/callback` appended.
      */
     public function withGoogle(
         string $clientId,
@@ -203,10 +194,8 @@ class Auth
     }
 
     /**
-     * Register a generic OAuth client
-     * ---
-     * Register a generic OAuth client to use with Leaf Auth, should be a league/oauth2-client compatible client.
-     * @param string $clientName The name of the client to register
+     * Register a generic OAuth client to use with Leaf Auth, should be a
+     * league/oauth2-client compatible client.
      * @param AbstractProvider $client An instance of a league/oauth2-client compatible client
      */
     public function withProvider(string $clientName, $client): static
@@ -215,11 +204,7 @@ class Auth
         return $this;
     }
 
-    /**
-     * Return an oauth client
-     * @param string $clientName The name of the client to return
-     * @return AbstractProvider|null
-     */
+    /** @return AbstractProvider|null An oauth client */
     public function client(string $clientName)
     {
         return $this->oauthClients[$clientName] ?? null;
@@ -227,8 +212,8 @@ class Auth
 
     /**
      * Get/Set Leaf Auth config
-     *
-     * @param string|array<string, mixed> $config The auth config key or array of config
+     * @param string|array<string, mixed> $config The auth config key or
+     * array of config
      * @param mixed $value The value if $config is a string
      */
     public function config($config, mixed $value = null): mixed
@@ -248,8 +233,8 @@ class Auth
 
     /**
      * Create roles and permissions
-     *
-     * @param array<string, string[]> $roles Array of roles and their permissions
+     * @param array<string, string[]> $roles Array of roles and their
+     * permissions
      */
     public function createRoles(array $roles): static
     {
@@ -266,13 +251,7 @@ class Auth
         return Config::get('roles');
     }
 
-    /**
-     * Sign a user in
-     * ---
-     * Verify user credentials and sign them in with token or session
-     *
-     * @param array<string, mixed> $credentials User credentials
-     */
+    /** Verify user credentials and sign them in with token or session */
     public function login(array $credentials): bool
     {
         $this->errorsArray = [];
@@ -321,13 +300,7 @@ class Auth
         return true;
     }
 
-    /**
-     * Register a new user
-     * ---
-     * Save a new user to the database
-     *
-     * @param array<string, mixed> $userData User data
-     */
+    /** Save a new user to the database */
     public function register(array $userData): bool
     {
         // each operation owns its error state: stale errors from a
@@ -385,13 +358,7 @@ class Auth
         return true;
     }
 
-    /**
-     * Update user data
-     * ---
-     * Update user data in the database
-     *
-     * @param array<string, mixed> $userData User data
-     */
+    /** Update user data in the database */
     public function update(array $userData): bool
     {
         // each operation owns its error state: stale errors from a
@@ -457,14 +424,7 @@ class Auth
         return true;
     }
 
-    /**
-     * Update user password
-     * ---
-     * Update user password in the database
-     *
-     * @param string $oldPassword Old password
-     * @param string $newPassword New password
-     */
+    /** Update user password in the database */
     public function updatePassword(string $oldPassword, string $newPassword): bool
     {
         $this->checkDbConnection();
@@ -513,11 +473,7 @@ class Auth
         return true;
     }
 
-    /**
-     * Create a new user from OAuth
-     *
-     * @param array<string, mixed> $userData User data
-     */
+    /** Create a new user from OAuth */
     public function fromOAuth(array $userData): bool
     {
         $initialPassword = Config::get('password.key');
@@ -547,10 +503,7 @@ class Auth
     }
 
     /**
-     * Find a user by id
-     * ---
-     * Select and return an existing user from db
-     *
+     * Select and return an existing user from db by id
      * @param string|int $id The id of the user to grab
      */
     public function find($id): ?User
@@ -567,10 +520,7 @@ class Auth
     }
 
     /**
-     * Create a new user
-     * ---
      * Create an account for another user
-     *
      * @param array<string, mixed> $userData The user details to save
      * @throws Exception If database connection is not established
      */
@@ -636,11 +586,9 @@ class Auth
     }
 
     /**
-     * Sign a user out
-     * ---
      * Sign out the currently authenticated user
-     *
-     * @param string|mixed[]|callable|null $action Redirect to this url after logout
+     * @param string|mixed[]|callable|null $action Redirect to this url
+     * after logout
      */
     public function logout($action = null): bool
     {
@@ -842,9 +790,7 @@ class Auth
         app()->registerMiddleware($middleware, $callback);
     }
 
-    /**
-     * Parse the current user's token
-     */
+    /** Parse the current user's token */
     public function parseToken(): ?array
     {
         $bearerToken = $this->getTokenFromRequest();
@@ -864,10 +810,7 @@ class Auth
         }
     }
 
-    /**
-     * Verify a user's token
-     * @param string $token The token to verify
-     */
+    /** Verify a user's token */
     public function verifyToken(string $token, ?string $purpose = null): ?User
     {
         try {
@@ -994,9 +937,7 @@ class Auth
         return Session::get('auth.token');
     }
 
-    /**
-     * Clear all errors caught
-     */
+    /** Clear all errors caught */
     public function clearErrors(): void
     {
         $this->errorsArray = [];
