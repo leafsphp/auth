@@ -24,7 +24,6 @@ trait UsesRoles
 
     /**
      * Assign new role to user
-     *
      * @param string|string[] $role The role to assign
      */
     public function assign($role): bool
@@ -111,19 +110,13 @@ trait UsesRoles
         return !$this->is($role);
     }
 
-    /**
-     * Return the user's roles
-     * @return string[]
-     */
+    /** Return the user's roles */
     public function roles(): array
     {
         return $this->roles;
     }
 
-    /**
-     * Return the user's permissions
-     * @return string[]
-     */
+    /** Return the user's permissions */
     public function permissions(): array
     {
         return $this->permissions;
@@ -153,9 +146,7 @@ trait UsesRoles
 
     /**
      * Return any of the given roles that haven't been registered
-     *
      * @param string|string[] $roles The role(s) to check
-     * @return string[]
      */
     protected function unknownRoles($roles): array
     {
@@ -169,7 +160,6 @@ trait UsesRoles
 
     /**
      * Set the roles and permissions for a user
-     *
      * @param string|string[] $roles The role(s) to set
      */
     protected function setRolesAndPermissions($roles): void
@@ -195,9 +185,7 @@ trait UsesRoles
 
     /**
      * Get the permissions for a role
-     *
      * @param string|string[] $roles
-     * @return string[]
      */
     protected function getRolePermissions($roles): array
     {
