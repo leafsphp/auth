@@ -564,9 +564,8 @@ class Auth
      * Select and return an existing user from db
      *
      * @param string|int $id The id of the user to grab
-     * @return User|null
      */
-    public function find($id)
+    public function find($id): ?User
     {
         $this->checkDbConnection();
 
@@ -585,10 +584,9 @@ class Auth
      * Create an account for another user
      *
      * @param array<string, mixed> $userData The user details to save
-     * @return User|false|never
      * @throws Exception If database connection is not established
      */
-    public function createUserFor($userData)
+    public function createUserFor($userData): false|User
     {
         // each operation owns its error state: stale errors from a
         // previous call must never leak into this result
@@ -899,9 +897,8 @@ class Auth
     /**
      * Verify a user's token
      * @param string $token The token to verify
-     * @return User|null
      */
-    public function verifyToken(string $token, ?string $purpose = null)
+    public function verifyToken(string $token, ?string $purpose = null): ?User
     {
         try {
             $decodedToken = (array) JWT::decode(
