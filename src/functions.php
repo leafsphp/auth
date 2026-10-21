@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Leaf\App;
 use Leaf\Auth;
 use Leaf\Config;
