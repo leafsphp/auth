@@ -25,8 +25,6 @@ trait UsesSubscriptions
      *
      * The most recent subscription is returned, so a resubscribed user
      * gets their new subscription rather than an older cancelled one.
-     *
-     * @return mixed[]|null
      */
     public function subscription(): ?array
     {
@@ -48,9 +46,7 @@ trait UsesSubscriptions
         return $this->subscription ?: null;
     }
 
-    /**
-     * Check if user has a subscription
-     */
+    /** Check if user has a subscription */
     public function hasSubscription(): bool
     {
         return $this->subscription() && $this->subscription['status'] !== Subscription::STATUS_CANCELLED;
@@ -83,7 +79,6 @@ trait UsesSubscriptions
      * Matches on the subscription name or on the billing tier's name or id,
      * so `isSubscribedTo('Starter')` works whether you named the
      * subscription after the tier or not.
-     *
      * @param string $plan The plan name or tier id to check
      */
     public function isSubscribedTo(string $plan): bool
@@ -111,9 +106,7 @@ trait UsesSubscriptions
         return ($tier['name'] ?? null) === $plan || ($tier['id'] ?? null) === $plan;
     }
 
-    /**
-     * Check if user is on a trial
-     */
+    /** Check if user is on a trial */
     public function onTrial(): bool
     {
         if (!$this->subscription()) {
@@ -129,9 +122,7 @@ trait UsesSubscriptions
         return $trialEndsAt && strtotime($trialEndsAt) > time();
     }
 
-    /**
-     * Check if user cancelled but still has access until the period ends
-     */
+    /** Check if user cancelled but still has access until the period ends */
     public function onGracePeriod(): bool
     {
         if (!$this->subscription()) {
@@ -159,8 +150,6 @@ trait UsesSubscriptions
      * By default the subscription is cancelled at the end of the current
      * billing period, so the user keeps access to what they paid for.
      * Pass false to cancel and revoke access immediately.
-     *
-     * @param bool $atPeriodEnd Cancel at period end instead of immediately
      */
     public function cancelSubscription(bool $atPeriodEnd = true): bool
     {
