@@ -387,7 +387,7 @@ class User implements Stringable
      */
     public function isVerified(): bool
     {
-        return !!($this->data['email_verified_at'] ?? false);
+        return (bool) ($this->data['email_verified_at'] ?? false);
     }
 
     /**
