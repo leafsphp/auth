@@ -147,7 +147,7 @@ class User implements Stringable
     {
         $user = $this->get();
 
-        if (!$user) {
+        if ($user === []) {
             return false;
         }
 
@@ -214,7 +214,7 @@ class User implements Stringable
     {
         $user = $this->get();
 
-        if (!$user) {
+        if ($user === []) {
             return false;
         }
 
@@ -267,7 +267,7 @@ class User implements Stringable
     {
         $user = $this->get();
 
-        if (!$user) {
+        if ($user === []) {
             return false;
         }
 

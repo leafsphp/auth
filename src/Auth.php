@@ -913,7 +913,7 @@ class Auth
 
             $user = $this->find($decodedToken['user.id']);
 
-            if (!$user) {
+            if (!$user instanceof User) {
                 $this->errorsArray['token'] = 'User not found';
                 return null;
             }
