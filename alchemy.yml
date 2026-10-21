@@ -45,6 +45,7 @@ refactor:
   sets:
     - dead-code
     - code-quality
+    - coding-style
 
 analyse:
   level: 8

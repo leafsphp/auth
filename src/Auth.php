@@ -317,8 +317,8 @@ class Auth
                 $this->errorsArray['auth'] = Config::get('messages.loginParamsError');
                 return false;
             }
-        } catch (Throwable $th) {
-            throw new Exception($th->getMessage(), $th->getCode(), $th);
+        } catch (Throwable $throwable) {
+            throw new Exception($throwable->getMessage(), $throwable->getCode(), $throwable);
         }
 
         if ($passwordKey !== false) {
@@ -387,8 +387,8 @@ class Auth
                 $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
                 return false;
             }
-        } catch (Throwable $th) {
-            throw new Exception($th->getMessage(), $th->getCode(), $th);
+        } catch (Throwable $throwable) {
+            throw new Exception($throwable->getMessage(), $throwable->getCode(), $throwable);
         }
 
         $user = $this->db->select($table)->where($userData)->first();
@@ -460,8 +460,8 @@ class Auth
                 $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
                 return false;
             }
-        } catch (Throwable $th) {
-            throw new Exception($th->getMessage(), $th->getCode(), $th);
+        } catch (Throwable $throwable) {
+            throw new Exception($throwable->getMessage(), $throwable->getCode(), $throwable);
         }
 
         if (Config::get('session')) {
@@ -522,8 +522,8 @@ class Auth
                 $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
                 return false;
             }
-        } catch (Throwable $th) {
-            throw new Exception($th->getMessage(), $th->getCode(), $th);
+        } catch (Throwable $throwable) {
+            throw new Exception($throwable->getMessage(), $throwable->getCode(), $throwable);
         }
 
         $this->user->{$passwordKey} = $newPassword;
@@ -635,8 +635,8 @@ class Auth
                 $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
                 return false;
             }
-        } catch (Throwable $th) {
-            throw new Exception($th->getMessage(), $th->getCode(), $th);
+        } catch (Throwable $throwable) {
+            throw new Exception($throwable->getMessage(), $throwable->getCode(), $throwable);
         }
 
         $user = $this->db->select($table)->where($userData)->first();
@@ -733,8 +733,8 @@ class Auth
                 $this->errorsArray = $this->db->errors();
                 return null;
             }
-        } catch (Throwable $th) {
-            throw new Exception($th->getMessage(), $th->getCode(), $th);
+        } catch (Throwable $throwable) {
+            throw new Exception($throwable->getMessage(), $throwable->getCode(), $throwable);
         }
 
         return $this->user = (new User(
@@ -898,8 +898,8 @@ class Auth
                 $bearerToken,
                 new Key(Config::tokenSecret(), 'HS256')
             );
-        } catch (Throwable $th) {
-            $this->errorsArray['token'] = $th->getMessage();
+        } catch (Throwable $throwable) {
+            $this->errorsArray['token'] = $throwable->getMessage();
             return null;
         }
     }
@@ -940,8 +940,8 @@ class Auth
             }
 
             return $user;
-        } catch (Throwable $th) {
-            $this->errorsArray['token'] = $th->getMessage();
+        } catch (Throwable $throwable) {
+            $this->errorsArray['token'] = $throwable->getMessage();
             return null;
         }
     }

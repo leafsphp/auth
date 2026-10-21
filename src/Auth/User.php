@@ -187,8 +187,8 @@ class User implements Stringable
                 $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
                 return false;
             }
-        } catch (Throwable $th) {
-            throw new Exception($th->getMessage(), $th->getCode(), $th);
+        } catch (Throwable $throwable) {
+            throw new Exception($throwable->getMessage(), $throwable->getCode(), $throwable);
         }
 
         if (Config::get('session')) {
@@ -247,8 +247,8 @@ class User implements Stringable
                 $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
                 return false;
             }
-        } catch (Throwable $th) {
-            throw new Exception($th->getMessage(), $th->getCode(), $th);
+        } catch (Throwable $throwable) {
+            throw new Exception($throwable->getMessage(), $throwable->getCode(), $throwable);
         }
 
         $this->data[$passwordKey] = $newPassword;
@@ -288,8 +288,8 @@ class User implements Stringable
                 $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
                 return false;
             }
-        } catch (Throwable $th) {
-            throw new Exception($th->getMessage(), $th->getCode(), $th);
+        } catch (Throwable $throwable) {
+            throw new Exception($throwable->getMessage(), $throwable->getCode(), $throwable);
         }
 
         $this->data[$passwordKey] = $newPassword;
