@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Leaf\Auth;
 
 use Leaf\Billing\Tier;

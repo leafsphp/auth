@@ -51,6 +51,10 @@ refactor:
     - privatization
     # - naming
     - named-args
+    - instanceof
+    - if
+    - early-return
+    - rector-preset
 
 analyse:
   level: 8
