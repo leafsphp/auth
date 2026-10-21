@@ -522,7 +522,6 @@ class User implements Stringable
      * @param mixed $method The table to relate to
      * @param mixed $args
      * @throws Exception
-     *
      * @return Model
      */
     public function __call($method, $args)
