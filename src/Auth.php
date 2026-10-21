@@ -230,9 +230,8 @@ class Auth
      *
      * @param string|array<string, mixed> $config The auth config key or array of config
      * @param mixed $value The value if $config is a string
-     * @return mixed|void
      */
-    public function config($config, $value = null)
+    public function config($config, mixed $value = null): mixed
     {
         if (is_string($config) && $value === null) {
             return Config::get($config);
@@ -243,6 +242,8 @@ class Auth
             ? [$config => $value]
             : $config
         );
+
+        return null;
     }
 
     /**
