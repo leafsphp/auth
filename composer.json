@@ -36,23 +36,18 @@
         "leafs/date": "^5.0",
         "leafs/password": "^5.0",
         "leafs/session": "^5.0",
-        "leafs/db": "^5.0",
-        "firebase/php-jwt": "^7.0"
+        "leafs/db": "^5.1",
+        "firebase/php-jwt": "^7.1"
     },
     "config": {
         "allow-plugins": {
-            "pestphp/pest-plugin": true,
-            "phpstan/extension-installer": true
+            "pestphp/pest-plugin": true
         }
     },
     "require-dev": {
-        "pestphp/pest": "*",
-        "friendsofphp/php-cs-fixer": "*",
         "leafs/alchemy": "^5.0",
-        "phpstan/phpstan": "*",
-        "phpstan/extension-installer": "*",
         "leafs/leaf": "^5.0",
-        "league/oauth2-google": "*",
+        "league/oauth2-google": "^5.0",
         "leafs/billing": "^5.0",
         "rector/rector": "*",
         "ext-pdo_sqlite": "*"
