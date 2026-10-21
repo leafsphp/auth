@@ -8,7 +8,6 @@ use Stringable;
 use Leaf\App;
 use Exception;
 use Throwable;
-use ReturnTypeWillChange;
 use Leaf\Db;
 use Firebase\JWT\JWT;
 use Leaf\Date;
@@ -449,7 +448,6 @@ class User implements Stringable
         return $this->errorsArray;
     }
 
-    #[ReturnTypeWillChange]
     public function __toString(): string
     {
         return json_encode($this->get()) ?: '';
