@@ -147,9 +147,8 @@ class Auth
      *     dbtype?: string,
      *     pdoOptions?: mixed[],
      * } $dbConfig Configuration for leaf db connection
-     * @return $this
      */
-    public function connect($dbConfig = [])
+    public function connect($dbConfig = []): static
     {
         $this->db = new Db();
         $this->db->connect($dbConfig);
@@ -161,9 +160,8 @@ class Auth
      * Connect to database using environment variables
      *
      * @param mixed[] $pdoOptions Options for PDO connection
-     * @return $this
      */
-    public function autoConnect(array $pdoOptions = [])
+    public function autoConnect(array $pdoOptions = []): static
     {
         $this->db = new Db();
         $this->db->autoConnect($pdoOptions);
@@ -175,9 +173,8 @@ class Auth
      * Pass in db connection instance directly
      *
      * @param PDO $connection A connection instance of your db
-     * @return $this
      */
-    public function dbConnection(PDO $connection)
+    public function dbConnection(PDO $connection): static
     {
         $this->db = new Db();
         $this->db->connection($connection);
@@ -193,13 +190,12 @@ class Auth
      *     name?: string,
      *     redirectUri?: string,
      * } $options If `$options['redirectUri']` is not set, it will default to the value of `APP_URL` (as resolved by this class's environment helper) with `/auth/google/callback` appended; if `APP_URL` is unset or empty, the default will be `/auth/google/callback`.
-     * @return static
      */
     public function withGoogle(
         string $clientId,
         string $clientSecret,
         array $options = []
-    ) {
+    ): static {
         $clientName = $options['name'] ?? 'google';
 
         unset($options['name']);
@@ -221,9 +217,8 @@ class Auth
      * Register a generic OAuth client to use with Leaf Auth, should be a league/oauth2-client compatible client.
      * @param string $clientName The name of the client to register
      * @param AbstractProvider $client An instance of a league/oauth2-client compatible client
-     * @return static
      */
-    public function withProvider(string $clientName, $client)
+    public function withProvider(string $clientName, $client): static
     {
         $this->oauthClients[$clientName] = $client;
         return $this;
@@ -263,9 +258,8 @@ class Auth
      * Create roles and permissions
      *
      * @param array<string, string[]> $roles Array of roles and their permissions
-     * @return Auth
      */
-    public function createRoles(array $roles)
+    public function createRoles(array $roles): static
     {
         Config::set([
             'roles' => $roles,

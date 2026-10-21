@@ -448,9 +448,8 @@ class User implements Stringable
     /**
      * Set user db instance
      * @param Db $db
-     * @return User
      */
-    public function setDb($db)
+    public function setDb($db): static
     {
         $this->db = $db;
 
