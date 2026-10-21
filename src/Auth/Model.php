@@ -30,9 +30,7 @@ class Model
     /** User data to save */
     protected array $dataToSave = [];
 
-    /**
-     * @param array{db: Db, user: User, table: string} $data
-     */
+    /** @param array{db: Db, user: User, table: string} $data */
     public function __construct($data)
     {
         $this->db = $data['db'];
@@ -42,7 +40,6 @@ class Model
 
     /**
      * Create a new model resource
-     *
      * @param array<string, mixed> $data Data to be inserted
      */
     public function create(array $data): ?PDOStatement
@@ -60,7 +57,6 @@ class Model
 
     /**
      * Update a model resource
-     *
      * @param array<string, mixed> $data Data to be updated
      */
     public function update(array $data): Db
@@ -72,9 +68,7 @@ class Model
             ->where('user_id', $this->user->id());
     }
 
-    /**
-     * Delete a model resource
-     */
+    /** Delete a model resource */
     public function delete(): Db
     {
         return $this->db->delete($this->table)
@@ -83,7 +77,6 @@ class Model
 
     /**
      * Get a model resource
-     *
      * @param string $columns Columns to search by separated by commas or *
      */
     public function table($columns = '*'): Db
@@ -92,9 +85,7 @@ class Model
             ->where('user_id', $this->user->id());
     }
 
-    /**
-     * Save a model resource
-     */
+    /** Save a model resource */
     public function save(): ?PDOStatement
     {
         $success = $this->create($this->dataToSave);
@@ -104,9 +95,7 @@ class Model
         return $success;
     }
 
-    /**
-     * @param string $name
-     */
+    /** @param string $name */
     public function __set($name, mixed $value)
     {
         $this->dataToSave[$name] = $value;
