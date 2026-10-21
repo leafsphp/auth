@@ -19,10 +19,6 @@ class FakeBillingDriver
     public static $cancelled = [];
     public static $resumed = [];
 
-    public function __construct($config = [])
-    {
-    }
-
     public function tier(string $id): ?array
     {
         return SUBSCRIPTION_TIERS[$id] ?? null;
