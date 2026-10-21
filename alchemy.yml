@@ -46,6 +46,7 @@ refactor:
     - dead-code
     - code-quality
     - coding-style
+    - type-declarations
 
 analyse:
   level: 8

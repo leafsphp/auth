@@ -14,17 +14,17 @@ use Leaf\Auth\Config;
 |
 */
 
-afterEach(function () {
+afterEach(function (): void {
     // config is static — leave it as other suites expect
     Config::set(['token.secret' => null, 'token.lifetime' => 60 * 60 * 24 * 365]);
     unset($_ENV['APP_KEY'], $_ENV['AUTH_TOKEN_SECRET']);
 });
 
-test('the default token lifetime is a year, not zero', function () {
+test('the default token lifetime is a year, not zero', function (): void {
     expect(Config::get('token.lifetime'))->toBe(60 * 60 * 24 * 365);
 });
 
-test('tokens are minted with a future expiry on default config', function () {
+test('tokens are minted with a future expiry on default config', function (): void {
     $auth = authInstance();
     $auth->createUserFor([
         'username' => 'token-check',
@@ -45,7 +45,7 @@ test('tokens are minted with a future expiry on default config', function () {
     deleteUser('token-check');
 });
 
-test('the token secret derives from APP_KEY when nothing else is set', function () {
+test('the token secret derives from APP_KEY when nothing else is set', function (): void {
     Config::set(['token.secret' => null]);
     $_ENV['APP_KEY'] = 'base64:test-app-key';
 
@@ -56,7 +56,7 @@ test('the token secret derives from APP_KEY when nothing else is set', function 
         ->and(strlen($secret))->toBe(64); // long enough for HS256 everywhere
 });
 
-test('AUTH_TOKEN_SECRET beats the APP_KEY derivation', function () {
+test('AUTH_TOKEN_SECRET beats the APP_KEY derivation', function (): void {
     Config::set(['token.secret' => null]);
     $_ENV['APP_KEY'] = 'base64:test-app-key';
     $_ENV['AUTH_TOKEN_SECRET'] = 'explicit-secret-that-is-long-enough-for-hs256';
@@ -64,15 +64,15 @@ test('AUTH_TOKEN_SECRET beats the APP_KEY derivation', function () {
     expect(Config::tokenSecret())->toBe('explicit-secret-that-is-long-enough-for-hs256');
 });
 
-test('token operations throw clearly when no secret can be resolved', function () {
+test('token operations throw clearly when no secret can be resolved', function (): void {
     Config::set(['token.secret' => null]);
     unset($_ENV['APP_KEY'], $_ENV['AUTH_TOKEN_SECRET']);
 
-    expect(fn () => Config::tokenSecret())
+    expect(fn (): string => Config::tokenSecret())
         ->toThrow(RuntimeException::class, 'No auth token secret');
 });
 
-test('each operation starts with a clean error state', function () {
+test('each operation starts with a clean error state', function (): void {
     $auth = authInstance();
     $auth->createUserFor([
         'username' => 'error-state',
@@ -103,7 +103,7 @@ test('each operation starts with a clean error state', function () {
     deleteUser('error-state');
 });
 
-test('a present-but-null roles column is hidden from get()', function () {
+test('a present-but-null roles column is hidden from get()', function (): void {
     $auth = authInstance();
     $user = new User([
         'id' => 1,
@@ -114,7 +114,7 @@ test('a present-but-null roles column is hidden from get()', function () {
     expect($user->get())->not->toHaveKey(Config::get('roles.key'));
 });
 
-test('the password hash never leaks from get(), whatever hidden says', function () {
+test('the password hash never leaks from get(), whatever hidden says', function (): void {
     // following the old docs (literal 'password') with a custom
     // password.key put the bcrypt hash in the session and Inertia props
     Config::set(['password.key' => 'pass', 'hidden' => ['password', 'remember_token']]);
@@ -132,7 +132,7 @@ test('the password hash never leaks from get(), whatever hidden says', function 
     Config::set(['password.key' => 'password', 'hidden' => ['field.id', 'field.password', 'remember_token']]);
 });
 
-test('session-only users need no token secret until tokens are read', function () {
+test('session-only users need no token secret until tokens are read', function (): void {
     Config::set(['token.secret' => null]);
     unset($_ENV['APP_KEY'], $_ENV['AUTH_TOKEN_SECRET']);
 
@@ -146,7 +146,7 @@ test('session-only users need no token secret until tokens are read', function (
         ->toThrow(RuntimeException::class, 'No auth token secret');
 });
 
-test('middleware redirect targets are configurable', function () {
+test('middleware redirect targets are configurable', function (): void {
     expect(Config::get('redirect.login'))->toBe('/auth/login')
         ->and(Config::get('redirect.guest'))->toBe('/dashboard');
 

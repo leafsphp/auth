@@ -3,7 +3,7 @@
 use Leaf\Auth;
 use Leaf\Auth\User;
 
-beforeAll(function () {
+beforeAll(function (): void {
     createTableForUsers();
     dbInstance()->delete('users')->execute();
 
@@ -17,11 +17,11 @@ beforeAll(function () {
         ->execute();
 });
 
-afterAll(function () {
+afterAll(function (): void {
     dbInstance()->delete('users')->execute();
 });
 
-test('auth user is instance of Leaf\Auth\User', function () {
+test('auth user is instance of Leaf\Auth\User', function (): void {
     $auth = authInstance();
     $auth->config(['db.table' => 'users']);
 
@@ -42,7 +42,7 @@ test('auth user is instance of Leaf\Auth\User', function () {
     expect($auth->user()->username)->toBe($testUser['username']);
 });
 
-test('logout can use logout callback to run custom action', function () {
+test('logout can use logout callback to run custom action', function (): void {
     $auth = authInstance();
     $auth->config(['db.table' => 'users']);
 
@@ -62,7 +62,7 @@ test('logout can use logout callback to run custom action', function () {
     expect($auth->user())->toBeInstanceOf(User::class);
     expect($auth->user()->username)->toBe($testUser['username']);
 
-    $auth->logout(function ($auth) {
+    $auth->logout(function ($auth): void {
         expect($auth)->toBeInstanceOf(Auth::class);
     });
 

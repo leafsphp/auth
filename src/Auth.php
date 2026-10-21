@@ -50,15 +50,15 @@ class Auth
     public function __construct()
     {
         if (class_exists(App::class)) {
-            $this->middleware('auth.required', function () {
+            $this->middleware('auth.required', function (): void {
                 response()->redirect(Config::get('redirect.login') ?? '/auth/login');
             });
 
-            $this->middleware('auth.guest', function () {
+            $this->middleware('auth.guest', function (): void {
                 response()->redirect(Config::get('redirect.guest') ?? '/dashboard');
             });
 
-            $this->middleware('is', function ($role) {
+            $this->middleware('is', function ($role): void {
                 Pages::error(
                     'Page not found',
                     'The page you are looking for could not be found.',
@@ -66,7 +66,7 @@ class Auth
                 );
             });
 
-            $this->middleware('isNot', function () {
+            $this->middleware('isNot', function (): void {
                 Pages::error(
                     'Page not found',
                     'The page you are looking for could not be found.',
@@ -74,7 +74,7 @@ class Auth
                 );
             });
 
-            $this->middleware('can', function () {
+            $this->middleware('can', function (): void {
                 Pages::error(
                     'Page not found',
                     'The page you are looking for could not be found.',
@@ -82,7 +82,7 @@ class Auth
                 );
             });
 
-            $this->middleware('cannot', function () {
+            $this->middleware('cannot', function (): void {
                 Pages::error(
                     'Page not found',
                     'The page you are looking for could not be found.',
@@ -90,11 +90,11 @@ class Auth
                 );
             });
 
-            $this->middleware('auth.verified', function () {
+            $this->middleware('auth.verified', function (): void {
                 response()->redirect('/auth/verify');
             });
 
-            $this->middleware('auth.unverified', function () {
+            $this->middleware('auth.unverified', function (): void {
                 response()->redirect('/dashboard');
             });
         }
@@ -779,17 +779,16 @@ class Auth
      * Register auth middleware for your Leaf apps
      * @param string $middleware The middleware to register
      * @param callable $callback The callback to run if middleware fails
-     * @return void|never
      * @throws Exception If not used with leafs/leaf installed
      */
-    public function middleware(string $middleware, callable $callback)
+    public function middleware(string $middleware, callable $callback): void
     {
         if (!class_exists(App::class)) {
             throw new Exception('This feature is only available for Leaf apps');
         }
 
         if ($middleware === 'auth.required') {
-            app()->registerMiddleware('auth.required', function () use ($callback) {
+            app()->registerMiddleware('auth.required', function () use ($callback): void {
                 if (!$this->user()) {
                     $callback();
                     exit;
@@ -800,7 +799,7 @@ class Auth
         }
 
         if ($middleware === 'auth.guest') {
-            app()->registerMiddleware('auth.guest', function () use ($callback) {
+            app()->registerMiddleware('auth.guest', function () use ($callback): void {
                 if ($this->user()) {
                     $callback();
                     exit;
@@ -813,7 +812,7 @@ class Auth
         }
 
         if ($middleware === 'is') {
-            app()->registerMiddleware('is', function ($role) use ($callback) {
+            app()->registerMiddleware('is', function ($role) use ($callback): void {
                 if (!$this->user() || $this->user()->isNot($role)) {
                     $callback($role);
                     exit;
@@ -824,7 +823,7 @@ class Auth
         }
 
         if ($middleware === 'isNot') {
-            app()->registerMiddleware('isNot', function ($role) use ($callback) {
+            app()->registerMiddleware('isNot', function ($role) use ($callback): void {
                 if (!$this->user() || $this->user()->is($role)) {
                     $callback($role);
                     exit;
@@ -835,7 +834,7 @@ class Auth
         }
 
         if ($middleware === 'can') {
-            app()->registerMiddleware('can', function ($role) use ($callback) {
+            app()->registerMiddleware('can', function ($role) use ($callback): void {
                 if (!$this->user() || $this->user()->cannot($role)) {
                     $callback($role);
                     exit;
@@ -846,7 +845,7 @@ class Auth
         }
 
         if ($middleware === 'cannot') {
-            app()->registerMiddleware('cannot', function ($role) use ($callback) {
+            app()->registerMiddleware('cannot', function ($role) use ($callback): void {
                 if (!$this->user() || $this->user()->can($role)) {
                     $callback($role);
                     exit;
@@ -857,7 +856,7 @@ class Auth
         }
 
         if ($middleware === 'auth.verified') {
-            app()->registerMiddleware('auth.verified', function () use ($callback) {
+            app()->registerMiddleware('auth.verified', function () use ($callback): void {
                 if (!$this->user() || !$this->user()->isVerified()) {
                     $callback();
                     exit;
@@ -868,7 +867,7 @@ class Auth
         }
 
         if ($middleware === 'auth.unverified') {
-            app()->registerMiddleware('auth.unverified', function () use ($callback) {
+            app()->registerMiddleware('auth.unverified', function () use ($callback): void {
                 if (!$this->user() || $this->user()->isVerified()) {
                     $callback();
                     exit;
@@ -1049,9 +1048,8 @@ class Auth
 
     /**
      * Clear all errors caught
-     * @return void
      */
-    public function clearErrors()
+    public function clearErrors(): void
     {
         $this->errorsArray = [];
     }

@@ -1,17 +1,17 @@
 <?php
 
-beforeAll(function () {
+beforeAll(function (): void {
     createTableForUsers('myusers');
 
     deleteUser('test-user', 'myusers');
     deleteUser('test-user55', 'myusers');
 });
 
-afterAll(function () {
+afterAll(function (): void {
     dbInstance()->delete('myusers')->execute();
 });
 
-test('register should save user in user defined table', function () {
+test('register should save user in user defined table', function (): void {
     $auth = authInstance();
     $auth->config(['session' => false, 'db.table' => 'myusers']);
 
@@ -28,7 +28,7 @@ test('register should save user in user defined table', function () {
     expect($auth->user()->username)->toBe('test-user');
 });
 
-test('login should work with user defined table', function () {
+test('login should work with user defined table', function (): void {
     $auth = authInstance();
     $auth->config(['session' => false, 'db.table' => 'myusers']);
 
@@ -45,7 +45,7 @@ test('login should work with user defined table', function () {
     expect($auth->user()->username)->toBe('test-user');
 });
 
-test('update should work with user defined table', function () {
+test('update should work with user defined table', function (): void {
     $auth = authInstance();
     $auth->config(['session' => true, 'db.table' => 'myusers', 'session.lifetime' => '1 day']);
 
@@ -72,7 +72,7 @@ test('update should work with user defined table', function () {
     expect($auth->user()->email)->toBe('test-user55@example.com');
 });
 
-test('user table can use uuid as id', function () {
+test('user table can use uuid as id', function (): void {
     createTableForUsers('uuid_users', uuid: true);
 
     $auth = authInstance();

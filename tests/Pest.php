@@ -66,7 +66,7 @@ function authInstance(): Auth
     return $auth;
 }
 
-function deleteUser(string $username, $table = 'users')
+function deleteUser(string $username, $table = 'users'): void
 {
     $db = dbInstance();
 

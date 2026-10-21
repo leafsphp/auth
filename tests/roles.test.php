@@ -23,15 +23,15 @@ function roleAuthInstance(): Auth
     return $auth;
 }
 
-beforeAll(function () {
+beforeAll(function (): void {
     createTableForUsers('role_users');
 });
 
-afterAll(function () {
+afterAll(function (): void {
     dbInstance()->delete('role_users')->execute();
 });
 
-beforeEach(function () {
+beforeEach(function (): void {
     deleteUser('role-user', 'role_users');
 
     $this->auth = roleAuthInstance();
@@ -42,11 +42,11 @@ beforeEach(function () {
     ]);
 });
 
-test('createRoles registers roles and their permissions', function () {
+test('createRoles registers roles and their permissions', function (): void {
     expect($this->auth->roles())->toBe(ROLES);
 });
 
-test('a fresh user has no roles or permissions', function () {
+test('a fresh user has no roles or permissions', function (): void {
     $user = $this->auth->user();
 
     expect($user->roles())->toBe([]);
@@ -55,7 +55,7 @@ test('a fresh user has no roles or permissions', function () {
     expect($user->can('view-ticket'))->toBeFalse();
 });
 
-test('assign gives a user a role and its permissions', function () {
+test('assign gives a user a role and its permissions', function (): void {
     $user = $this->auth->user();
 
     expect($user->assign('admin'))->toBeTrue();
@@ -66,7 +66,7 @@ test('assign gives a user a role and its permissions', function () {
     expect($user->cannot('nonexistent-permission'))->toBeTrue();
 });
 
-test('assign accepts multiple roles and merges permissions without duplicates', function () {
+test('assign accepts multiple roles and merges permissions without duplicates', function (): void {
     $user = $this->auth->user();
 
     $user->assign(['support', 'guest']);
@@ -75,7 +75,7 @@ test('assign accepts multiple roles and merges permissions without duplicates', 
     expect($user->permissions())->toBe(['view-ticket', 'edit-ticket']);
 });
 
-test('assigning an unknown role fails loudly instead of silently doing nothing', function () {
+test('assigning an unknown role fails loudly instead of silently doing nothing', function (): void {
     $user = $this->auth->user();
 
     $errors = [];
@@ -95,7 +95,7 @@ test('assigning an unknown role fails loudly instead of silently doing nothing',
     expect($user->permissions())->toBe([]);
 });
 
-test('a known role mixed with an unknown one assigns nothing', function () {
+test('a known role mixed with an unknown one assigns nothing', function (): void {
     $user = $this->auth->user();
 
     set_error_handler(fn () => true);
@@ -106,7 +106,7 @@ test('a known role mixed with an unknown one assigns nothing', function () {
     expect($user->roles())->toBe([]);
 });
 
-test('is and can accept arrays and match any entry', function () {
+test('is and can accept arrays and match any entry', function (): void {
     $user = $this->auth->user();
     $user->assign('support');
 
@@ -116,7 +116,7 @@ test('is and can accept arrays and match any entry', function () {
     expect($user->can(['delete-ticket']))->toBeFalse();
 });
 
-test('roles persist and rehydrate on a fresh login', function () {
+test('roles persist and rehydrate on a fresh login', function (): void {
     $this->auth->user()->assign('support');
 
     $freshAuth = roleAuthInstance();
@@ -132,7 +132,7 @@ test('roles persist and rehydrate on a fresh login', function () {
     expect($user->can('delete-ticket'))->toBeFalse();
 });
 
-test('unassign revokes a role and recalculates permissions', function () {
+test('unassign revokes a role and recalculates permissions', function (): void {
     $user = $this->auth->user();
     $user->assign(['admin', 'guest']);
 
@@ -163,7 +163,7 @@ class MiddlewareDenied extends Exception
 function registerRoleMiddleware(Auth $auth): void
 {
     foreach (['is', 'isNot', 'can', 'cannot'] as $name) {
-        $auth->middleware($name, function () use ($name) {
+        $auth->middleware($name, function () use ($name): void {
             throw new MiddlewareDenied($name);
         });
     }
@@ -176,21 +176,21 @@ function runRoleMiddleware(string $name, $args)
     return $registered->getValue()[$name](is_array($args) ? $args : [$args]);
 }
 
-test('is middleware allows a user holding the role', function () {
+test('is middleware allows a user holding the role', function (): void {
     $this->auth->user()->assign('admin');
     registerRoleMiddleware($this->auth);
 
     expect(fn () => runRoleMiddleware('is', ['admin']))->not->toThrow(MiddlewareDenied::class);
 });
 
-test('is middleware blocks a user without the role', function () {
+test('is middleware blocks a user without the role', function (): void {
     $this->auth->user()->assign('guest');
     registerRoleMiddleware($this->auth);
 
     expect(fn () => runRoleMiddleware('is', ['admin']))->toThrow(MiddlewareDenied::class);
 });
 
-test('is middleware allows any role in a piped list', function () {
+test('is middleware allows any role in a piped list', function (): void {
     $this->auth->user()->assign('support');
     registerRoleMiddleware($this->auth);
 
@@ -198,28 +198,28 @@ test('is middleware allows any role in a piped list', function () {
     expect(fn () => runRoleMiddleware('is', ['admin', 'support']))->not->toThrow(MiddlewareDenied::class);
 });
 
-test('can middleware allows a permission the role grants', function () {
+test('can middleware allows a permission the role grants', function (): void {
     $this->auth->user()->assign('support');
     registerRoleMiddleware($this->auth);
 
     expect(fn () => runRoleMiddleware('can', ['edit-ticket']))->not->toThrow(MiddlewareDenied::class);
 });
 
-test('can middleware blocks a permission the role does not grant', function () {
+test('can middleware blocks a permission the role does not grant', function (): void {
     $this->auth->user()->assign('support');
     registerRoleMiddleware($this->auth);
 
     expect(fn () => runRoleMiddleware('can', ['delete-ticket']))->toThrow(MiddlewareDenied::class);
 });
 
-test('isNot middleware blocks a user holding the role', function () {
+test('isNot middleware blocks a user holding the role', function (): void {
     $this->auth->user()->assign('admin');
     registerRoleMiddleware($this->auth);
 
     expect(fn () => runRoleMiddleware('isNot', ['admin']))->toThrow(MiddlewareDenied::class);
 });
 
-test('cannot middleware blocks a user holding the permission', function () {
+test('cannot middleware blocks a user holding the permission', function (): void {
     $this->auth->user()->assign('admin');
     registerRoleMiddleware($this->auth);
 

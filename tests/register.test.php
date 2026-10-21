@@ -2,16 +2,16 @@
 
 use Leaf\Auth\User;
 
-beforeAll(function () {
+beforeAll(function (): void {
     createTableForUsers();
     dbInstance()->delete('users')->execute();
 });
 
-afterEach(function () {
+afterEach(function (): void {
     dbInstance()->delete('users')->execute();
 });
 
-test('user can register an account', function () {
+test('user can register an account', function (): void {
     $auth = authInstance();
     $auth->config(['db.table' => 'users']);
 
@@ -32,7 +32,7 @@ test('user can register an account', function () {
     expect($auth->user()->username)->toBe($userData['username']);
 });
 
-test('user can login after registering', function () {
+test('user can login after registering', function (): void {
     $auth = authInstance();
     $auth->config(['db.table' => 'users']);
 
@@ -53,7 +53,7 @@ test('user can login after registering', function () {
     expect($auth->user()->username)->toBe($userData['username']);
 });
 
-test('user can only sign up once', function () {
+test('user can only sign up once', function (): void {
     $auth = authInstance();
     $auth->config(['db.table' => 'users']);
 
@@ -81,7 +81,7 @@ test('user can only sign up once', function () {
     ]);
 });
 
-test('register passwords are encrypted', function () {
+test('register passwords are encrypted', function (): void {
     $auth = authInstance();
     $auth->config(['db.table' => 'users']);
 
