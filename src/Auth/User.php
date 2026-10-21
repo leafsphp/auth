@@ -113,15 +113,7 @@ class User implements Stringable
         return $this->data[Config::get('id.key')] ?? null;
     }
 
-    /**
-     * Update user data
-     * ---
-     * Update user data in the database
-     *
-     * @param array{
-     *   email?: string,
-     * } | array<string, mixed> $userData User data
-     */
+    /** Update user data in the database */
     public function update(array $userData): bool
     {
         $user = $this->get();
@@ -181,14 +173,7 @@ class User implements Stringable
         return true;
     }
 
-    /**
-     * Update user password
-     * ---
-     * Update user password in the database
-     *
-     * @param string $oldPassword Old password
-     * @param string $newPassword New password
-     */
+    /** Update user password in the database */
     public function updatePassword(string $oldPassword, string $newPassword): bool
     {
         $user = $this->get();
@@ -235,13 +220,7 @@ class User implements Stringable
         return true;
     }
 
-    /**
-     * Reset user password
-     * ---
-     * Reset user password in the database
-     *
-     * @param string $newPassword New password
-     */
+    /** Reset user password in the database */
     public function resetPassword(string $newPassword): bool
     {
         $user = $this->get();
@@ -276,9 +255,7 @@ class User implements Stringable
         return true;
     }
 
-    /**
-     * Get auth information to be sent to the client
-     */
+    /** Get auth information to be sent to the client */
     public function getAuthInfo(): object
     {
         $tokens = $this->tokens();
@@ -300,13 +277,7 @@ class User implements Stringable
         return $dataToReturn;
     }
 
-    /**
-     * Return generated tokens
-     * @return array{
-     *     access?: string,
-     *     refresh?: string,
-     * }
-     */
+    /** Return generated tokens */
     public function tokens(): array
     {
         if (!isset($this->tokens['access'])) {
@@ -339,7 +310,6 @@ class User implements Stringable
     /**
      * Generate a verification token for the user
      * @param mixed $expiresIn Token expiration time
-     * @param string|null $purpose Purpose of the token
      */
     public function generateVerificationToken($expiresIn = null, ?string $purpose = null): string
     {
@@ -361,17 +331,13 @@ class User implements Stringable
         return JWT::encode($payload, $secretPhrase, 'HS256');
     }
 
-    /**
-     * Check if email is verified
-     */
+    /** Check if email is verified */
     public function isVerified(): bool
     {
         return (bool) ($this->data['email_verified_at'] ?? false);
     }
 
-    /**
-     * Verify user's email
-     */
+    /** Verify user's email */
     public function verifyEmail(): bool
     {
         if ($this->isVerified()) {
@@ -445,9 +411,7 @@ class User implements Stringable
         return json_encode($this->get()) ?: '';
     }
 
-    /**
-     * @param string $name
-     */
+    /** @param string $name */
     public function __get($name): mixed
     {
         // using data instead of get() here because
@@ -456,9 +420,7 @@ class User implements Stringable
         return $this->data[$name] ?? null;
     }
 
-    /**
-     * @param string $name
-     */
+    /** @param string $name */
     public function __set($name, mixed $value): void
     {
         $this->data[$name] = $value;
