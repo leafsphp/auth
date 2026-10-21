@@ -43,15 +43,15 @@ class Auth
     public function __construct()
     {
         if (class_exists(App::class)) {
-            $this->middleware('auth.required', function (): void {
+            $this->middleware('auth.required', static function (): void {
                 response()->redirect(Config::get('redirect.login') ?? '/auth/login');
             });
 
-            $this->middleware('auth.guest', function (): void {
+            $this->middleware('auth.guest', static function (): void {
                 response()->redirect(Config::get('redirect.guest') ?? '/dashboard');
             });
 
-            $this->middleware('is', function ($role): void {
+            $this->middleware('is', static function (): void {
                 Pages::error(
                     'Page not found',
                     'The page you are looking for could not be found.',
@@ -59,7 +59,7 @@ class Auth
                 );
             });
 
-            $this->middleware('isNot', function (): void {
+            $this->middleware('isNot', static function (): void {
                 Pages::error(
                     'Page not found',
                     'The page you are looking for could not be found.',
@@ -67,7 +67,7 @@ class Auth
                 );
             });
 
-            $this->middleware('can', function (): void {
+            $this->middleware('can', static function (): void {
                 Pages::error(
                     'Page not found',
                     'The page you are looking for could not be found.',
@@ -75,7 +75,7 @@ class Auth
                 );
             });
 
-            $this->middleware('cannot', function (): void {
+            $this->middleware('cannot', static function (): void {
                 Pages::error(
                     'Page not found',
                     'The page you are looking for could not be found.',
@@ -83,11 +83,11 @@ class Auth
                 );
             });
 
-            $this->middleware('auth.verified', function (): void {
+            $this->middleware('auth.verified', static function (): void {
                 response()->redirect('/auth/verify');
             });
 
-            $this->middleware('auth.unverified', function (): void {
+            $this->middleware('auth.unverified', static function (): void {
                 response()->redirect('/dashboard');
             });
         }
