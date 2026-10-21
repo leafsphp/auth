@@ -689,8 +689,9 @@ class Auth
             return true;
         }
 
-        if ($action) {
+        if ($action && function_exists('response')) {
             response()->redirect($action);
+
             exit;
         }
 
