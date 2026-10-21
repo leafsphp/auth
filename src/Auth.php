@@ -260,12 +260,8 @@ class Auth
         return $this;
     }
 
-    /**
-     * Return all roles and their permissions
-     *
-     * @return array<string, string[]>
-     */
-    public function roles()
+    /** Return all roles and their permissions */
+    public function roles(): ?array
     {
         return Config::get('roles');
     }
@@ -633,11 +629,8 @@ class Auth
         return (new User($user, session: false))->setDb($this->db);
     }
 
-    /**
-     * Get saved OAuth token
-     * @return mixed
-     */
-    public function oauthToken()
+    /** Get saved OAuth token */
+    public function oauthToken(): mixed
     {
         return Config::getUserCache('oauth-token');
     }
@@ -670,22 +663,16 @@ class Auth
         return true;
     }
 
-    /**
-     * Get the id of the currently authenticated user
-     * @return string|int
-     */
-    public function id()
+    /** Get the id of the currently authenticated user */
+    public function id(): string|int
     {
         return Config::get('session')
             ? $this->getFromSession('auth.id')
             : ($this->user ? $this->user->id() : ($this->parseToken()['user.id'] ?? null));
     }
 
-    /**
-     * Get the currently authenticated user
-     * @return User|null
-     */
-    public function user()
+    /** Get the currently authenticated user */
+    public function user(): ?User
     {
         if (Config::get('session')) {
             $userId = $this->getFromSession('auth.id');
@@ -726,11 +713,8 @@ class Auth
         ))->setDb($this->db);
     }
 
-    /**
-     * Get data generated on user login
-     * @return object|null
-     */
-    public function data()
+    /** Get data generated on user login */
+    public function data(): ?object
     {
         $user = $this->user();
 
@@ -741,14 +725,8 @@ class Auth
         return $user->getAuthInfo();
     }
 
-    /**
-     * Get generated access tokens
-     * @return array{
-     *     access?: string,
-     *     refresh?: string,
-     * }|null
-     */
-    public function tokens()
+    /** Get generated access tokens */
+    public function tokens(): ?array
     {
         $user = $this->user();
 
@@ -927,12 +905,8 @@ class Auth
         }
     }
 
-    /**
-     * Return the current db instance
-     *
-     * @return Db
-     */
-    public function db()
+    /** Return the current db instance */
+    public function db(): ?Db
     {
         return $this->db;
     }
@@ -951,11 +925,8 @@ class Auth
         }
     }
 
-    /**
-     * @param string|array<string, mixed> $value
-     * @return ?mixed
-     */
-    protected function getFromSession($value)
+    /** @param string|array<string, mixed> $value */
+    protected function getFromSession($value): mixed
     {
         if ($this->checkAndExpireSession()) {
             return null;
@@ -964,11 +935,8 @@ class Auth
         return Session::get($value);
     }
 
-    /**
-     * @return void|never
-     * @throws Exception If sessions are not enabled
-     */
-    protected function sessionCheck()
+    /** @throws Exception If sessions are not enabled */
+    protected function sessionCheck(): void
     {
         if (!Config::get('session')) {
             throw new Exception('Turn on sessions to use this feature.');
@@ -1021,8 +989,7 @@ class Auth
         return null;
     }
 
-    /** @return ?mixed */
-    protected function getTokenFromSession()
+    protected function getTokenFromSession(): mixed
     {
         return Session::get('auth.token');
     }
@@ -1035,10 +1002,7 @@ class Auth
         $this->errorsArray = [];
     }
 
-    /**
-     * Return all errors caught
-     * @return array<string, mixed>
-     */
+    /** Return all errors caught */
     public function errors(): array
     {
         return $this->errorsArray;
