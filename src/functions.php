@@ -7,15 +7,11 @@ use Leaf\Auth;
 use Leaf\Config;
 
 if (!function_exists('auth') && class_exists(App::class)) {
-    /**
-     * Return the leaf auth object
-     *
-     * @return Leaf\Auth
-     */
-    function auth()
+    /** Return the leaf auth object */
+    function auth(): Auth
     {
-        if (!(Config::getStatic('auth'))) {
-            Config::singleton('auth', fn (): Auth => new Auth());
+        if (!Config::getStatic('auth')) {
+            Config::singleton('auth', static fn (): Auth => new Auth());
         }
 
         return Config::get('auth');
