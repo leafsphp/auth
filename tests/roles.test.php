@@ -79,7 +79,7 @@ test('assigning an unknown role fails loudly instead of silently doing nothing',
     $user = $this->auth->user();
 
     $errors = [];
-    set_error_handler(function ($errno, $errstr) use (&$errors) {
+    set_error_handler(function ($errno, $errstr) use (&$errors): true {
         $errors[] = $errstr;
         return true;
     });
@@ -98,7 +98,7 @@ test('assigning an unknown role fails loudly instead of silently doing nothing',
 test('a known role mixed with an unknown one assigns nothing', function (): void {
     $user = $this->auth->user();
 
-    set_error_handler(fn () => true);
+    set_error_handler(fn (): true => true);
     $result = $user->assign(['admin', 'nope']);
     restore_error_handler();
 

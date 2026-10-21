@@ -142,7 +142,7 @@ test('session-only users need no token secret until tokens are read', function (
     expect($user->get())->toHaveKey('email');
 
     // reading tokens is the moment the secret becomes required
-    expect(fn () => $user->tokens())
+    expect(fn (): array => $user->tokens())
         ->toThrow(RuntimeException::class, 'No auth token secret');
 });
 
