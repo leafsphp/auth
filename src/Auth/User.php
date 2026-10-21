@@ -29,42 +29,23 @@ class User implements Stringable
     use UsesRoles;
     use UsesSubscriptions;
 
-    /**
-     * Internal instance of Leaf database
-     * @var Db
-     */
+    /** @var Db Internal instance of Leaf database */
     protected $db;
 
-    /**
-     * Internal instance of Leaf session
-     * @var Session
-     */
+    /** @var Session Internal instance of Leaf session */
     protected $session;
 
-    /** @var array<string, mixed> User Information */
+    /** User Information */
     protected array $data = [];
 
-    /**
-     * @var array{
-     *     access?: string,
-     *     refresh?: string,
-     * } User Tokens
-     */
+    /** @var array{access?: string, refresh?: string} User Tokens */
     protected array $tokens = [];
 
-    /**
-     * Expiry used when tokens are lazily minted
-     * @var int
-     */
+    /** @var int Expiry used when tokens are lazily minted */
     protected $tokenLifetime;
 
-    /**
-     * All errors caught
-     * @var array{
-     *   password?: string,
-     * } | array<string, string>
-     */
-    protected $errorsArray = [];
+    /** All errors caught */
+    protected array $errorsArray = [];
 
     /**
      * @param array<string, mixed> $data

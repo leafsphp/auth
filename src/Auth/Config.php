@@ -53,7 +53,7 @@ class Config
         );
     }
 
-    /** @var array<string, mixed> Configuration for Leaf Auth */
+    /** Configuration for Leaf Auth */
     protected static array $config = [
         'id.key' => 'id',
         'db.table' => 'users',
@@ -83,7 +83,7 @@ class Config
         'messages.loginPasswordError' => 'Password is incorrect!',
     ];
 
-    /** @var array<string, mixed> Additional user information for cache */
+    /** Additional user information for cache */
     protected static array $userCache = [];
 
     /**

@@ -28,26 +28,17 @@ use Throwable;
  */
 class Auth
 {
-    /**
-     * The currently authenticated user
-     * @var ?User
-     */
+    /** @var ?User The currently authenticated user */
     protected $user;
 
-    /**
-     * Internal instance of Leaf DB
-     * @var ?Db
-     */
+    /** @var ?Db Internal instance of Leaf DB */
     protected $db;
 
-    /**
-     * All errors caught
-     * @var array<string, string>
-     */
-    protected $errorsArray = [];
+    /** All errors caught */
+    protected array $errorsArray = [];
 
-    /** @var array<string, AbstractProvider> Configured oauth clients */
-    protected $oauthClients = [];
+    /** Configured oauth clients */
+    protected array $oauthClients = [];
 
     public function __construct()
     {

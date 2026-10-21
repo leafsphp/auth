@@ -18,22 +18,16 @@ use PDOStatement;
  */
 class Model
 {
-    /**
-     * User Information
-     */
+    /** User Information */
     protected User $user;
 
-    /**
-     * DB table name
-     */
+    /** DB table name */
     protected string $table;
 
-    /**
-     * DB connection
-     */
+    /** DB connection */
     protected Db $db;
 
-    /** @var array<string, mixed> User data to save */
+    /** User data to save */
     protected array $dataToSave = [];
 
     /**

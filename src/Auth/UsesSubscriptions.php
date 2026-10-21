@@ -17,10 +17,7 @@ use Leaf\Billing\Subscription;
  */
 trait UsesSubscriptions
 {
-    /**
-     * User Subscription
-     * @var array<string, mixed>|null
-     */
+    /** @var ?array<string, mixed> User Subscription */
     protected $subscription;
 
     /**

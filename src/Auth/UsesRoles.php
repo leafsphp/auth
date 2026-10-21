@@ -16,10 +16,10 @@ use Throwable;
  */
 trait UsesRoles
 {
-    /** @var string[] User Permissions */
+    /** User Permissions */
     protected array $permissions = [];
 
-    /** @var string[] User Roles */
+    /** User Roles */
     protected array $roles = [];
 
     /**
