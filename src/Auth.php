@@ -55,7 +55,7 @@ class Auth
                 Pages::error(
                     'Page not found',
                     'The page you are looking for could not be found.',
-                    403
+                    403,
                 );
             });
 
@@ -63,7 +63,7 @@ class Auth
                 Pages::error(
                     'Page not found',
                     'The page you are looking for could not be found.',
-                    403
+                    403,
                 );
             });
 
@@ -71,7 +71,7 @@ class Auth
                 Pages::error(
                     'Page not found',
                     'The page you are looking for could not be found.',
-                    403
+                    403,
                 );
             });
 
@@ -79,7 +79,7 @@ class Auth
                 Pages::error(
                     'Page not found',
                     'The page you are looking for could not be found.',
-                    403
+                    403,
                 );
             });
 
@@ -104,9 +104,9 @@ class Auth
                     'name' => 'google',
                     'redirectUri' => $this->env(
                         'GOOGLE_AUTH_REDIRECT_URI',
-                        $this->env('APP_URL') . '/auth/register/google'
+                        $this->env('APP_URL') . '/auth/register/google',
                     ),
-                ]
+                ],
             );
         }
     }
@@ -185,7 +185,7 @@ class Auth
     public function withGoogle(
         string $clientId,
         string $clientSecret,
-        array $options = []
+        array $options = [],
     ): static {
         $clientName = $options['name'] ?? 'google';
 
