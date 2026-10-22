@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Leaf;
 
 use League\OAuth2\Client\Provider\AbstractProvider;
@@ -26,75 +28,66 @@ use Throwable;
  */
 class Auth
 {
-    /**
-     * The currently authenticated user
-     * @var ?User
-     */
-    protected $user = null;
+    /** @var ?User The currently authenticated user */
+    protected $user;
 
-    /**
-     * Internal instance of Leaf DB
-     * @var ?Db
-     */
-    protected $db = null;
+    /** @var ?Db Internal instance of Leaf DB */
+    protected $db;
 
-    /**
-     * All errors caught
-     * @var array<string, string>
-     */
-    protected $errorsArray = [];
+    /** All errors caught */
+    protected array $errorsArray = [];
 
-    /** @var array<string, AbstractProvider> Configured oauth clients */
-    protected $oauthClients = [];
+    /** Configured oauth clients */
+    protected array $oauthClients = [];
 
     public function __construct()
     {
-        if (class_exists('Leaf\App')) {
-            $this->middleware('auth.required', function () {
+        if (class_exists(App::class)) {
+            $this->middleware('auth.required', static function (): void {
                 response()->redirect(Config::get('redirect.login') ?? '/auth/login');
             });
 
-            $this->middleware('auth.guest', function () {
+            $this->middleware('auth.guest', static function (): void {
                 response()->redirect(Config::get('redirect.guest') ?? '/dashboard');
             });
 
-            $this->middleware('is', function ($role) {
+            $this->middleware('is', static function (): void {
                 Pages::error(
                     'Page not found',
                     'The page you are looking for could not be found.',
-                    403
+                    403,
                 );
             });
 
-            $this->middleware('isNot', function () {
+            $this->middleware('isNot', static function (): void {
                 Pages::error(
                     'Page not found',
                     'The page you are looking for could not be found.',
-                    403
+                    403,
                 );
             });
 
-            $this->middleware('can', function () {
+            $this->middleware('can', static function (): void {
                 Pages::error(
                     'Page not found',
                     'The page you are looking for could not be found.',
-                    403
+                    403,
                 );
             });
 
-            $this->middleware('cannot', function () {
+            $this->middleware('cannot', static function (): void {
                 Pages::error(
                     'Page not found',
                     'The page you are looking for could not be found.',
-                    403
+                    403,
                 );
             });
 
-            $this->middleware('auth.verified', function () {
+            $this->middleware('auth.verified', static function (): void {
                 response()->redirect('/auth/verify');
             });
 
-            $this->middleware('auth.unverified', function () {
+            $this->middleware('auth.unverified', static function (): void {
                 response()->redirect('/dashboard');
             });
         }
@@ -111,9 +104,9 @@ class Auth
                     'name' => 'google',
                     'redirectUri' => $this->env(
                         'GOOGLE_AUTH_REDIRECT_URI',
-                        $this->env('APP_URL') . '/auth/register/google'
+                        $this->env('APP_URL') . '/auth/register/google',
                     ),
-                ]
+                ],
             );
         }
     }
@@ -124,10 +117,8 @@ class Auth
      * reads happen once during setup (e.g. resolving the Google redirect
      * URI), so the uncached read costs nothing and stays honest when the
      * environment is set at runtime.
-     * @param mixed $default
-     * @return mixed
      */
-    private function env(string $name, $default = false)
+    private function env(string $name, mixed $default = false): mixed
     {
         if (function_exists('_envUncached')) {
             return _envUncached($name, $default);
@@ -147,9 +138,8 @@ class Auth
      *     dbtype?: string,
      *     pdoOptions?: mixed[],
      * } $dbConfig Configuration for leaf db connection
-     * @return $this
      */
-    public function connect($dbConfig = [])
+    public function connect($dbConfig = []): static
     {
         $this->db = new Db();
         $this->db->connect($dbConfig);
@@ -157,13 +147,8 @@ class Auth
         return $this;
     }
 
-    /**
-     * Connect to database using environment variables
-     *
-     * @param mixed[] $pdoOptions Options for PDO connection
-     * @return $this
-     */
-    public function autoConnect(array $pdoOptions = [])
+    /** Connect to database using environment variables */
+    public function autoConnect(array $pdoOptions = []): static
     {
         $this->db = new Db();
         $this->db->autoConnect($pdoOptions);
@@ -171,13 +156,8 @@ class Auth
         return $this;
     }
 
-    /**
-     * Pass in db connection instance directly
-     *
-     * @param PDO $connection A connection instance of your db
-     * @return $this
-     */
-    public function dbConnection(PDO $connection)
+    /** Pass in db connection instance directly */
+    public function dbConnection(PDO $connection): static
     {
         $this->db = new Db();
         $this->db->connection($connection);
@@ -186,29 +166,23 @@ class Auth
     }
 
     /**
-     * Register a Google OAuth client
-     * ---
-     * Register a Google OAuth client to use with Leaf Auth, should be a league/oauth2-client compatible client.
-     * @param string $clientId
-     * @param string $clientSecret
-     * @param array{
-     *     name?: string,
-     *     redirectUri?: string,
-     * } $options If `$options['redirectUri']` is not set, it will default to the value of `APP_URL` (as resolved by this class's environment helper) with `/auth/google/callback` appended; if `APP_URL` is unset or empty, the default will be `/auth/google/callback`.
-     * @return static
+     * Register a Google OAuth client to use with Leaf Auth, should be a
+     * league/oauth2-client compatible client.
+     * @param array{name?: string, redirectUri?: string} $options
+     * - If `$options['redirectUri']` is not set, it will default to the
+     * value of `APP_URL` (as resolved by this class's environment helper)
+     * with `/auth/google/callback` appended.
      */
     public function withGoogle(
         string $clientId,
         string $clientSecret,
-        array $options = []
-    ) {
+        array $options = [],
+    ): static {
         $clientName = $options['name'] ?? 'google';
 
         unset($options['name']);
 
-        if (!isset($options['redirectUri'])) {
-            $options['redirectUri'] = $this->env('APP_URL') . '/auth/google/callback';
-        }
+        $options['redirectUri'] ??= $this->env('APP_URL') . '/auth/google/callback';
 
         $this->withProvider($clientName, new Google(array_merge([
             'clientId' => $clientId,
@@ -220,24 +194,17 @@ class Auth
     }
 
     /**
-     * Register a generic OAuth client
-     * ---
-     * Register a generic OAuth client to use with Leaf Auth, should be a league/oauth2-client compatible client.
-     * @param string $clientName The name of the client to register
+     * Register a generic OAuth client to use with Leaf Auth, should be a
+     * league/oauth2-client compatible client.
      * @param AbstractProvider $client An instance of a league/oauth2-client compatible client
-     * @return static
      */
-    public function withProvider(string $clientName, $client)
+    public function withProvider(string $clientName, $client): static
     {
         $this->oauthClients[$clientName] = $client;
         return $this;
     }
 
-    /**
-     * Return an oauth client
-     * @param string $clientName The name of the client to return
-     * @return AbstractProvider|null
-     */
+    /** @return AbstractProvider|null An oauth client */
     public function client(string $clientName)
     {
         return $this->oauthClients[$clientName] ?? null;
@@ -245,12 +212,11 @@ class Auth
 
     /**
      * Get/Set Leaf Auth config
-     *
-     * @param string|array<string, mixed> $config The auth config key or array of config
+     * @param string|array<string, mixed> $config The auth config key or
+     * array of config
      * @param mixed $value The value if $config is a string
-     * @return mixed|void
      */
-    public function config($config, $value = null)
+    public function config($config, mixed $value = null): mixed
     {
         if (is_string($config) && $value === null) {
             return Config::get($config);
@@ -261,15 +227,16 @@ class Auth
             ? [$config => $value]
             : $config
         );
+
+        return null;
     }
 
     /**
      * Create roles and permissions
-     *
-     * @param array<string, string[]> $roles Array of roles and their permissions
-     * @return Auth
+     * @param array<string, string[]> $roles Array of roles and their
+     * permissions
      */
-    public function createRoles(array $roles)
+    public function createRoles(array $roles): static
     {
         Config::set([
             'roles' => $roles,
@@ -278,24 +245,13 @@ class Auth
         return $this;
     }
 
-    /**
-     * Return all roles and their permissions
-     *
-     * @return array<string, string[]>
-     */
-    public function roles()
+    /** Return all roles and their permissions */
+    public function roles(): ?array
     {
         return Config::get('roles');
     }
 
-    /**
-     * Sign a user in
-     * ---
-     * Verify user credentials and sign them in with token or session
-     *
-     * @param array<string, mixed> $credentials User credentials
-     * @return bool
-     */
+    /** Verify user credentials and sign them in with token or session */
     public function login(array $credentials): bool
     {
         $this->errorsArray = [];
@@ -322,8 +278,8 @@ class Auth
                 $this->errorsArray['auth'] = Config::get('messages.loginParamsError');
                 return false;
             }
-        } catch (Throwable $th) {
-            throw new Exception($th->getMessage());
+        } catch (Throwable $throwable) {
+            throw new Exception($throwable->getMessage(), $throwable->getCode(), $throwable);
         }
 
         if ($passwordKey !== false) {
@@ -344,14 +300,7 @@ class Auth
         return true;
     }
 
-    /**
-     * Register a new user
-     * ---
-     * Save a new user to the database
-     *
-     * @param array<string, mixed> $userData User data
-     * @return bool
-     */
+    /** Save a new user to the database */
     public function register(array $userData): bool
     {
         // each operation owns its error state: stale errors from a
@@ -393,8 +342,8 @@ class Auth
                 $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
                 return false;
             }
-        } catch (Throwable $th) {
-            throw new Exception($th->getMessage());
+        } catch (Throwable $throwable) {
+            throw new Exception($throwable->getMessage(), $throwable->getCode(), $throwable);
         }
 
         $user = $this->db->select($table)->where($userData)->first();
@@ -409,14 +358,7 @@ class Auth
         return true;
     }
 
-    /**
-     * Update user data
-     * ---
-     * Update user data in the database
-     *
-     * @param array<string, mixed> $userData User data
-     * @return bool
-     */
+    /** Update user data in the database */
     public function update(array $userData): bool
     {
         // each operation owns its error state: stale errors from a
@@ -467,8 +409,8 @@ class Auth
                 $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
                 return false;
             }
-        } catch (Throwable $th) {
-            throw new Exception($th->getMessage());
+        } catch (Throwable $throwable) {
+            throw new Exception($throwable->getMessage(), $throwable->getCode(), $throwable);
         }
 
         if (Config::get('session')) {
@@ -482,15 +424,7 @@ class Auth
         return true;
     }
 
-    /**
-     * Update user password
-     * ---
-     * Update user password in the database
-     *
-     * @param string $oldPassword Old password
-     * @param string $newPassword New password
-     * @return bool
-     */
+    /** Update user password in the database */
     public function updatePassword(string $oldPassword, string $newPassword): bool
     {
         $this->checkDbConnection();
@@ -530,8 +464,8 @@ class Auth
                 $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
                 return false;
             }
-        } catch (Throwable $th) {
-            throw new Exception($th->getMessage());
+        } catch (Throwable $throwable) {
+            throw new Exception($throwable->getMessage(), $throwable->getCode(), $throwable);
         }
 
         $this->user->{$passwordKey} = $newPassword;
@@ -539,19 +473,13 @@ class Auth
         return true;
     }
 
-    /**
-     * Create a new user from OAuth
-     *
-     * @param array<string, mixed> $userData User data
-     *
-     * @return bool
-     */
+    /** Create a new user from OAuth */
     public function fromOAuth(array $userData): bool
     {
         $initialPassword = Config::get('password.key');
 
         $this->checkDbConnection();
-        $this->config('password.key', false);
+        $this->config('password.key', value: false);
 
         $user = $this->db->select(Config::get('db.table'))
             ->where([
@@ -575,14 +503,10 @@ class Auth
     }
 
     /**
-     * Find a user by id
-     * ---
-     * Select and return an existing user from db
-     *
+     * Select and return an existing user from db by id
      * @param string|int $id The id of the user to grab
-     * @return User|null
      */
-    public function find($id)
+    public function find($id): ?User
     {
         $this->checkDbConnection();
 
@@ -592,19 +516,15 @@ class Auth
             return null;
         }
 
-        return (new User($userData, false))->setDb($this->db);
+        return (new User($userData, session: false))->setDb($this->db);
     }
 
     /**
-     * Create a new user
-     * ---
      * Create an account for another user
-     *
      * @param array<string, mixed> $userData The user details to save
-     * @return User|false|never
      * @throws Exception If database connection is not established
      */
-    public function createUserFor($userData)
+    public function createUserFor($userData): false|User
     {
         // each operation owns its error state: stale errors from a
         // previous call must never leak into this result
@@ -645,8 +565,8 @@ class Auth
                 $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
                 return false;
             }
-        } catch (Throwable $th) {
-            throw new Exception($th->getMessage());
+        } catch (Throwable $throwable) {
+            throw new Exception($throwable->getMessage(), $throwable->getCode(), $throwable);
         }
 
         $user = $this->db->select($table)->where($userData)->first();
@@ -656,25 +576,19 @@ class Auth
             return false;
         }
 
-        return (new User($user, false))->setDb($this->db);
+        return (new User($user, session: false))->setDb($this->db);
     }
 
-    /**
-     * Get saved OAuth token
-     * @return mixed
-     */
-    public function oauthToken()
+    /** Get saved OAuth token */
+    public function oauthToken(): mixed
     {
         return Config::getUserCache('oauth-token');
     }
 
     /**
-     * Sign a user out
-     * ---
      * Sign out the currently authenticated user
-     *
-     * @param string|mixed[]|callable|null $action Redirect to this url after logout
-     * @return bool
+     * @param string|mixed[]|callable|null $action Redirect to this url
+     * after logout
      */
     public function logout($action = null): bool
     {
@@ -698,22 +612,16 @@ class Auth
         return true;
     }
 
-    /**
-     * Get the id of the currently authenticated user
-     * @return string|int
-     */
-    public function id()
+    /** Get the id of the currently authenticated user */
+    public function id(): string|int
     {
         return Config::get('session')
             ? $this->getFromSession('auth.id')
             : ($this->user ? $this->user->id() : ($this->parseToken()['user.id'] ?? null));
     }
 
-    /**
-     * Get the currently authenticated user
-     * @return User|null
-     */
-    public function user()
+    /** Get the currently authenticated user */
+    public function user(): ?User
     {
         if (Config::get('session')) {
             $userId = $this->getFromSession('auth.id');
@@ -745,8 +653,8 @@ class Auth
                 $this->errorsArray = $this->db->errors();
                 return null;
             }
-        } catch (Throwable $th) {
-            throw new Exception($th->getMessage());
+        } catch (Throwable $throwable) {
+            throw new Exception($throwable->getMessage(), $throwable->getCode(), $throwable);
         }
 
         return $this->user = (new User(
@@ -754,11 +662,8 @@ class Auth
         ))->setDb($this->db);
     }
 
-    /**
-     * Get data generated on user login
-     * @return object|null
-     */
-    public function data()
+    /** Get data generated on user login */
+    public function data(): ?object
     {
         $user = $this->user();
 
@@ -769,14 +674,8 @@ class Auth
         return $user->getAuthInfo();
     }
 
-    /**
-     * Get generated access tokens
-     * @return array{
-     *     access?: string,
-     *     refresh?: string,
-     * }|null
-     */
-    public function tokens()
+    /** Get generated access tokens */
+    public function tokens(): ?array
     {
         $user = $this->user();
 
@@ -791,17 +690,16 @@ class Auth
      * Register auth middleware for your Leaf apps
      * @param string $middleware The middleware to register
      * @param callable $callback The callback to run if middleware fails
-     * @return void|never
      * @throws Exception If not used with leafs/leaf installed
      */
-    public function middleware(string $middleware, callable $callback)
+    public function middleware(string $middleware, callable $callback): void
     {
         if (!class_exists(App::class)) {
             throw new Exception('This feature is only available for Leaf apps');
         }
 
         if ($middleware === 'auth.required') {
-            app()->registerMiddleware('auth.required', function () use ($callback) {
+            app()->registerMiddleware('auth.required', function () use ($callback): void {
                 if (!$this->user()) {
                     $callback();
                     exit;
@@ -812,7 +710,7 @@ class Auth
         }
 
         if ($middleware === 'auth.guest') {
-            app()->registerMiddleware('auth.guest', function () use ($callback) {
+            app()->registerMiddleware('auth.guest', function () use ($callback): void {
                 if ($this->user()) {
                     $callback();
                     exit;
@@ -825,7 +723,7 @@ class Auth
         }
 
         if ($middleware === 'is') {
-            app()->registerMiddleware('is', function ($role) use ($callback) {
+            app()->registerMiddleware('is', function ($role) use ($callback): void {
                 if (!$this->user() || $this->user()->isNot($role)) {
                     $callback($role);
                     exit;
@@ -836,7 +734,7 @@ class Auth
         }
 
         if ($middleware === 'isNot') {
-            app()->registerMiddleware('isNot', function ($role) use ($callback) {
+            app()->registerMiddleware('isNot', function ($role) use ($callback): void {
                 if (!$this->user() || $this->user()->is($role)) {
                     $callback($role);
                     exit;
@@ -847,7 +745,7 @@ class Auth
         }
 
         if ($middleware === 'can') {
-            app()->registerMiddleware('can', function ($role) use ($callback) {
+            app()->registerMiddleware('can', function ($role) use ($callback): void {
                 if (!$this->user() || $this->user()->cannot($role)) {
                     $callback($role);
                     exit;
@@ -858,7 +756,7 @@ class Auth
         }
 
         if ($middleware === 'cannot') {
-            app()->registerMiddleware('cannot', function ($role) use ($callback) {
+            app()->registerMiddleware('cannot', function ($role) use ($callback): void {
                 if (!$this->user() || $this->user()->can($role)) {
                     $callback($role);
                     exit;
@@ -869,7 +767,7 @@ class Auth
         }
 
         if ($middleware === 'auth.verified') {
-            app()->registerMiddleware('auth.verified', function () use ($callback) {
+            app()->registerMiddleware('auth.verified', function () use ($callback): void {
                 if (!$this->user() || !$this->user()->isVerified()) {
                     $callback();
                     exit;
@@ -880,7 +778,7 @@ class Auth
         }
 
         if ($middleware === 'auth.unverified') {
-            app()->registerMiddleware('auth.unverified', function () use ($callback) {
+            app()->registerMiddleware('auth.unverified', function () use ($callback): void {
                 if (!$this->user() || $this->user()->isVerified()) {
                     $callback();
                     exit;
@@ -893,11 +791,8 @@ class Auth
         app()->registerMiddleware($middleware, $callback);
     }
 
-    /**
-     * Parse the current user's token
-     * @return array<string, mixed>|null
-     */
-    public function parseToken()
+    /** Parse the current user's token */
+    public function parseToken(): ?array
     {
         $bearerToken = $this->getTokenFromRequest();
 
@@ -910,18 +805,14 @@ class Auth
                 $bearerToken,
                 new Key(Config::tokenSecret(), 'HS256')
             );
-        } catch (Throwable $th) {
-            $this->errorsArray['token'] = $th->getMessage();
+        } catch (Throwable $throwable) {
+            $this->errorsArray['token'] = $throwable->getMessage();
             return null;
         }
     }
 
-    /**
-     * Verify a user's token
-     * @param string $token The token to verify
-     * @return User|null
-     */
-    public function verifyToken(string $token, ?string $purpose = null)
+    /** Verify a user's token */
+    public function verifyToken(string $token, ?string $purpose = null): ?User
     {
         try {
             $decodedToken = (array) JWT::decode(
@@ -936,7 +827,7 @@ class Auth
 
             $user = $this->find($decodedToken['user.id']);
 
-            if (!$user) {
+            if (!$user instanceof User) {
                 $this->errorsArray['token'] = 'User not found';
                 return null;
             }
@@ -952,18 +843,14 @@ class Auth
             }
 
             return $user;
-        } catch (Throwable $th) {
-            $this->errorsArray['token'] = $th->getMessage();
+        } catch (Throwable $throwable) {
+            $this->errorsArray['token'] = $throwable->getMessage();
             return null;
         }
     }
 
-    /**
-     * Return the current db instance
-     *
-     * @return Db
-     */
-    public function db()
+    /** Return the current db instance */
+    public function db(): ?Db
     {
         return $this->db;
     }
@@ -982,11 +869,8 @@ class Auth
         }
     }
 
-    /**
-     * @param string|array<string, mixed> $value
-     * @return ?mixed
-     */
-    protected function getFromSession($value)
+    /** @param string|array<string, mixed> $value */
+    protected function getFromSession($value): mixed
     {
         if ($this->checkAndExpireSession()) {
             return null;
@@ -995,11 +879,8 @@ class Auth
         return Session::get($value);
     }
 
-    /**
-     * @return void|never
-     * @throws Exception If sessions are not enabled
-     */
-    protected function sessionCheck()
+    /** @throws Exception If sessions are not enabled */
+    protected function sessionCheck(): void
     {
         if (!Config::get('session')) {
             throw new Exception('Turn on sessions to use this feature.');
@@ -1023,8 +904,7 @@ class Auth
         return $isSessionExpired;
     }
 
-    /** @return ?string */
-    protected function getTokenFromRequest()
+    protected function getTokenFromRequest(): ?string
     {
         $headers = null;
 
@@ -1035,7 +915,7 @@ class Auth
         } elseif (function_exists('apache_request_headers')) {
             $requestHeaders = apache_request_headers();
             // Server-side fix for bug in old Android versions (a nice side-effect of this fix means we don't care about capitalization for Authorization)
-            $requestHeaders = array_combine(array_map('ucwords', array_keys($requestHeaders)), array_values($requestHeaders));
+            $requestHeaders = array_combine(array_map(ucwords(...), array_keys($requestHeaders)), array_values($requestHeaders));
 
             if (isset($requestHeaders['Authorization'])) {
                 $headers = trim($requestHeaders['Authorization']);
@@ -1053,25 +933,18 @@ class Auth
         return null;
     }
 
-    /** @return ?mixed */
-    protected function getTokenFromSession()
+    protected function getTokenFromSession(): mixed
     {
         return Session::get('auth.token');
     }
 
-    /**
-     * Clear all errors caught
-     * @return void
-     */
-    public function clearErrors()
+    /** Clear all errors caught */
+    public function clearErrors(): void
     {
         $this->errorsArray = [];
     }
 
-    /**
-     * Return all errors caught
-     * @return array<string, mixed>
-     */
+    /** Return all errors caught */
     public function errors(): array
     {
         return $this->errorsArray;

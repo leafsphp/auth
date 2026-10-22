@@ -1,6 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Leaf\Auth;
+
+use RuntimeException;
 
 /**
  * Config for Leaf Auth
@@ -17,7 +21,6 @@ class Config
      * AUTH_TOKEN_SECRET from the env, then a secret derived from APP_KEY.
      * Without any of the three, token operations throw instead of signing
      * with a guessable default.
-     * @return string
      */
     public static function tokenSecret(): string
     {
@@ -45,12 +48,12 @@ class Config
             return hash_hmac('sha256', 'leaf.auth.token.v1', $appKey);
         }
 
-        throw new \RuntimeException(
+        throw new RuntimeException(
             'No auth token secret is set. Set `token.secret` in your auth config, or export AUTH_TOKEN_SECRET in the environment your app actually runs with. In Leaf MVC you can run `leaf key:generate` instead; lite apps have no key:generate and do not load .env files.'
         );
     }
 
-    /** @var array<string, mixed> Configuration for Leaf Auth */
+    /** Configuration for Leaf Auth */
     protected static array $config = [
         'id.key' => 'id',
         'db.table' => 'users',
@@ -80,7 +83,7 @@ class Config
         'messages.loginPasswordError' => 'Password is incorrect!',
     ];
 
-    /** @var array<string, mixed> Additional user information for cache */
+    /** Additional user information for cache */
     protected static array $userCache = [];
 
     /**
@@ -118,9 +121,8 @@ class Config
     /**
      * Set user cache
      * @param string $key
-     * @param mixed $value
      */
-    public static function setUserCache($key, $value): void
+    public static function setUserCache($key, mixed $value): void
     {
         if (isset($_SESSION)) {
             $_SESSION[$key] = $value;

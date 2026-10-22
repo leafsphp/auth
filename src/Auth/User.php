@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Leaf\Auth;
 
+use Stringable;
+use Leaf\App;
 use Exception;
 use Throwable;
-use ReturnTypeWillChange;
 use Leaf\Db;
 use Firebase\JWT\JWT;
 use Leaf\Helpers\Password;
@@ -19,47 +22,28 @@ use Leaf\Http\Session;
  * @version 1.0.0
  * @property mixed $email
  */
-class User
+class User implements Stringable
 {
     use UsesRoles;
     use UsesSubscriptions;
 
-    /**
-     * Internal instance of Leaf database
-     * @var Db
-     */
+    /** @var Db Internal instance of Leaf database */
     protected $db;
 
-    /**
-     * Internal instance of Leaf session
-     * @var Session
-     */
+    /** @var Session Internal instance of Leaf session */
     protected $session;
 
-    /** @var array<string, mixed> User Information */
+    /** User Information */
     protected array $data = [];
 
-    /**
-     * @var array{
-     *     access?: string,
-     *     refresh?: string,
-     * } User Tokens
-     */
+    /** @var array{access?: string, refresh?: string} User Tokens */
     protected array $tokens = [];
 
-    /**
-     * Expiry used when tokens are lazily minted
-     * @var int
-     */
+    /** @var int Expiry used when tokens are lazily minted */
     protected $tokenLifetime;
 
-    /**
-     * All errors caught
-     * @var array{
-     *   password?: string,
-     * } | array<string, string>
-     */
-    protected $errorsArray = [];
+    /** All errors caught */
+    protected array $errorsArray = [];
 
     /**
      * @param array<string, mixed> $data
@@ -118,34 +102,22 @@ class User
         }
 
         if ($data[Config::get('roles.key')] ?? null) {
-            $this->setRolesAndPermissions(json_decode($data[Config::get('roles.key')], true));
+            $this->setRolesAndPermissions(json_decode($data[Config::get('roles.key')], associative: true));
         }
     }
 
-    /**
-     * Return the id of current user
-     * @return string|int
-     */
-    public function id()
+    /** Return the id of current user */
+    public function id(): null|string|int
     {
         return $this->data[Config::get('id.key')] ?? null;
     }
 
-    /**
-     * Update user data
-     * ---
-     * Update user data in the database
-     *
-     * @param array{
-     *   email?: string,
-     * } | array<string, mixed> $userData User data
-     * @return bool
-     */
+    /** Update user data in the database */
     public function update(array $userData): bool
     {
         $user = $this->get();
 
-        if (!$user) {
+        if ($user === []) {
             return false;
         }
 
@@ -185,8 +157,8 @@ class User
                 $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
                 return false;
             }
-        } catch (Throwable $th) {
-            throw new Exception($th->getMessage());
+        } catch (Throwable $throwable) {
+            throw new Exception($throwable->getMessage(), $throwable->getCode(), $throwable);
         }
 
         if (Config::get('session')) {
@@ -200,20 +172,12 @@ class User
         return true;
     }
 
-    /**
-     * Update user password
-     * ---
-     * Update user password in the database
-     *
-     * @param string $oldPassword Old password
-     * @param string $newPassword New password
-     * @return bool
-     */
+    /** Update user password in the database */
     public function updatePassword(string $oldPassword, string $newPassword): bool
     {
         $user = $this->get();
 
-        if (!$user) {
+        if ($user === []) {
             return false;
         }
 
@@ -246,8 +210,8 @@ class User
                 $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
                 return false;
             }
-        } catch (Throwable $th) {
-            throw new Exception($th->getMessage());
+        } catch (Throwable $throwable) {
+            throw new Exception($throwable->getMessage(), $throwable->getCode(), $throwable);
         }
 
         $this->data[$passwordKey] = $newPassword;
@@ -255,19 +219,12 @@ class User
         return true;
     }
 
-    /**
-     * Reset user password
-     * ---
-     * Reset user password in the database
-     *
-     * @param string $newPassword New password
-     * @return bool
-     */
+    /** Reset user password in the database */
     public function resetPassword(string $newPassword): bool
     {
         $user = $this->get();
 
-        if (!$user) {
+        if ($user === []) {
             return false;
         }
 
@@ -288,8 +245,8 @@ class User
                 $this->errorsArray = array_merge($this->errorsArray, $this->db->errors());
                 return false;
             }
-        } catch (Throwable $th) {
-            throw new Exception($th->getMessage());
+        } catch (Throwable $throwable) {
+            throw new Exception($throwable->getMessage(), $throwable->getCode(), $throwable);
         }
 
         $this->data[$passwordKey] = $newPassword;
@@ -297,10 +254,7 @@ class User
         return true;
     }
 
-    /**
-     * Get auth information to be sent to the client
-     * @return object
-     */
+    /** Get auth information to be sent to the client */
     public function getAuthInfo(): object
     {
         $tokens = $this->tokens();
@@ -322,13 +276,7 @@ class User
         return $dataToReturn;
     }
 
-    /**
-     * Return generated tokens
-     * @return array{
-     *     access?: string,
-     *     refresh?: string,
-     * }
-     */
+    /** Return generated tokens */
     public function tokens(): array
     {
         if (!isset($this->tokens['access'])) {
@@ -342,7 +290,6 @@ class User
     /**
      * Generate a new JWT for the user
      * @param int $tokenLifetime
-     * @return string
      */
     public function generateToken($tokenLifetime): string
     {
@@ -362,8 +309,6 @@ class User
     /**
      * Generate a verification token for the user
      * @param mixed $expiresIn Token expiration time
-     * @param string|null $purpose Purpose of the token
-     * @return string
      */
     public function generateVerificationToken($expiresIn = null, ?string $purpose = null): string
     {
@@ -385,19 +330,13 @@ class User
         return JWT::encode($payload, $secretPhrase, 'HS256');
     }
 
-    /**
-     * Check if email is verified
-     * @return bool
-     */
+    /** Check if email is verified */
     public function isVerified(): bool
     {
-        return !!($this->data['email_verified_at'] ?? false);
+        return (bool) ($this->data['email_verified_at'] ?? false);
     }
 
-    /**
-     * Verify user's email
-     * @return bool
-     */
+    /** Verify user's email */
     public function verifyEmail(): bool
     {
         if ($this->isVerified()) {
@@ -417,13 +356,12 @@ class User
                 ->execute();
 
             return true;
-        } catch (Throwable $th) {
+        } catch (Throwable) {
             return false;
         }
     }
 
-    /** @return array<string, mixed> */
-    public function get()
+    public function get(): array
     {
         $userData = $this->data;
 
@@ -433,19 +371,17 @@ class User
 
         unset($userData[$passwordKey], $userData['remember_token']);
 
-        if (count($hidden) > 0) {
-            foreach ($hidden as $item) {
-                if (array_key_exists($item, $userData)) {
-                    unset($userData[$item]);
-                }
+        foreach ($hidden as $item) {
+            if (array_key_exists($item, $userData)) {
+                unset($userData[$item]);
+            }
 
-                if ($item === 'field.id' && array_key_exists($idKey, $userData)) {
-                    unset($userData[$idKey]);
-                }
+            if ($item === 'field.id' && array_key_exists($idKey, $userData)) {
+                unset($userData[$idKey]);
+            }
 
-                if ($item === 'field.password' && array_key_exists($passwordKey, $userData)) {
-                    unset($userData[$passwordKey]);
-                }
+            if ($item === 'field.password' && array_key_exists($passwordKey, $userData)) {
+                unset($userData[$passwordKey]);
             }
         }
 
@@ -455,37 +391,27 @@ class User
     /**
      * Set user db instance
      * @param Db $db
-     * @return User
      */
-    public function setDb($db)
+    public function setDb($db): static
     {
         $this->db = $db;
 
         return $this;
     }
 
-    /**
-     * Get user errors
-     * @return array{
-     *   password?: string,
-     * } | array<string, string>
-     */
-    public function errors()
+    /** Get user errors */
+    public function errors(): array
     {
         return $this->errorsArray;
     }
 
-    #[ReturnTypeWillChange]
-    public function __toString()
+    public function __toString(): string
     {
         return json_encode($this->get()) ?: '';
     }
 
-    /**
-     * @param string $name
-     * @return ?mixed
-     */
-    public function __get($name)
+    /** @param string $name */
+    public function __get($name): mixed
     {
         // using data instead of get() here because
         // we want people to be able to user()->get hidden fields
@@ -493,53 +419,37 @@ class User
         return $this->data[$name] ?? null;
     }
 
-    /**
-     * @param string $name
-     * @param mixed $value
-     * @return void
-     */
-    public function __set($name, $value)
+    /** @param string $name */
+    public function __set($name, mixed $value): void
     {
         $this->data[$name] = $value;
     }
 
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function __isset($name)
+    /** @param string $name */
+    public function __isset($name): bool
     {
         return isset($this->data[$name]);
     }
 
-    /**
-     * @param string $name
-     * @return void
-     */
-    public function __unset($name)
+    /** @param string $name */
+    public function __unset($name): void
     {
         unset($this->data[$name]);
     }
 
     /**
      * Get a "user to many" table relation
-     *
-     * <code>
+     * ```
      * auth()->user()->orders()->all();
      * auth()->user()->transactions()->where('amount', '>', 100)->get();
      * auth()->user()->notes()->where('title', 'like', '%important%')->get();
      * auth()->user()->posts()->where('published', true)->all();
-     * </code>
-     *
-     * @param mixed $method The table to relate to
-     * @param mixed $args
-     * @throws Exception
-     *
-     * @return Model
+     * ```
+     * @throws Exception If Leaf App class does not exist
      */
-    public function __call($method, $args)
+    public function __call(mixed $method, mixed $args): Model
     {
-        if (!class_exists('Leaf\App')) {
+        if (!class_exists(App::class)) {
             throw new Exception('Relations are only available in Leaf apps.');
         }
 

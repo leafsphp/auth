@@ -42,6 +42,19 @@ refactor:
   php: '8.2'
   fluent-new-line: true
   import-names: true
+  sets:
+    - dead-code
+    - code-quality
+    - coding-style
+    - type-declarations
+    - type-declaration-docblocks
+    - privatization
+    # - naming
+    - named-args
+    - instanceof
+    - if
+    - early-return
+    - rector-preset
 
 analyse:
   level: 8

@@ -2,23 +2,23 @@
 
 use Leaf\Auth\User;
 
-beforeAll(function () {
+beforeAll(function (): void {
     createTableForUsers();
     dbInstance()->delete('users')->execute();
 });
 
-afterEach(function () {
+afterEach(function (): void {
     if (session_status() === PHP_SESSION_ACTIVE) {
         $_SESSION = [];
         session_destroy();
     }
 });
 
-afterAll(function () {
+afterAll(function (): void {
     dbInstance()->delete('users')->execute();
 });
 
-test('register should create a new session when session => true', function () {
+test('register should create a new session when session => true', function (): void {
     $auth = authInstance();
     $auth->config(['session' => true]);
     $auth->config(['db.table' => 'users']);
@@ -39,7 +39,7 @@ test('register should create a new session when session => true', function () {
     expect($_SESSION['auth']['user']['username'] ?? null)->toBe($userData['username']);
 });
 
-test('register should not create a new session when session => false', function () {
+test('register should not create a new session when session => false', function (): void {
     $auth = authInstance();
     $auth->config(['session' => false]);
     $auth->config(['db.table' => 'users']);
@@ -59,7 +59,7 @@ test('register should not create a new session when session => false', function 
     expect($_SESSION['auth']['user']['username'] ?? null)->toBeNull();
 });
 
-test('login should create session when session => true', function () {
+test('login should create session when session => true', function (): void {
     $auth = authInstance();
     $auth->config(['session' => true]);
     $auth->config(['db.table' => 'users']);
@@ -80,7 +80,7 @@ test('login should create session when session => true', function () {
     expect($_SESSION['auth']['user']['username'] ?? null)->toBe($userData['username']);
 });
 
-test('session should create auth.ttl when session.lifetime is not 0', function () {
+test('session should create auth.ttl when session.lifetime is not 0', function (): void {
     $auth = authInstance();
     $auth->config(['session' => true, 'session.lifetime' => 2]);
     $auth->config(['db.table' => 'users']);
@@ -105,7 +105,7 @@ test('session should create auth.ttl when session.lifetime is not 0', function (
     expect($_SESSION['auth']['ttl'])->toBeGreaterThan($timeBeforeLogin);
 });
 
-test('session should not create auth.ttl when session.lifetime is 0', function () {
+test('session should not create auth.ttl when session.lifetime is 0', function (): void {
     $auth = authInstance();
     $auth->config(['session' => true, 'session.lifetime' => 0]);
     $auth->config(['db.table' => 'users']);
@@ -128,7 +128,7 @@ test('session should not create auth.ttl when session.lifetime is 0', function (
     expect($_SESSION['auth']['ttl'] ?? null)->toBeNull();
 });
 
-test('session should expire after session.lifetime', function () {
+test('session should expire after session.lifetime', function (): void {
     $auth = authInstance();
     $auth->config(['session' => true, 'session.lifetime' => 2]);
     $auth->config(['db.table' => 'users']);
@@ -154,7 +154,7 @@ test('session should expire after session.lifetime', function () {
     expect($auth->user())->toBeNull();
 });
 
-test('login should regenerate session id when session => true and session is already active', function () {
+test('login should regenerate session id when session => true and session is already active', function (): void {
     $auth = authInstance();
     $auth->config(['session' => true]);
     $auth->config(['db.table' => 'users']);
@@ -183,7 +183,7 @@ test('login should regenerate session id when session => true and session is alr
     expect($newSessionId)->not()->toBe($sessionId);
 });
 
-test('logout should remove auth info from session when session => true', function () {
+test('logout should remove auth info from session when session => true', function (): void {
     $auth = authInstance();
     $auth->config(['session' => true]);
     $auth->config(['db.table' => 'users']);

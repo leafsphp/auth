@@ -1,5 +1,7 @@
 <?php
 
+use Leaf\Config;
+use Leaf\Auth\User;
 use Leaf\Billing\Subscription;
 
 /*
@@ -15,11 +17,8 @@ const SUBSCRIPTION_TIERS = [
 class FakeBillingDriver
 {
     public static $cancelled = [];
+    
     public static $resumed = [];
-
-    public function __construct($config = [])
-    {
-    }
 
     public function tier(string $id): ?array
     {
@@ -49,7 +48,7 @@ class FakeBillingDriver
 class_alias(FakeBillingDriver::class, 'Leaf\\Billing\\Fake');
 
 
-if (!class_exists('Leaf\\Config')) {
+if (!class_exists(Config::class)) {
     eval('namespace Leaf; class Config {
         protected static $items = [];
         public static function getStatic($key) { return static::$items[$key] ?? null; }
@@ -58,7 +57,7 @@ if (!class_exists('Leaf\\Config')) {
     }');
 }
 
-function subscriptionUser(): \Leaf\Auth\User
+function subscriptionUser(): User
 {
     $auth = authInstance();
     $auth->config(['session' => false]);
@@ -85,7 +84,7 @@ function seedUserSubscription(int $userId, array $overrides = []): void
     ], $overrides))->execute();
 }
 
-beforeAll(function () {
+beforeAll(function (): void {
     // point the db() singleton (leafs/db ships it since leaf core is a
     // transitive dev dep) at the shared test connection
     db()->connection(dbInstance()->connection());
@@ -111,14 +110,14 @@ beforeAll(function () {
     createTableForUsers();
 });
 
-beforeEach(function () {
+beforeEach(function (): void {
     dbInstance()->delete('subscriptions')->execute();
     deleteUser('sub-user');
     FakeBillingDriver::$cancelled = [];
     FakeBillingDriver::$resumed = [];
 });
 
-test('a user with no subscription rows has no subscription', function () {
+test('a user with no subscription rows has no subscription', function (): void {
     $user = subscriptionUser();
 
     expect($user->subscription())->toBeNull();
@@ -126,7 +125,7 @@ test('a user with no subscription rows has no subscription', function () {
     expect($user->hasActiveSubscription())->toBeFalse();
 });
 
-test('an active subscription is returned with its tier attached', function () {
+test('an active subscription is returned with its tier attached', function (): void {
     $user = subscriptionUser();
     seedUserSubscription($user->id());
 
@@ -134,7 +133,7 @@ test('an active subscription is returned with its tier attached', function () {
     expect($user->subscription()['tier']['name'])->toBe('Basic');
 });
 
-test('the latest subscription wins after a resubscribe', function () {
+test('the latest subscription wins after a resubscribe', function (): void {
     $user = subscriptionUser();
     seedUserSubscription($user->id(), [
         'subscription_id' => 'sub_old',
@@ -147,7 +146,7 @@ test('the latest subscription wins after a resubscribe', function () {
     expect($user->hasActiveSubscription())->toBeTrue();
 });
 
-test('a cancelled subscription keeps access through the grace period', function () {
+test('a cancelled subscription keeps access through the grace period', function (): void {
     $user = subscriptionUser();
     seedUserSubscription($user->id(), [
         'status' => Subscription::STATUS_CANCELLED,
@@ -159,7 +158,7 @@ test('a cancelled subscription keeps access through the grace period', function 
     expect($user->hasSubscription())->toBeFalse();
 });
 
-test('a cancelled subscription past its end date has no access', function () {
+test('a cancelled subscription past its end date has no access', function (): void {
     $user = subscriptionUser();
     seedUserSubscription($user->id(), [
         'status' => Subscription::STATUS_CANCELLED,
@@ -170,7 +169,7 @@ test('a cancelled subscription past its end date has no access', function () {
     expect($user->hasActiveSubscription())->toBeFalse();
 });
 
-test('trial state is reported from status or trial_ends_at', function () {
+test('trial state is reported from status or trial_ends_at', function (): void {
     $user = subscriptionUser();
     seedUserSubscription($user->id(), [
         'status' => Subscription::STATUS_TRIAL,
@@ -181,7 +180,7 @@ test('trial state is reported from status or trial_ends_at', function () {
     expect($user->hasActiveSubscription())->toBeTrue();
 });
 
-test('past due subscriptions lose access but are flagged for dunning', function () {
+test('past due subscriptions lose access but are flagged for dunning', function (): void {
     $user = subscriptionUser();
     seedUserSubscription($user->id(), ['status' => Subscription::STATUS_PAST_DUE]);
 
@@ -189,18 +188,18 @@ test('past due subscriptions lose access but are flagged for dunning', function 
     expect($user->hasActiveSubscription())->toBeFalse();
 });
 
-test('cancelSubscription defaults to period end and can cancel immediately', function () {
+test('cancelSubscription defaults to period end and can cancel immediately', function (): void {
     $user = subscriptionUser();
     seedUserSubscription($user->id());
 
     expect($user->cancelSubscription())->toBeTrue();
     expect(FakeBillingDriver::$cancelled)->toBe([['sub_1', true]]);
 
-    expect($user->cancelSubscription(false))->toBeTrue();
+    expect($user->cancelSubscription(atPeriodEnd: false))->toBeTrue();
     expect(FakeBillingDriver::$cancelled[1])->toBe(['sub_1', false]);
 });
 
-test('resumeSubscription only works during the grace period', function () {
+test('resumeSubscription only works during the grace period', function (): void {
     $user = subscriptionUser();
     seedUserSubscription($user->id(), [
         'status' => Subscription::STATUS_CANCELLED,
@@ -211,7 +210,7 @@ test('resumeSubscription only works during the grace period', function () {
     expect(FakeBillingDriver::$resumed)->toBe(['sub_1']);
 });
 
-test('resumeSubscription refuses when the subscription is fully over', function () {
+test('resumeSubscription refuses when the subscription is fully over', function (): void {
     $user = subscriptionUser();
     seedUserSubscription($user->id(), [
         'status' => Subscription::STATUS_CANCELLED,
