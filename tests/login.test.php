@@ -2,28 +2,24 @@
 
 use Leaf\Auth\User;
 
-beforeAll(function () {
+beforeAll(function (): void {
     createTableForUsers();
 
-    try {
-        dbInstance()
-            ->insert('users')
-            ->params([
-                'username' => 'test-user',
-                'email' => 'test-user@example.com',
-                'password' => password_hash('password', PASSWORD_BCRYPT)
-            ])
-            ->execute();
-    } catch (Throwable $th) {
-        throw $th;
-    }
+    dbInstance()
+        ->insert('users')
+        ->params([
+            'username' => 'test-user',
+            'email' => 'test-user@example.com',
+            'password' => password_hash('password', PASSWORD_BCRYPT)
+        ])
+        ->execute();
 });
 
-afterAll(function () {
+afterAll(function (): void {
     dbInstance()->delete('users')->execute();
 });
 
-test('user can login', function () {
+test('user can login', function (): void {
     $auth = authInstance();
 
     $testUser = [
@@ -39,7 +35,7 @@ test('user can login', function () {
     expect($auth->user()->username)->toBe($testUser['username']);
 });
 
-test('login generates tokens on success', function () {
+test('login generates tokens on success', function (): void {
     $auth = authInstance();
 
     $testUser = [
@@ -56,7 +52,7 @@ test('login generates tokens on success', function () {
     expect($auth->data()->refreshToken)->toBeString();
 });
 
-test('login fails with incorrect password', function () {
+test('login fails with incorrect password', function (): void {
     $auth = authInstance();
 
     $userData = [
@@ -73,7 +69,7 @@ test('login fails with incorrect password', function () {
     expect($auth->errors()['password'] ?? null)->toBe($loginPasswordError);
 });
 
-test('login should fail if user does not exist', function () {
+test('login should fail if user does not exist', function (): void {
     $auth = authInstance();
 
     $userData = [
@@ -90,10 +86,10 @@ test('login should fail if user does not exist', function () {
     expect($auth->errors()['auth'] ?? null)->toBe($loginParamsError);
 });
 
-test('login should work without password is password.key is false', function () {
+test('login should work without password is password.key is false', function (): void {
     $auth = authInstance();
 
-    $auth->config('password.key', false);
+    $auth->config('password.key', value: false);
 
     $userData = [
         'username' => 'test-user'

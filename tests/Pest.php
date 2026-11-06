@@ -66,7 +66,7 @@ function authInstance(): Auth
     return $auth;
 }
 
-function deleteUser(string $username, $table = 'users')
+function deleteUser(string $username, string $table = 'users'): void
 {
     $db = dbInstance();
 
@@ -79,9 +79,8 @@ function createTableForUsers($table = 'users', bool $uuid = false): void
     $idColumn = $uuid ? 'id TEXT PRIMARY KEY' : null;
 
     try {
-        switch ($_ENV['DB_CONNECTION']) {
-            case 'sqlite':
-                $sql = "CREATE TABLE IF NOT EXISTS $table (
+        $sql = match ($_ENV['DB_CONNECTION']) {
+            'sqlite' => "CREATE TABLE IF NOT EXISTS $table (
                     " . ($idColumn ?? 'id INTEGER PRIMARY KEY AUTOINCREMENT') . ",
                     username TEXT NOT NULL,
                     email TEXT NOT NULL,
@@ -90,11 +89,8 @@ function createTableForUsers($table = 'users', bool $uuid = false): void
                     roles TEXT,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )";
-                break;
-
-            case 'mysql':
-                $sql = "CREATE TABLE IF NOT EXISTS $table (
+                )",
+            'mysql' => "CREATE TABLE IF NOT EXISTS $table (
                     " . ($idColumn ?? 'id SERIAL PRIMARY KEY') . ",
                     username VARCHAR(255) NOT NULL,
                     email VARCHAR(255) NOT NULL,
@@ -103,11 +99,8 @@ function createTableForUsers($table = 'users', bool $uuid = false): void
                     roles JSON,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )";
-                break;
-
-            default:
-                $sql = "CREATE TABLE IF NOT EXISTS $table (
+                )",
+            default => "CREATE TABLE IF NOT EXISTS $table (
                     " . ($idColumn ?? 'id SERIAL PRIMARY KEY') . ",
                     username VARCHAR(255) NOT NULL,
                     email VARCHAR(255) NOT NULL,
@@ -116,11 +109,11 @@ function createTableForUsers($table = 'users', bool $uuid = false): void
                     roles JSONB,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )";
-        }
+                )",
+        };
 
         $db->query($sql)->execute();
-    } catch (Throwable $th) {
-        throw new Exception('Failed to create table for users: ' . $th->getMessage());
+    } catch (Throwable $throwable) {
+        throw new Exception('Failed to create table for users: ' . $throwable->getMessage(), $throwable->getCode(), $throwable);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Leaf\Auth;
 
 use Throwable;
@@ -14,17 +16,15 @@ use Throwable;
  */
 trait UsesRoles
 {
-    /** @var string[] User Permissions */
+    /** User Permissions */
     protected array $permissions = [];
 
-    /** @var string[] User Roles */
+    /** User Roles */
     protected array $roles = [];
 
     /**
      * Assign new role to user
-     *
      * @param string|string[] $role The role to assign
-     * @return bool
      */
     public function assign($role): bool
     {
@@ -46,7 +46,7 @@ trait UsesRoles
         if (!array_key_exists($roleKey, (array) $this->data)) {
             try {
                 $this->db->query('ALTER TABLE ' . Config::get('db.table') . " ADD COLUMN $roleKey TEXT")->execute();
-            } catch (Throwable $th) {
+            } catch (Throwable) {
                 // column already exists in the table, it just wasn't selected
             }
         }
@@ -59,7 +59,7 @@ trait UsesRoles
                 ])
                 ->where(Config::get('id.key'), $this->data[Config::get('id.key')])
                 ->execute();
-        } catch (Throwable $th) {
+        } catch (Throwable) {
             return false;
         }
 
@@ -69,7 +69,6 @@ trait UsesRoles
     /**
      * Check if user has a permission
      * @param string|string[] $permission The permission(s) to check
-     * @return bool
      */
     public function can($permission): bool
     {
@@ -92,7 +91,6 @@ trait UsesRoles
     /**
      * Check if user has a role
      * @param string|string[] $role The role(s) to check
-     * @return bool
      */
     public function is($role): bool
     {
@@ -112,19 +110,13 @@ trait UsesRoles
         return !$this->is($role);
     }
 
-    /**
-     * Return the user's roles
-     * @return string[]
-     */
+    /** Return the user's roles */
     public function roles(): array
     {
         return $this->roles;
     }
 
-    /**
-     * Return the user's permissions
-     * @return string[]
-     */
+    /** Return the user's permissions */
     public function permissions(): array
     {
         return $this->permissions;
@@ -154,9 +146,7 @@ trait UsesRoles
 
     /**
      * Return any of the given roles that haven't been registered
-     *
      * @param string|string[] $roles The role(s) to check
-     * @return string[]
      */
     protected function unknownRoles($roles): array
     {
@@ -164,15 +154,12 @@ trait UsesRoles
 
         return array_values(array_filter(
             is_string($roles) ? [$roles] : $roles,
-            function ($role) use ($registered) {
-                return !array_key_exists($role, $registered);
-            }
+            fn ($role): bool => !array_key_exists($role, $registered)
         ));
     }
 
     /**
      * Set the roles and permissions for a user
-     *
      * @param string|string[] $roles The role(s) to set
      */
     protected function setRolesAndPermissions($roles): void
@@ -198,9 +185,7 @@ trait UsesRoles
 
     /**
      * Get the permissions for a role
-     *
      * @param string|string[] $roles
-     * @return string[]
      */
     protected function getRolePermissions($roles): array
     {

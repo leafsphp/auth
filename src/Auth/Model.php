@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Leaf\Auth;
 
 use Leaf\Db;
@@ -15,27 +17,19 @@ use PDOStatement;
  */
 class Model
 {
-    /**
-     * User Information
-     */
+    /** User Information */
     protected User $user;
 
-    /**
-     * DB table name
-     */
+    /** DB table name */
     protected string $table;
 
-    /**
-     * DB connection
-     */
+    /** DB connection */
     protected Db $db;
 
-    /** @var array<string, mixed> User data to save */
+    /** User data to save */
     protected array $dataToSave = [];
 
-    /**
-     * @param array{db: Db, user: User, table: string} $data
-     */
+    /** @param array{db: Db, user: User, table: string} $data */
     public function __construct($data)
     {
         $this->db = $data['db'];
@@ -45,10 +39,7 @@ class Model
 
     /**
      * Create a new model resource
-     *
      * @param array<string, mixed> $data Data to be inserted
-     *
-     * @return PDOStatement|null
      */
     public function create(array $data): ?PDOStatement
     {
@@ -65,10 +56,7 @@ class Model
 
     /**
      * Update a model resource
-     *
      * @param array<string, mixed> $data Data to be updated
-     *
-     * @return Db
      */
     public function update(array $data): Db
     {
@@ -79,11 +67,7 @@ class Model
             ->where('user_id', $this->user->id());
     }
 
-    /**
-     * Delete a model resource
-     *
-     * @return Db
-     */
+    /** Delete a model resource */
     public function delete(): Db
     {
         return $this->db->delete($this->table)
@@ -92,10 +76,7 @@ class Model
 
     /**
      * Get a model resource
-     *
      * @param string $columns Columns to search by separated by commas or *
-     *
-     * @return Db
      */
     public function table($columns = '*'): Db
     {
@@ -103,11 +84,7 @@ class Model
             ->where('user_id', $this->user->id());
     }
 
-    /**
-     * Save a model resource
-     *
-     * @return PDOStatement|null
-     */
+    /** Save a model resource */
     public function save(): ?PDOStatement
     {
         $success = $this->create($this->dataToSave);
@@ -117,11 +94,8 @@ class Model
         return $success;
     }
 
-    /**
-     * @param string $name
-     * @param mixed $value
-     */
-    public function __set($name, $value)
+    /** @param string $name */
+    public function __set($name, mixed $value)
     {
         $this->dataToSave[$name] = $value;
     }
@@ -129,9 +103,8 @@ class Model
     /**
      * @param string $name
      * @param mixed[] $arguments
-     * @return mixed
      */
-    public function __call($name, $arguments)
+    public function __call($name, $arguments): mixed
     {
         return $this->table()->$name(...$arguments);
     }

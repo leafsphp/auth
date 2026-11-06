@@ -1,6 +1,6 @@
 <?php
 
-beforeAll(function () {
+beforeAll(function (): void {
     $auth = authInstance();
     $auth->config(['db.table' => 'users']);
 
@@ -19,11 +19,11 @@ beforeAll(function () {
     sleep(1);
 });
 
-afterAll(function () {
+afterAll(function (): void {
     dbInstance()->delete('users')->execute();
 });
 
-test('update should update user data', function () {
+test('update should update user data', function (): void {
     $auth = authInstance();
     $auth->config(['db.table' => 'users']);
 
@@ -49,7 +49,7 @@ test('update should update user data', function () {
     expect($auth->user()->username)->toBe($updateData['username']);
 });
 
-test('update should fail if user already exists', function () {
+test('update should fail if user already exists', function (): void {
     $auth = authInstance();
     $auth->config(['db.table' => 'users']);
 
@@ -72,7 +72,7 @@ test('update should fail if user already exists', function () {
     expect($auth->errors()['username'])->toBe('username already exists');
 });
 
-test('updatePassword should update user password', function () {
+test('updatePassword should update user password', function (): void {
     $auth = authInstance();
     $auth->config(['unique' => ['username']]);
     $auth->config(['db.table' => 'users']);
@@ -104,7 +104,7 @@ test('updatePassword should update user password', function () {
     expect($auth->user()->{$auth->config('password.key')})->not()->toBe($oldPassword);
 });
 
-test('update should regenerate session id if session => true', function () {
+test('update should regenerate session id if session => true', function (): void {
     $auth = authInstance();
     $auth->config(['session' => true]);
     $auth->config(['db.table' => 'users']);

@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Leaf\Auth;
 
+use Leaf\Billing\Tier;
 use Leaf\Billing\Subscription;
 
 /**
@@ -14,19 +17,14 @@ use Leaf\Billing\Subscription;
  */
 trait UsesSubscriptions
 {
-    /**
-     * User Subscription
-     * @var array<string, mixed>|null
-     */
-    protected $subscription = null;
+    /** @var ?array<string, mixed> User Subscription */
+    protected $subscription;
 
     /**
      * Get current subscription
      *
      * The most recent subscription is returned, so a resubscribed user
      * gets their new subscription rather than an older cancelled one.
-     *
-     * @return mixed[]|null
      */
     public function subscription(): ?array
     {
@@ -45,13 +43,10 @@ trait UsesSubscriptions
             $this->subscription['tier'] = billing()->tier($this->subscription['plan_id']);
         }
 
-        return $this->subscription ? $this->subscription : null;
+        return $this->subscription ?: null;
     }
 
-    /**
-     * Check if user has a subscription
-     * @return bool
-     */
+    /** Check if user has a subscription */
     public function hasSubscription(): bool
     {
         return $this->subscription() && $this->subscription['status'] !== Subscription::STATUS_CANCELLED;
@@ -62,8 +57,6 @@ trait UsesSubscriptions
      *
      * Users on a trial, and users who cancelled but are still inside the
      * period they paid for (grace period), still count as active.
-     *
-     * @return bool
      */
     public function hasActiveSubscription(): bool
     {
@@ -86,9 +79,7 @@ trait UsesSubscriptions
      * Matches on the subscription name or on the billing tier's name or id,
      * so `isSubscribedTo('Starter')` works whether you named the
      * subscription after the tier or not.
-     *
      * @param string $plan The plan name or tier id to check
-     * @return bool
      */
     public function isSubscribedTo(string $plan): bool
     {
@@ -104,7 +95,7 @@ trait UsesSubscriptions
 
         $tier = $subscription['tier'] ?? null;
 
-        if ($tier instanceof \Leaf\Billing\Tier) {
+        if ($tier instanceof Tier) {
             $tier = $tier->toArray();
         }
 
@@ -115,10 +106,7 @@ trait UsesSubscriptions
         return ($tier['name'] ?? null) === $plan || ($tier['id'] ?? null) === $plan;
     }
 
-    /**
-     * Check if user is on a trial
-     * @return bool
-     */
+    /** Check if user is on a trial */
     public function onTrial(): bool
     {
         if (!$this->subscription()) {
@@ -134,10 +122,7 @@ trait UsesSubscriptions
         return $trialEndsAt && strtotime($trialEndsAt) > time();
     }
 
-    /**
-     * Check if user cancelled but still has access until the period ends
-     * @return bool
-     */
+    /** Check if user cancelled but still has access until the period ends */
     public function onGracePeriod(): bool
     {
         if (!$this->subscription()) {
@@ -153,7 +138,6 @@ trait UsesSubscriptions
 
     /**
      * Check if subscription payment is past due (renewal failed, in dunning)
-     * @return bool
      */
     public function hasPastDueSubscription(): bool
     {
@@ -166,9 +150,6 @@ trait UsesSubscriptions
      * By default the subscription is cancelled at the end of the current
      * billing period, so the user keeps access to what they paid for.
      * Pass false to cancel and revoke access immediately.
-     *
-     * @param bool $atPeriodEnd Cancel at period end instead of immediately
-     * @return bool
      */
     public function cancelSubscription(bool $atPeriodEnd = true): bool
     {
@@ -184,8 +165,6 @@ trait UsesSubscriptions
     /**
      * Resume a subscription that was cancelled at period end
      * but has not run out yet.
-     *
-     * @return bool
      */
     public function resumeSubscription(): bool
     {
