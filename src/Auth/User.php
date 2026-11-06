@@ -64,8 +64,9 @@ class User
     /**
      * @param array<string, mixed> $data
      * @param bool $session
+     * @param bool $regenerate
      */
-    public function __construct($data, $session = true)
+    public function __construct($data, $session = true, $regenerate = true)
     {
         $this->data = $data;
 
@@ -79,7 +80,9 @@ class User
                 session_start();
             }
 
-            session_regenerate_id();
+            if ($regenerate) {
+                session_regenerate_id();
+            }
 
             if (!Session::has('auth.startedAt')) {
                 Session::set('auth.startedAt', time());
