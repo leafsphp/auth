@@ -59,35 +59,19 @@ class Auth
             });
 
             $this->middleware('is', function ($role) {
-                Pages::error(
-                    'Page not found',
-                    'The page you are looking for could not be found.',
-                    403
-                );
+                static::denyAccess();
             });
 
             $this->middleware('isNot', function () {
-                Pages::error(
-                    'Page not found',
-                    'The page you are looking for could not be found.',
-                    403
-                );
+                static::denyAccess();
             });
 
             $this->middleware('can', function () {
-                Pages::error(
-                    'Page not found',
-                    'The page you are looking for could not be found.',
-                    403
-                );
+                static::denyAccess();
             });
 
             $this->middleware('cannot', function () {
-                Pages::error(
-                    'Page not found',
-                    'The page you are looking for could not be found.',
-                    403
-                );
+                static::denyAccess();
             });
 
             $this->middleware('auth.verified', function () {
@@ -116,6 +100,27 @@ class Auth
                 ]
             );
         }
+    }
+
+    /**
+     * Stop a request that failed a role or permission middleware.
+     * Leaf 5 (leafs/exception ^5) renders its Pages error view; Leaf 4
+     * has no Leaf\Crash\Pages, so fall back to a plain 403 response.
+     * @return void
+     */
+    protected static function denyAccess()
+    {
+        if (class_exists(Pages::class)) {
+            Pages::error(
+                'Page not found',
+                'The page you are looking for could not be found.',
+                403
+            );
+
+            return;
+        }
+
+        response()->exit('The page you are looking for could not be found.', 403);
     }
 
     /**
